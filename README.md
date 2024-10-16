@@ -32,8 +32,8 @@
 - 배포 방법: 버셀이 알아서 해줌
 - CI/CD: CI는 vite build, CD는 vercel
 - 배포 주소: 
-    - https://oz-advanced-team-a.vercel.app/
-    - https://advanced-class-project-a.vercel.app/
+    - 정세윤 : https://oz-advanced-team-a.vercel.app/
+    - 원도훈 : https://advanced-class-project-a.vercel.app/
 
 ## 개발 방법
 
