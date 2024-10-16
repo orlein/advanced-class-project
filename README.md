@@ -34,22 +34,13 @@
   - 원도훈: https://advanced-class-project-a.vercel.app/
   - 정세윤: https://oz-advanced-team-a.vercel.app/
   - 강사님: https://advanced-class-project-team-a.vercel.app/
-<<<<<<< HEAD
-
-=======
->>>>>>> 380c764 (Docs: 프로젝트 템플릿 파일 README.md 수정)
 
 ## 개발 방법
 
 - 사용 가능한 Editor / IDE : VSCode, Intellij
 - 개발 환경 설정 방법:
-<<<<<<< HEAD
-    - node : v20.18.0
-    - nvm : 0.40.1 
-=======
   - node: v20.18.0
   - nvm: 0.40.1
->>>>>>> 380c764 (Docs: 프로젝트 템플릿 파일 README.md 수정)
 - 로컬 개발 방법:
 - PR 방법:
 - Issue 관리 방법:
