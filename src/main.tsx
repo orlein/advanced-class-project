@@ -24,7 +24,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: 'setting',
+        path: 'settings',
         element: <></>,
         children: [
           { index: true, element: <></> },
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: 'challenge',
+        path: 'challenges',
         element: <></>,
         children: [
           { index: true, element: <></> },
@@ -116,7 +116,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: 'messages-channels',
+        path: 'message-channels',
         element: <></>,
         children: [
           { index: true, element: <></> },
