@@ -85,6 +85,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <></> },
           { path: 'new', element: <></> },
+          { path: 'sort/likes', element: <></> },
           {
             path: ':post_id',
             element: <></>,
@@ -101,12 +102,9 @@ const router = createBrowserRouter([
               },
             ],
           },
-
-          { path: 'sort/likes', element: <></> },
         ],
       },
       { path: 'comments/:comment_id/edit', element: <></> },
-
       {
         path: 'my-events',
         element: <></>,
