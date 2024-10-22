@@ -5,6 +5,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <HomePage />
+        <div>test</div>
     </ThemeProvider>
   );
 }
