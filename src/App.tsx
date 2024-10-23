@@ -8,22 +8,22 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
-    setIsSidebarOpen(prev => !prev);
+    setIsSidebarOpen((prev) => !prev);
   };
 
   return (
-      <ThemeProvider>
-        <SidebarProvider>
-          <div className="flex w-full">
-            <LeftSideBar
-                isSidebarOpen={isSidebarOpen}
-                toggleSidebar={toggleSidebar}
-            />
-            <div className="flex-1 p-4">
-              <Outlet />
-            </div>
+    <ThemeProvider>
+      <SidebarProvider>
+        <div className='flex w-full'>
+          <LeftSideBar
+            isSidebarOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+          />
+          <div className='flex-1 p-4'>
+            <Outlet />
           </div>
-        </SidebarProvider>
-      </ThemeProvider>
+        </div>
+      </SidebarProvider>
+    </ThemeProvider>
   );
 }

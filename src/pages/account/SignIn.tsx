@@ -1,75 +1,36 @@
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import SignInForm from '@/components/SignInForm';
+import { useState } from 'react';
 
 export default function SignIn() {
+  const [currentTab, setCurrentTab] = useState<'Sign in' | 'Password'>(
+    'Sign in'
+  );
+  const handleCurrentTab = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setCurrentTab(e.currentTarget.innerText as 'Sign in' | 'Password');
+  };
   return (
-      <Tabs defaultValue="account" className="w-[400px]">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="account">로그인</TabsTrigger>
-          <TabsTrigger value="password">비밀번호 찾기</TabsTrigger>
-        </TabsList>
-        <TabsContent value="account">
-          <Card>
-            <CardHeader>
-              <CardTitle>로그인</CardTitle>
-              <CardDescription>
-                아이디와 비밀번호를 입력하여 로그인 하세요.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="space-y-1">
-                <Label htmlFor="name">아이디</Label>
-                <Input id="name" placeholder="아이디를 입력하세요." />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="username">비밀번호</Label>
-                <Input id="username" placeholder="비밀번호를 입력하세요." />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>로그인</Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="password">
-          <Card>
-            <CardHeader>
-              <CardTitle>비밀번호 찾기</CardTitle>
-              <CardDescription>
-                비밀번호를 변경하세요.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="space-y-1">
-                <Label htmlFor="new">새로운 비밀번호</Label>
-                <Input id="new" type="password"/>
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="new">새로운 비밀번호 확인</Label>
-                <Input id="new" type="password"/>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button>비밀번호 저장</Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
-  )
+    <>
+      <div className='flex justify-center items-center h-full'>
+        <Tabs defaultValue='sign-in' className='flex flex-col items-center'>
+          <TabsList className='mb-5 grid w-full grid-cols-2'>
+            <TabsTrigger value='sign-in' onClick={handleCurrentTab}>
+              Sign in
+            </TabsTrigger>
+            <TabsTrigger value='password' onClick={handleCurrentTab}>
+              Password
+            </TabsTrigger>
+          </TabsList>
+          <section className='h-[600px] w-full'>
+            <TabsContent value='sign-in'>
+              <SignInForm currentTab={currentTab} />
+            </TabsContent>
+            <TabsContent value='password'>
+              <SignInForm currentTab={currentTab} />
+            </TabsContent>
+          </section>
+        </Tabs>
+      </div>
+    </>
+  );
 }
