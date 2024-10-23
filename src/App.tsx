@@ -7,11 +7,11 @@ export default function App() {
   return (
     <ThemeProvider>
       <SidebarProvider>
-        <div className='flex h-screen'>
+        <div className='flex h-screen w-screen'>
           <LeftSideBar />
-          <div className='flex-1 p-4'>
+          <section className='flex-1 p-4'>
             <Outlet />
-          </div>
+          </section>
         </div>
       </SidebarProvider>
     </ThemeProvider>
