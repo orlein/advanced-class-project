@@ -2,35 +2,30 @@ import { ThemeProvider } from './components/theme-provider';
 import { SidebarProvider } from './components/ui/sidebar';
 import LeftSideBar from './components/LeftSideBar.tsx';
 import { Outlet } from 'react-router-dom';
+
+import Header from './components/Header.tsx';
 import { useState } from 'react';
 
 export default function App() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
-  };
-
-  const toggleCollapse = () => {
-    setIsCollapsed((prev) => !prev);
-  };
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   return (
-      <ThemeProvider>
-        <SidebarProvider>
-          <div className='flex'>
+    <ThemeProvider>
+      <SidebarProvider>
+        <div className='flex w-screen'>
+          <Header />
+          <section className={`${isSidebarOpen ? 'w-64' : 'w-16'}`}>
             <LeftSideBar
-                isSidebarOpen={isSidebarOpen}
-                toggleSidebar={toggleSidebar}
-                isCollapsed={isCollapsed}
-                toggleCollapse={toggleCollapse}
+              isSidebarOpen={isSidebarOpen}
+              toggleSidebar={toggleSidebar}
             />
-            <div className='flex-1 p-6 pt-8'>
-              <Outlet />
-            </div>
-          </div>
-        </SidebarProvider>
-      </ThemeProvider>
+          </section>
+          <section className='flex-1 p-6 mt-16 flex-grow'>
+            <Outlet />
+          </section>
+        </div>
+      </SidebarProvider>
+    </ThemeProvider>
   );
 }
