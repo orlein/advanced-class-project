@@ -28,9 +28,9 @@ const INPUT_VALIDATION = z.object({
 type InputInfo = z.infer<typeof INPUT_VALIDATION>;
 
 const SOCIAL_LOGIN_BUTTONS = {
-  구글: 'src/assets/Google.png',
-  카카오: 'src/assets/Kakao.png',
-  네이버: 'src/assets/Naver.png',
+  구글: './src/assets/Google.png',
+  카카오: './src/assets/Kakao.png',
+  네이버: './src/assets/Naver.png',
 };
 
 interface TabProp {
