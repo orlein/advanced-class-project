@@ -21,7 +21,7 @@ export default function App() {
               toggleSidebar={toggleSidebar}
             />
           </section>
-          <section className='flex-1 p-6 mt-16 flex-grow'>
+          <section className='flex-1 p-10 mt-16 flex-grow'>
             <Outlet />
           </section>
         </div>
