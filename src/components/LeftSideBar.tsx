@@ -301,18 +301,6 @@ export default function LeftSideBar({
                 </SidebarMenuSub>
               )}
             </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton onClick={() => navigate('/sign-in')}>
-                <UserIcon />
-                {isSidebarOpen && '로그인'}
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton onClick={() => navigate('/sign-up')}>
-                <UserIcon />
-                {isSidebarOpen && '회원가입'}
-              </SidebarMenuButton>
-            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>
