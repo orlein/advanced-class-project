@@ -119,21 +119,36 @@ export default function SignInForm({ currentTab }: TabProp) {
             </div>
           </>
         )}
-        <Button type='submit' className='w-full my-5'>
+        <Button type='submit' className='w-full my-3'>
           {currentTab === 'Sign in' ? '로그인' : '비밀번호 찾기'}
         </Button>
       </form>
       {currentTab === 'Sign in' && (
         <>
-          <div className='relative flex justify-center text-xs uppercase'>
-            <span className='bg-background px-2 text-muted-foreground'>
-              Or continue with
+          <p className='text-sm text-muted-foreground'>
+            아직 회원이 아니신가요?{' '}
+            <span className='ml-1 font-semibold hover:underline cursor-pointer text-foreground'>
+              회원가입
             </span>
-          </div>
-          <section className='flex gap-5'>
-            {Object.entries(SOCIAL_LOGIN_BUTTONS).map(([name, url]) => (
-              <SocialLoginButton key={name} logoURL={url} name={name} />
-            ))}
+          </p>
+          <section className='w-full flex flex-col items-center gap-7'>
+            <div className='w-full'>
+              <div className='relative'>
+                <div className='absolute inset-0 flex items-center'>
+                  <span className='w-full border-t' />
+                </div>
+                <div className='relative flex justify-center text-xs uppercase'>
+                  <span className='bg-background px-2 text-muted-foreground'>
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+            </div>
+            <section className='flex gap-5'>
+              {Object.entries(SOCIAL_LOGIN_BUTTONS).map(([name, url]) => (
+                <SocialLoginButton key={name} logoURL={url} name={name} />
+              ))}
+            </section>
           </section>
         </>
       )}
