@@ -5,7 +5,7 @@ export default function Header() {
         <h1 className='text-4xl'>원정대</h1>
       </section>
       <section>
-        <div className='bg-foreground rounded-full size-10 absolute top-1/2 right-3 -translate-y-1/2'></div>
+        <div className='bg-foreground rounded-full size-10 absolute top-1/2 right-8 -translate-y-1/2'></div>
       </section>
     </header>
   );
