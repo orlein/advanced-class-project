@@ -5,6 +5,9 @@ import { useRef, useState, FormEvent } from 'react';
 import { SignInPageInput } from './ui/customUI/signInPageInput';
 import { SafeParseReturnType, z } from 'zod';
 import { Checkbox } from './ui/checkbox';
+import Google from '../assets/Google.png';
+import Kakao from '../assets/Kakao.png';
+import Naver from '../assets/Naver.png';
 
 const ICON_STYLE = 'size-5 text-secondary-foreground';
 const EYE_ICON = 'absolute top-1/2 -translate-y-1/2 right-5';
@@ -28,9 +31,9 @@ const INPUT_VALIDATION = z.object({
 type InputInfo = z.infer<typeof INPUT_VALIDATION>;
 
 const SOCIAL_LOGIN_BUTTONS = {
-  구글: './src/assets/Google.png',
-  카카오: './src/assets/Kakao.png',
-  네이버: './src/assets/Naver.png',
+  구글: Google,
+  카카오: Kakao,
+  네이버: Naver,
 };
 
 interface TabProp {
