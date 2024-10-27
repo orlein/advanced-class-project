@@ -6,11 +6,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { FileTextIcon, LogOut, MessageSquare, User } from 'lucide-react';
+import { ListTodo, LogOut, MessageSquare, Swords, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import DropdownMenuItemContent from './ui/customUI/dropdown-menu-item';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import Profile from '../assets/profile.jpg';
 
 export default function UserMenuDropdown() {
   const { setUser } = useAuthContext();
@@ -20,14 +21,14 @@ export default function UserMenuDropdown() {
       <DropdownMenu>
         <DropdownMenuTrigger className='outline-0'>
           <Avatar className='flex justify-center items-center size-9 rounded-full overflow-hidden'>
-            <AvatarImage src='src/assets/profile.jpg' alt='@shadcn' />
+            <AvatarImage src={Profile} alt='@shadcn' />
             <AvatarFallback>username</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className='w-80 mr-5'>
           <DropdownMenuLabel className='flex gap-3 items-center h-20'>
             <Avatar className='flex justify-center items-center size-12 rounded-full overflow-hidden'>
-              <AvatarImage src='src/assets/profile.jpg' alt='@shadcn' />
+              <AvatarImage src={Profile} alt='@shadcn' />
               <AvatarFallback>username</AvatarFallback>
             </Avatar>
             <section className='flex flex-col gap-1'>
@@ -41,11 +42,11 @@ export default function UserMenuDropdown() {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate('/my-challenges')}>
-            <DropdownMenuItemContent icon={FileTextIcon} text='나의 챌린지' />
+            <DropdownMenuItemContent icon={Swords} text='나의 챌린지' />
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => navigate('/my-events')}>
             <DropdownMenuItemContent
-              icon={FileTextIcon}
+              icon={ListTodo}
               text='나의 챌린지 이벤트'
             />
           </DropdownMenuItem>
