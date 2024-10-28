@@ -8,7 +8,6 @@ import { Checkbox } from './ui/checkbox';
 import Google from '../assets/Google.png';
 import Kakao from '../assets/Kakao.png';
 import Naver from '../assets/Naver.png';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 const ICON_STYLE = 'size-5 text-secondary-foreground';
 const EYE_ICON = 'absolute top-1/2 -translate-y-1/2 right-5';
