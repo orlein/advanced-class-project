@@ -8,6 +8,7 @@ import { Checkbox } from './ui/checkbox';
 import Google from '../assets/Google.png';
 import Kakao from '../assets/Kakao.png';
 import Naver from '../assets/Naver.png';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const ICON_STYLE = 'size-5 text-secondary-foreground';
 const EYE_ICON = 'absolute top-1/2 -translate-y-1/2 right-5';
@@ -94,7 +95,7 @@ export default function SignInForm({ currentTab }: TabProp) {
         />
         {currentTab === 'Sign in' && (
           <>
-            <div className='relative'>
+            <div className='relative w-full'>
               <SignInPageInput
                 icon={Lock}
                 type={showPassword ? 'text' : 'password'}
@@ -122,7 +123,7 @@ export default function SignInForm({ currentTab }: TabProp) {
             </div>
           </>
         )}
-        <Button type='submit' className='w-full my-3'>
+        <Button type='submit' className='w-full'>
           {currentTab === 'Sign in' ? '로그인' : '비밀번호 찾기'}
         </Button>
       </form>

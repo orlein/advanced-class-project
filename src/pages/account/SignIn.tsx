@@ -12,7 +12,10 @@ export default function SignIn() {
   return (
     <>
       <div className='flex justify-center items-center h-full'>
-        <Tabs defaultValue='sign-in' className='flex flex-col items-center'>
+        <Tabs
+          defaultValue='sign-in'
+          className='flex flex-col items-center w-full px-2 min-h-[450px]'
+        >
           <TabsList className='mb-5 grid w-full grid-cols-2'>
             <TabsTrigger value='sign-in' onClick={handleCurrentTab}>
               Sign in
@@ -21,7 +24,7 @@ export default function SignIn() {
               Password
             </TabsTrigger>
           </TabsList>
-          <section className='h-[600px] w-full'>
+          <section className='w-full'>
             <TabsContent value='sign-in'>
               <SignInForm currentTab={currentTab} />
             </TabsContent>
