@@ -1,67 +1,46 @@
+import { LogOut, User } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Profile from '../assets/profile.jpg';
 import {
-  DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { ListTodo, LogOut, MessageSquare, Swords, User } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+} from './ui/dropdown-menu';
 import DropdownMenuItemContent from './ui/customUI/dropdown-menu-item';
-import { useAuthContext } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import Profile from '../assets/profile.jpg';
 
 export default function UserMenuDropdown() {
-  const { setUser } = useAuthContext();
-  const navigate = useNavigate();
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger className='outline-0'>
-          <Avatar className='flex justify-center items-center size-9 rounded-full overflow-hidden'>
-            <AvatarImage src={Profile} alt='@shadcn' />
-            <AvatarFallback>username</AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className='w-80 mr-5'>
-          <DropdownMenuLabel className='flex gap-3 items-center h-20'>
-            <Avatar className='flex justify-center items-center size-12 rounded-full overflow-hidden'>
-              <AvatarImage src={Profile} alt='@shadcn' />
-              <AvatarFallback>username</AvatarFallback>
+      <DropdownMenuContent
+        className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-l relative bottom-2'
+        side='bottom'
+        align='end'
+        sideOffset={4}
+      >
+        <DropdownMenuLabel className='p-0 font-normal'>
+          <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm h-14'>
+            <Avatar className='h-8 w-8 rounded-lg'>
+              <AvatarImage src={Profile} alt='profile' />
+              <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
             </Avatar>
-            <section className='flex flex-col gap-1'>
-              <p className='text-lg'>username</p>
-              <p>user-email-id@google.com</p>
-            </section>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => navigate('/my-profile')}>
-            <DropdownMenuItemContent icon={User} text='나의 프로필' />
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => navigate('/my-challenges')}>
-            <DropdownMenuItemContent icon={Swords} text='나의 챌린지' />
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate('/my-events')}>
-            <DropdownMenuItemContent
-              icon={ListTodo}
-              text='나의 챌린지 이벤트'
-            />
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => navigate('/message-channels')}>
-            <DropdownMenuItemContent
-              icon={MessageSquare}
-              text='나의 메시지 채널'
-            />
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setUser((prev) => !prev)}>
-            <DropdownMenuItemContent icon={LogOut} text='로그아웃' />
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <div className='grid flex-1 text-left text-sm leading-tight'>
+              <span className='truncate font-semibold'>username</span>
+              <span className='truncate text-xs'>username@username.com</span>
+            </div>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItemContent
+            icon={User}
+            text='나의 프로필'
+            url='/my-profile'
+          />
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItemContent icon={LogOut} text='로그아웃' />
+      </DropdownMenuContent>
     </>
   );
 }
