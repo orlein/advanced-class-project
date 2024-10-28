@@ -94,7 +94,7 @@ export default function SignInForm({ currentTab }: TabProp) {
         />
         {currentTab === 'Sign in' && (
           <>
-            <div className='relative'>
+            <div className='relative w-full'>
               <SignInPageInput
                 icon={Lock}
                 type={showPassword ? 'text' : 'password'}
@@ -122,7 +122,7 @@ export default function SignInForm({ currentTab }: TabProp) {
             </div>
           </>
         )}
-        <Button type='submit' className='w-full my-3'>
+        <Button type='submit' className='w-full'>
           {currentTab === 'Sign in' ? '로그인' : '비밀번호 찾기'}
         </Button>
       </form>
