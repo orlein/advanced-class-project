@@ -8,6 +8,7 @@ import { Checkbox } from './ui/checkbox';
 import Google from '../assets/Google.png';
 import Kakao from '../assets/Kakao.png';
 import Naver from '../assets/Naver.png';
+import { Link } from 'react-router-dom';
 
 const ICON_STYLE = 'size-5 text-secondary-foreground';
 const EYE_ICON = 'absolute top-1/2 -translate-y-1/2 right-5';
@@ -130,9 +131,11 @@ export default function SignInForm({ currentTab }: TabProp) {
         <>
           <p className='text-sm text-muted-foreground'>
             아직 회원이 아니신가요?{' '}
-            <span className='ml-1 font-semibold hover:underline cursor-pointer text-foreground'>
-              회원가입
-            </span>
+            <Link to='/sign-up'>
+              <span className='ml-1 font-semibold hover:underline cursor-pointer text-foreground'>
+                회원가입
+              </span>
+            </Link>
           </p>
           <section className='w-full flex flex-col items-center gap-7'>
             <div className='w-full'>

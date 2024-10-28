@@ -14,7 +14,7 @@ export default function SignIn() {
       <div className='flex justify-center items-center h-full'>
         <Tabs
           defaultValue='sign-in'
-          className='flex flex-col items-center w-full px-2 min-h-[450px]'
+          className='flex flex-col items-center w-full max-w-[500px] px-2 min-h-[450px]'
         >
           <TabsList className='mb-5 grid w-full grid-cols-2'>
             <TabsTrigger value='sign-in' onClick={handleCurrentTab}>
