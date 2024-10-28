@@ -94,6 +94,7 @@ export function LeftSideBar() {
   const isWideScreen = useWideScreen();
   const { open, setOpen, setOpenMobile, isMobile } = useSidebar();
   const [openIndices, setOpenIndices] = useState<boolean[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const handleIconClick = (index?: number) => {
     if (!open) setOpen(true);
     setOpenIndices((prevState) => {
@@ -187,7 +188,7 @@ export function LeftSideBar() {
           )}
           {user && (
             <SidebarMenuItem>
-              <DropdownMenu>
+              <DropdownMenu onOpenChange={setDropdownOpen} open={dropdownOpen}>
                 <SidebarMenuButton
                   size='lg'
                   className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
@@ -209,7 +210,7 @@ export function LeftSideBar() {
                     </div>
                   </DropdownMenuTrigger>
                 </SidebarMenuButton>
-                <UserMenuDropdown />
+                <UserMenuDropdown setDropdownOpen={setDropdownOpen} />
               </DropdownMenu>
             </SidebarMenuItem>
           )}

@@ -7,9 +7,33 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from './ui/dropdown-menu';
-import DropdownMenuItemContent from './ui/customUI/dropdown-menu-item';
+// import DropdownMenuItemContent from './ui/customUI/dropdown-menu-item';
+import { SidebarMenuButton, useSidebar } from './ui/sidebar';
+import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '@/contexts/AuthContext';
+import { useWideScreen } from '@/hooks/use-wideScreen';
 
-export default function UserMenuDropdown() {
+const dropdownMenuItems = [
+  { title: '나의 프로필', icon: User, url: 'my-profile', divider: true },
+  { title: '로그아웃', icon: LogOut, url: '/', divider: false },
+];
+
+interface SetDropdownOpen {
+  setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
+  const navigate = useNavigate();
+  const { setOpen, setOpenMobile } = useSidebar();
+  const isWideScreen = useWideScreen();
+  const { setUser } = useAuthContext();
+  const handleClick = (title: string, url?: string) => {
+    title === '로그아웃' && setUser(false);
+    url && navigate(url);
+    setDropdownOpen(false);
+    setOpen(isWideScreen);
+    setOpenMobile(false);
+  };
   return (
     <>
       <DropdownMenuContent
@@ -32,14 +56,20 @@ export default function UserMenuDropdown() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItemContent
-            icon={User}
-            text='나의 프로필'
-            url='/my-profile'
-          />
+          {dropdownMenuItems &&
+            dropdownMenuItems.map((item) => (
+              <li key={item.title} className='list-none'>
+                <SidebarMenuButton
+                  onClick={() => handleClick(item.title, item.url && item.url)}
+                  className='hover:bg-accent hover:text-accent-foreground'
+                >
+                  <item.icon />
+                  <p>{item.title}</p>
+                </SidebarMenuButton>
+                {item.divider && <DropdownMenuSeparator />}
+              </li>
+            ))}
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItemContent icon={LogOut} text='로그아웃' />
       </DropdownMenuContent>
     </>
   );
