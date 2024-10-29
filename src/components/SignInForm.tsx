@@ -9,6 +9,7 @@ import Google from '../assets/Google.png';
 import Kakao from '../assets/Kakao.png';
 import Naver from '../assets/Naver.png';
 import { Link } from 'react-router-dom';
+import SocialKakao from "@/kakaotest.tsx";
 
 const ICON_STYLE = 'size-5 text-secondary-foreground';
 const EYE_ICON = 'absolute top-1/2 -translate-y-1/2 right-5';
@@ -150,6 +151,7 @@ export default function SignInForm({ currentTab }: TabProp) {
                 </div>
               </div>
             </div>
+            <SocialKakao/>
             <section className='flex gap-5'>
               {Object.entries(SOCIAL_LOGIN_BUTTONS).map(([name, url]) => (
                 <SocialLoginButton key={name} logoURL={url} name={name} />
