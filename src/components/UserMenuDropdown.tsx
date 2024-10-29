@@ -1,4 +1,4 @@
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Moon, Sun, Laptop } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Profile from '../assets/profile.jpg';
 import {
@@ -6,12 +6,17 @@ import {
   DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from './ui/dropdown-menu';
-// import DropdownMenuItemContent from './ui/customUI/dropdown-menu-item';
-import { SidebarMenuButton, useSidebar } from './ui/sidebar';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useWideScreen } from '@/hooks/use-wideScreen';
+import { useTheme, Theme } from '@/components/theme-provider';
 
 const dropdownMenuItems = [
   { title: '나의 프로필', icon: User, url: 'my-profile', divider: true },
@@ -24,23 +29,26 @@ interface SetDropdownOpen {
 
 export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
   const navigate = useNavigate();
-  const { setOpen, setOpenMobile } = useSidebar();
-  const isWideScreen = useWideScreen();
+  useWideScreen();
   const { setUser } = useAuthContext();
+  const { theme, setTheme } = useTheme();
+
   const handleClick = (title: string, url?: string) => {
-    title === '로그아웃' && setUser(false);
-    url && navigate(url);
+    if (title === '로그아웃') {
+      setUser(false);
+    }
+    if (url) {
+      navigate(url);
+    }
     setDropdownOpen(false);
-    setOpen(isWideScreen);
-    setOpenMobile(false);
   };
+
   return (
-    <>
       <DropdownMenuContent
-        className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-l relative bottom-2'
-        side='bottom'
-        align='end'
-        sideOffset={4}
+          className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-l relative bottom-2'
+          side='bottom'
+          align='end'
+          sideOffset={4}
       >
         <DropdownMenuLabel className='p-0 font-normal'>
           <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm h-14'>
@@ -56,21 +64,43 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {dropdownMenuItems &&
-            dropdownMenuItems.map((item) => (
-              <li key={item.title} className='list-none'>
-                <SidebarMenuButton
-                  onClick={() => handleClick(item.title, item.url && item.url)}
+          {dropdownMenuItems.map((item) => (
+              <DropdownMenuItem
+                  key={item.title}
+                  onClick={() => handleClick(item.title, item.url)}
                   className='hover:bg-accent hover:text-accent-foreground'
-                >
-                  <item.icon />
-                  <p>{item.title}</p>
-                </SidebarMenuButton>
-                {item.divider && <DropdownMenuSeparator />}
-              </li>
-            ))}
+              >
+                <item.icon className='mr-2 h-4 w-4' />
+                <span>{item.title}</span>
+              </DropdownMenuItem>
+          ))}
+          {/* 테마 변경 메뉴 추가 */}
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <Sun className='mr-2 h-4 w-4' />
+              <span>테마 변경</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuRadioGroup
+                  value={theme}
+                  onValueChange={(value: Theme) => setTheme(value)}
+              >
+                <DropdownMenuRadioItem value='light'>
+                  <Sun className='mr-2 h-4 w-4' />
+                  <span>라이트 모드</span>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value='dark'>
+                  <Moon className='mr-2 h-4 w-4' />
+                  <span>다크 모드</span>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value='system'>
+                  <Laptop className='mr-2 h-4 w-4' />
+                  <span>시스템 설정</span>
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
       </DropdownMenuContent>
-    </>
   );
 }
