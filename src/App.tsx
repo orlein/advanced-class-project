@@ -15,7 +15,7 @@ export default function App() {
           <div className='flex w-screen'>
             <Header />
             <LeftSideBar />
-            <section className='flex-1 sm:p-10 mt-16'>
+            <section className='flex-1 p-8 sm:p-10 mt-16'>
               <Outlet />
             </section>
           </div>
