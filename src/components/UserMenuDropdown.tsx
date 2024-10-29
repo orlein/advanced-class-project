@@ -44,63 +44,63 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
   };
 
   return (
-      <DropdownMenuContent
-          className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-l relative bottom-2'
-          side='bottom'
-          align='end'
-          sideOffset={4}
-      >
-        <DropdownMenuLabel className='p-0 font-normal'>
-          <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm h-14'>
-            <Avatar className='h-8 w-8 rounded-lg'>
-              <AvatarImage src={Profile} alt='profile' />
-              <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
-            </Avatar>
-            <div className='grid flex-1 text-left text-sm leading-tight'>
-              <span className='truncate font-semibold'>username</span>
-              <span className='truncate text-xs'>username@username.com</span>
-            </div>
+    <DropdownMenuContent
+      className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-l relative bottom-2'
+      side='bottom'
+      align='end'
+      sideOffset={4}
+    >
+      <DropdownMenuLabel className='p-0 font-normal'>
+        <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm h-14'>
+          <Avatar className='h-8 w-8 rounded-lg'>
+            <AvatarImage src={Profile} alt='profile' />
+            <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
+          </Avatar>
+          <div className='grid flex-1 text-left text-sm leading-tight'>
+            <span className='truncate font-semibold'>username</span>
+            <span className='truncate text-xs'>username@username.com</span>
           </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          {dropdownMenuItems.map((item) => (
-              <DropdownMenuItem
-                  key={item.title}
-                  onClick={() => handleClick(item.title, item.url)}
-                  className='hover:bg-accent hover:text-accent-foreground'
-              >
-                <item.icon className='mr-2 h-4 w-4' />
-                <span>{item.title}</span>
-              </DropdownMenuItem>
-          ))}
-          {/* 테마 변경 메뉴 추가 */}
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <Sun className='mr-2 h-4 w-4' />
-              <span>테마 변경</span>
-            </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuRadioGroup
-                  value={theme}
-                  onValueChange={(value: Theme) => setTheme(value)}
-              >
-                <DropdownMenuRadioItem value='light'>
-                  <Sun className='mr-2 h-4 w-4' />
-                  <span>라이트 모드</span>
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value='dark'>
-                  <Moon className='mr-2 h-4 w-4' />
-                  <span>다크 모드</span>
-                </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value='system'>
-                  <Laptop className='mr-2 h-4 w-4' />
-                  <span>시스템 설정</span>
-                </DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
+        </div>
+      </DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        {dropdownMenuItems.map((item) => (
+          <DropdownMenuItem
+            key={item.title}
+            onClick={() => handleClick(item.title, item.url)}
+            className='hover:bg-accent hover:text-accent-foreground'
+          >
+            <item.icon className='mr-2 h-4 w-4' />
+            <span>{item.title}</span>
+          </DropdownMenuItem>
+        ))}
+        {/* 테마 변경 메뉴 추가 */}
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <Sun className='mr-2 h-4 w-4' />
+            <span>테마 변경</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuRadioGroup
+              value={theme}
+              onValueChange={(value) => setTheme(value as Theme)}
+            >
+              <DropdownMenuRadioItem value='light'>
+                <Sun className='mr-2 h-4 w-4' />
+                <span>라이트 모드</span>
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value='dark'>
+                <Moon className='mr-2 h-4 w-4' />
+                <span>다크 모드</span>
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value='system'>
+                <Laptop className='mr-2 h-4 w-4' />
+                <span>시스템 설정</span>
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      </DropdownMenuGroup>
+    </DropdownMenuContent>
   );
 }
