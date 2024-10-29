@@ -18,6 +18,7 @@ import { PencilIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
 import { useState } from 'react';
 import { z } from 'zod';
+import {Input} from "@/components/ui/input.tsx";
 
 export default function MyProfile() {
   const [editingField, setEditingField] = useState<string | null>(null);
@@ -73,7 +74,7 @@ export default function MyProfile() {
                 <label htmlFor='avatar-input'>
                   <PencilIcon className='h-6 w-6'/>
                 </label>
-                <input
+                <Input
                     id='avatar-input'
                     type='file'
                     accept='image/*'
@@ -83,11 +84,11 @@ export default function MyProfile() {
               </div>
             </div>
             {editingField === 'username' ? (
-                <input
+                <Input
                     type='text'
                     value={formData.username}
                     onChange={(e) => handleInputChange('username', e.target.value)}
-                    className='border rounded-md p-2 bg-gray-100 dark:bg-gray-700 font-bold text-3xl'
+                    className='border rounded-md p-2 font-bold text-3xl'
                 />
             ) : (
                 <CardTitle className='text-3xl font-bold'>
@@ -100,13 +101,13 @@ export default function MyProfile() {
               <div>
                 <h2 className='text-lg font-medium  mb-2'>사용자 이름</h2>
                 {editingField === 'username' ? (
-                    <input
+                    <Input
                         type='text'
                         value={formData.username}
                         onChange={(e) =>
                             handleInputChange('username', e.target.value)
                         }
-                        className='w-full border rounded-md p-2 bg-gray-100 dark:bg-gray-700'
+                        className='w-full border rounded-md p-2'
                     />
                 ) : (
                     <p className=''>{formData.username}</p>
@@ -126,11 +127,11 @@ export default function MyProfile() {
                 <h2 className='text-lg font-medium mb-2'>이메일</h2>
                 {editingField === 'email' ? (
                     <div>
-                      <input
+                      <Input
                           type='text'
                           value={formData.email}
                           onChange={(e) => handleInputChange('email', e.target.value)}
-                          className='w-full border rounded-md p-2 bg-gray-100 dark:bg-gray-700'
+                          className='w-full border rounded-md p-2'
                       />
                       {errors.email && (
                           <p className='text-red-500 mt-1'>{errors.email}</p>
@@ -153,13 +154,13 @@ export default function MyProfile() {
               <div>
                 <h2 className='text-lg font-medium mb-2'>생일</h2>
                 {editingField === 'birthday' ? (
-                    <input
+                    <Input
                         type='text'
                         value={formData.birthday}
                         onChange={(e) =>
                             handleInputChange('birthday', e.target.value)
                         }
-                        className='w-full border rounded-md p-2 bg-gray-100 dark:bg-gray-700'
+                        className='w-full border rounded-md p-2'
                     />
                 ) : (
                     <p className=''>{formData.birthday}</p>
@@ -273,11 +274,11 @@ export default function MyProfile() {
               <div>
                 <h2 className='text-lg font-medium mb-2'>자기소개</h2>
                 {editingField === 'bio' ? (
-                    <input
+                    <Input
                         type='text'
                         value={formData.bio}
                         onChange={(e) => handleInputChange('bio', e.target.value)}
-                        className='w-full border rounded-md p-2 bg-gray-100 dark:bg-gray-700'
+                        className='w-full border rounded-md p-2'
                     />
                 ) : (
                     <p className=''>{formData.bio}</p>
@@ -296,13 +297,13 @@ export default function MyProfile() {
               <div>
                 <h2 className='text-lg font-medium mb-2'>외부 URL</h2>
                 {editingField === 'externalUrl' ? (
-                    <input
+                    <Input
                         type='text'
                         value={formData.externalUrl}
                         onChange={(e) =>
                             handleInputChange('externalUrl', e.target.value)
                         }
-                        className='w-full border rounded-md p-2 bg-gray-100 dark:bg-gray-700'
+                        className='w-full border rounded-md p-2'
                     />
                 ) : (
                     <p className=''>{formData.externalUrl}</p>
@@ -323,13 +324,13 @@ export default function MyProfile() {
               <div>
                 <h2 className='text-lg font-medium mb-2'>관심사</h2>
                 {editingField === 'interests' ? (
-                    <input
+                    <Input
                         type='text'
                         value={formData.interests}
                         onChange={(e) =>
                             handleInputChange('interests', e.target.value)
                         }
-                        className='w-full border rounded-md p-2 bg-gray-100 dark:bg-gray-700'
+                        className='w-full border rounded-md p-2'
                     />
                 ) : (
                     <p className=''>{formData.interests}</p>

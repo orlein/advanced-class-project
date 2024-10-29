@@ -57,7 +57,7 @@ export default function NotificationSetting() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-8">
                 {/* 알림 유형 선택 */}
                 <FormField
                     control={form.control}
