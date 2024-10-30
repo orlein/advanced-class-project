@@ -1,7 +1,6 @@
 import { LucideProps } from 'lucide-react';
 import { SidebarMenuButton, useSidebar } from '../sidebar';
 import { useNavigate } from 'react-router-dom';
-import { useAuthContext } from '@/contexts/AuthContext';
 import { useWideScreen } from '@/hooks/use-wideScreen';
 
 interface ItemProps {
@@ -18,9 +17,7 @@ export default function DropdownMenuItemContent({
   const navigate = useNavigate();
   const { setOpen, setOpenMobile } = useSidebar();
   const isWideScreen = useWideScreen();
-  const { setUser } = useAuthContext();
   const handleClick = () => {
-    text === '로그아웃' && setUser(false);
     url && navigate(url);
     setOpen(isWideScreen);
     setOpenMobile(false);
