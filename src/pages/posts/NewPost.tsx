@@ -1,3 +1,9 @@
+import NewPostCreate from "@/components/ui/NewPostCreate.tsx";
+
 export default function NewPost() {
-  return <>NewPost</>;
+    return (
+        <div>
+            <NewPostCreate/>
+        </div>
+    )
 }

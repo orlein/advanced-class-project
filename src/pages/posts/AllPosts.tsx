@@ -1,3 +1,9 @@
+import {DataTable} from "@/components/ui/DataTable.tsx";
+
 export default function AllPosts() {
-  return <>AllPosts</>;
+  return (
+      <div>
+        <DataTable />
+      </div>
+  )
 }
