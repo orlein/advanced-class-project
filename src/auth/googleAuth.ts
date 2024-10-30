@@ -6,9 +6,6 @@ const provider = 'google';
 export function googleSignIn() {
   supabase.auth.signInWithOAuth({
     provider,
-    options: {
-      redirectTo: undefined,
-    },
   });
 }
 
