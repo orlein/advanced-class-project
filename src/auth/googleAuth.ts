@@ -6,6 +6,9 @@ const provider = 'google';
 export function googleSignIn() {
   supabase.auth.signInWithOAuth({
     provider,
+    options: {
+      redirectTo: 'https://tmrrszbhlifufarltcfh.supabase.co/auth/v1/callback',
+    },
   });
 }
 
