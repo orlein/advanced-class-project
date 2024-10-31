@@ -1,6 +1,4 @@
-import { onAuthStateChange, googleSignIn } from '@/auth/googleAuth';
-import { User } from '@supabase/supabase-js';
-import { signOut } from '@/auth/localAuth';
+import { onAuthStateChange } from '@/api/FakeAuthApi';
 import {
   useState,
   createContext,
@@ -10,8 +8,8 @@ import {
 } from 'react';
 
 interface AuthContextType {
-  user: User | null;
-  googleSignIn: () => void;
+  user: object | null;
+  signIn: () => void;
   signOut: () => void;
 }
 
@@ -22,20 +20,18 @@ interface AuthProviderProps {
 }
 
 export default function AuthContextProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<object | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  const signIn = () => setIsLoggedIn(true);
+  const signOut = () => setIsLoggedIn(false);
 
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = onAuthStateChange(setUser);
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+    onAuthStateChange(isLoggedIn, setUser);
+  }, [isLoggedIn]);
 
   return (
-    <AuthContext.Provider value={{ user, googleSignIn, signOut }}>
+    <AuthContext.Provider value={{ user, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

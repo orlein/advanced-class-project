@@ -10,9 +10,9 @@ export default function SocialLoginButton({
   logoURL,
   name,
 }: SocialNetworkServicesLogos) {
-  const { googleSignIn } = useAuthContext();
+  const { signIn } = useAuthContext();
   const handleSocialLogin = () => {
-    name === '구글' && googleSignIn();
+    signIn();
   };
   return (
     <Button variant='secondary' onClick={handleSocialLogin}>
