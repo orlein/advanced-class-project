@@ -47,6 +47,7 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
       side='bottom'
       align='end'
       sideOffset={4}
+      aria-label='사용자 메뉴'
     >
       <DropdownMenuLabel className='p-0 font-normal'>
         <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm h-14'>

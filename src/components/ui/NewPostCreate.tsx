@@ -27,7 +27,6 @@ export default function NewPostCreate() {
         console.log('Temperature:', temperature)
         console.log('Maximum Length:', maxLength)
         console.log('Top P:', topP)
-        // Implement API call or other submit actions here
     }
 
     const handleReset = () => {
@@ -40,16 +39,14 @@ export default function NewPostCreate() {
 
     const handleAlign = () => {
         console.log('Align clicked')
-        // Implement alignment functionality here
     }
 
     const handleDownload = () => {
         console.log('Download clicked')
-        // Implement download functionality here
     }
 
     return (
-        <div className="w-full max-w-4xl mx-auto p-4 border-2">
+        <div className="w-full mx-auto p-4 border-2">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold">글 작성</h2>
                 <div className="flex items-center gap-2">
