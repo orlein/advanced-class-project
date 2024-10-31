@@ -1,15 +1,16 @@
+import { onAuthStateChange } from '@/api/FakeAuthApi';
 import {
   useState,
   createContext,
   ReactNode,
-  Dispatch,
-  SetStateAction,
   useContext,
+  useEffect,
 } from 'react';
 
 interface AuthContextType {
-  user: boolean;
-  setUser: Dispatch<SetStateAction<boolean>>;
+  user: object | null;
+  signIn: () => void;
+  signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,10 +20,18 @@ interface AuthProviderProps {
 }
 
 export default function AuthContextProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState(false);
+  const [user, setUser] = useState<object | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  const signIn = () => setIsLoggedIn(true);
+  const signOut = () => setIsLoggedIn(false);
+
+  useEffect(() => {
+    onAuthStateChange(isLoggedIn, setUser);
+  }, [isLoggedIn]);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

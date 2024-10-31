@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import SocialLoginButton from '@/components/ui/customUI/socialLoginButton';
-import { Eye, EyeOff, Lock, User } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useRef, useState, FormEvent } from 'react';
 import { SignInPageInput } from './ui/customUI/signInPageInput';
 import { SafeParseReturnType, z } from 'zod';
@@ -9,6 +9,8 @@ import Google from '../assets/Google.png';
 import Kakao from '../assets/Kakao.png';
 import Naver from '../assets/Naver.png';
 import { Link } from 'react-router-dom';
+import { CardDescription, CardTitle } from './ui/card';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const ICON_STYLE = 'size-5 text-secondary-foreground';
 const EYE_ICON = 'absolute top-1/2 -translate-y-1/2 right-5';
@@ -45,6 +47,7 @@ export default function SignInForm({ currentTab }: TabProp) {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const emailSaveCheckRef = useRef<HTMLButtonElement>(null);
+  const isMobile = useIsMobile();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const handlePassword = () => setShowPassword(!showPassword);
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -86,8 +89,28 @@ export default function SignInForm({ currentTab }: TabProp) {
         className='flex flex-col items-center gap-5 w-full'
         onSubmit={handleSubmit}
       >
+        {currentTab === 'Email' && (
+          <section className='text-left w-full'>
+            <CardTitle className='text-2xl mb-2'>이메일 찾기</CardTitle>
+            <CardDescription>
+              이메일을 입력하시면,
+              <br className={`${isMobile ? 'block' : 'hidden'}`} />
+              해당 이메일의 가입 여부를 확인해드립니다.
+            </CardDescription>
+          </section>
+        )}
+        {currentTab === 'Password' && (
+          <section className='text-left w-full'>
+            <CardTitle className='text-2xl mb-2'>비밀번호 찾기</CardTitle>
+            <CardDescription>
+              가입된 이메일을 입력하시면,
+              <br className={`${isMobile ? 'block' : 'hidden'}`} />
+              해당 이메일로 비밀번호 재설정 링크를 보내드립니다.
+            </CardDescription>
+          </section>
+        )}
         <SignInPageInput
-          icon={User}
+          icon={Mail}
           type='email'
           name='email'
           placeholder='이메일을 입력해주세요.'
@@ -124,7 +147,9 @@ export default function SignInForm({ currentTab }: TabProp) {
           </>
         )}
         <Button type='submit' className='w-full'>
-          {currentTab === 'Sign in' ? '로그인' : '비밀번호 찾기'}
+          {currentTab === 'Sign in' && '로그인'}
+          {currentTab === 'Email' && '이메일 찾기'}
+          {currentTab === 'Password' && '비밀번호 찾기'}
         </Button>
       </form>
       {currentTab === 'Sign in' && (
@@ -150,7 +175,6 @@ export default function SignInForm({ currentTab }: TabProp) {
                 </div>
               </div>
             </div>
-            {/*<SocialKakao/>*/}
             <section className='flex gap-5'>
               {Object.entries(SOCIAL_LOGIN_BUTTONS).map(([name, url]) => (
                 <SocialLoginButton key={name} logoURL={url} name={name} />

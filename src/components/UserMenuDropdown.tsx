@@ -14,9 +14,8 @@ import {
   DropdownMenuSubContent,
 } from './ui/dropdown-menu';
 import { useNavigate } from 'react-router-dom';
-import { useAuthContext } from '@/contexts/AuthContext';
-import { useWideScreen } from '@/hooks/use-wideScreen';
 import { useTheme, Theme } from '@/components/theme-provider';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 const dropdownMenuItems = [
   { title: '나의 프로필', icon: User, url: 'my-profile', divider: true },
@@ -29,13 +28,12 @@ interface SetDropdownOpen {
 
 export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
   const navigate = useNavigate();
-  useWideScreen();
-  const { setUser } = useAuthContext();
   const { theme, setTheme } = useTheme();
+  const { signOut } = useAuthContext();
 
   const handleClick = (title: string, url?: string) => {
     if (title === '로그아웃') {
-      setUser(false);
+      signOut();
     }
     if (url) {
       navigate(url);

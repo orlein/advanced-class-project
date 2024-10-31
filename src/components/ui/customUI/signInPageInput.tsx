@@ -11,13 +11,16 @@ interface InputProps {
 
 export const SignInPageInput = forwardRef<HTMLInputElement, InputProps>(
   ({ icon: Icon, type, name, placeholder }, ref) => {
-    const INPUT_STYLE = 'p-2 grow outline-none bg-transparent text-sm';
-    const INPUT_BOX = `flex w-full items-center px-2 gap-2`;
-    const ICON_STYLE = 'size-5 text-secondary-foreground';
+    const INPUT_STYLE = 'px-9 grow outline-none bg-transparent text-sm';
+    const INPUT_BOX = `flex w-full items-center gap-2`;
+    const ICON_STYLE =
+      'size-5 text-muted-foreground absolute top-1/2 -translate-y-1/2 left-4';
 
     return (
       <div className={INPUT_BOX}>
-        <Icon className={ICON_STYLE} />
+        <div className='relative'>
+          <Icon className={ICON_STYLE} />
+        </div>
         <Input
           ref={ref}
           type={type}
