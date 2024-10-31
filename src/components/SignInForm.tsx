@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import SocialLoginButton from '@/components/ui/customUI/socialLoginButton';
-import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useRef, useState, FormEvent } from 'react';
 import { SignInPageInput } from './ui/customUI/signInPageInput';
 import { SafeParseReturnType, z } from 'zod';
