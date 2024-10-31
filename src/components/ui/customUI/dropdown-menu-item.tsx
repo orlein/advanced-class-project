@@ -18,7 +18,7 @@ export default function DropdownMenuItemContent({
   const { setOpen, setOpenMobile } = useSidebar();
   const isWideScreen = useWideScreen();
   const handleClick = () => {
-    url && navigate(url);
+    if (url) navigate(url);
     setOpen(isWideScreen);
     setOpenMobile(false);
   };

@@ -155,7 +155,7 @@ const columns: ColumnDef<Payment>[] = [
                             <DotsHorizontalIcon className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" aria-label="Actions">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
                             onClick={() => navigator.clipboard.writeText(payment.id)}
@@ -217,7 +217,7 @@ export function DataTable() {
                             Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" aria-label="Columns"> {/* aria-label 추가 */}
                         {table
                             .getAllColumns()
                             .filter((column) => column.getCanHide())
@@ -237,6 +237,7 @@ export function DataTable() {
                             })}
                     </DropdownMenuContent>
                 </DropdownMenu>
+
             </div>
             <div className="rounded-md border">
                 <Table>
