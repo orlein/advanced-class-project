@@ -2,38 +2,44 @@ import * as React from 'react';
 import { type DialogProps } from '@radix-ui/react-dialog';
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { Command as CommandPrimitive } from 'cmdk';
-
 import { cn } from '@/lib/utils';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from '@/components/ui/dialog';
 
 const Command = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive>
+    React.ElementRef<typeof CommandPrimitive>,
+    React.ComponentPropsWithoutRef<typeof CommandPrimitive>
 >(({ className, ...props }, ref) => (
-  <CommandPrimitive
-    ref={ref}
-    className={cn(
-      'flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground',
-      className
-    )}
-    {...props}
-  />
+    <CommandPrimitive
+        ref={ref}
+        className={cn(
+            'flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground',
+            className
+        )}
+        {...props}
+    />
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-interface CommandDialogProps extends DialogProps {}
+type CommandDialogProps = DialogProps;
 
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
-  return (
-    <Dialog {...props}>
-      <DialogContent className='overflow-hidden p-0'>
-        <Command className='[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5'>
-          {children}
-        </Command>
-      </DialogContent>
-    </Dialog>
-  );
+    return (
+        <Dialog {...props}>
+            <DialogContent className='overflow-hidden p-0'>
+                <DialogHeader>
+                    <DialogTitle>명령어 팔레트</DialogTitle>
+                    <DialogDescription>원하는 작업을 검색하세요.</DialogDescription>
+                </DialogHeader>
+                <Command className='[&_[cmdk-group-heading]]:px-2 ...'>
+                    {children}
+                </Command>
+            </DialogContent>
+        </Dialog>
+    );
 };
+
+
+
 
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,

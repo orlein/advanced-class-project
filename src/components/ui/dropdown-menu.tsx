@@ -44,8 +44,10 @@ DropdownMenuSubTrigger.displayName =
 
 const DropdownMenuSubContent = React.forwardRef<
     React.ElementRef<typeof DropdownMenuPrimitive.SubContent>,
-    React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent>
->(({ className, children, ...props }, ref) => (
+    React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent> & {
+    'aria-label'?: string;
+}
+>(({ className, children, 'aria-label': ariaLabel, ...props }, ref) => (
     <DropdownMenuPrimitive.SubContent
         ref={ref}
         className={cn(
@@ -53,9 +55,10 @@ const DropdownMenuSubContent = React.forwardRef<
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             className
         )}
+        aria-label={ariaLabel}
         {...props}
     >
-      {children}
+        {children}
     </DropdownMenuPrimitive.SubContent>
 ));
 DropdownMenuSubContent.displayName =
@@ -64,26 +67,27 @@ DropdownMenuSubContent.displayName =
 const DropdownMenuContent = React.forwardRef<
     React.ElementRef<typeof DropdownMenuPrimitive.Content>,
     React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content> & {
-  'aria-label'?: string;
+    'aria-label'?: string;
 }
 >(({ className, sideOffset = 4, children, 'aria-label': ariaLabel, ...props }, ref) => (
     <DropdownMenuPrimitive.Portal>
-      <DropdownMenuPrimitive.Content
-          ref={ref}
-          sideOffset={sideOffset}
-          className={cn(
-              'z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md',
-              'data-[state=open]:animate-in data-[state=closed]:animate-out',
-              className
-          )}
-          aria-label={ariaLabel}
-          {...props}
-      >
-        {children}
-      </DropdownMenuPrimitive.Content>
+        <DropdownMenuPrimitive.Content
+            ref={ref}
+            sideOffset={sideOffset}
+            className={cn(
+                'z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md',
+                'data-[state=open]:animate-in data-[state=closed]:animate-out',
+                className
+            )}
+            aria-label={ariaLabel}
+            {...props}
+        >
+            {children}
+        </DropdownMenuPrimitive.Content>
     </DropdownMenuPrimitive.Portal>
 ));
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
+
 
 const DropdownMenuItem = React.forwardRef<
     React.ElementRef<typeof DropdownMenuPrimitive.Item>,

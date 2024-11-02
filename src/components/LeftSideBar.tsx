@@ -105,8 +105,11 @@ export function LeftSideBar() {
   };
   const handleMenuClick = (url: string) => {
     navigate(url);
-    !isMobile && setOpen(isWideScreen);
-    isMobile && setOpenMobile(false);
+    if (!isMobile) {
+      setOpen(isWideScreen);
+    } else {
+      setOpenMobile(false);
+    }
     if (!isWideScreen) setOpenIndices([]);
   };
   return (
