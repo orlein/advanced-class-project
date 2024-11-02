@@ -1,6 +1,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import SignInForm from '@/components/SignInForm';
 import { useState } from 'react';
+import SignInFormField from '@/components/SignInFormField';
 
 export default function SignIn() {
   const [currentTab, setCurrentTab] = useState<
@@ -31,13 +31,13 @@ export default function SignIn() {
           </TabsList>
           <section className='w-full'>
             <TabsContent value='sign-in'>
-              <SignInForm currentTab={currentTab} />
+              <SignInFormField currentTab={currentTab} />
             </TabsContent>
             <TabsContent value='email'>
-              <SignInForm currentTab={currentTab} />
+              <SignInFormField currentTab={currentTab} />
             </TabsContent>
             <TabsContent value='password'>
-              <SignInForm currentTab={currentTab} />
+              <SignInFormField currentTab={currentTab} />
             </TabsContent>
           </section>
         </Tabs>

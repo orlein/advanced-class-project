@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../button';
 import { useAuthContext } from '@/contexts/AuthContext';
 
@@ -11,8 +12,10 @@ export default function SocialLoginButton({
   name,
 }: SocialNetworkServicesLogos) {
   const { signIn } = useAuthContext();
+  const navigate = useNavigate();
   const handleSocialLogin = () => {
     signIn();
+    navigate('/');
   };
   return (
     <Button variant='secondary' onClick={handleSocialLogin}>

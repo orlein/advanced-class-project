@@ -10,19 +10,14 @@ import { Form } from '@/components/ui/form';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
-
 import { useNavigate } from 'react-router-dom';
-import SignUpCompleteAlert from '@/components/SignUpCompleteAlert';
-import SignUpFormField from '@/components/ui/customUI/signUpFormField';
+import { useState } from 'react';
+import PasswordFormField from '@/components/PasswordFormField';
+import EmailFormField from '@/components/EmailFormField';
+import { truncate } from 'fs/promises';
 
 const formSchema = z
   .object({
-    username: z
-      .string()
-      .min(2, { message: '최소 2자 이상 입력해주세요.' })
-      .max(20, { message: '최대 20자까지 입력 가능합니다.' })
-      .regex(/^[a-zA-Z0-9]+$/, { message: '특수문자는 사용할 수 없습니다.' }),
     email: z
       .string()
       .trim()
@@ -44,6 +39,12 @@ const formSchema = z
         /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&-])[A-Za-z\d@$!%*?&-]{8,15}$/g,
         { message: '비밀번호를 확인해주세요.' }
       ),
+    // mainLanguage: z.string(),
+    // nationality: z.string(),
+    // bio: z.string(),
+    // externalUrls: z.array(z.string()),
+    // interests: z.array(z.string()),
+    // isEmailVerified: z.boolean(),
   })
   .refine((data) => data.password === data.confirmedPassword, {
     message: '비밀번호가 일치하지 않습니다',
@@ -55,34 +56,40 @@ export default function SignUp() {
   const form = useForm<userInfoType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: '',
       email: '',
       password: '',
       confirmedPassword: '',
     },
   });
   const navigate = useNavigate();
-  const [signUpCompleted, setSignUpCompleted] = useState(false);
-  const [userData, setUserData] = useState<userInfoType | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const onSubmit = (data: userInfoType) => {
-    if (data) {
-      setSignUpCompleted(true);
-      setUserData(data);
-      console.log(data);
-      setTimeout(() => navigate('/'), 2500);
-    }
+    setIsSubmitted(true);
+    console.log(data);
   };
   return (
     <section className='flex items-center justify-center w-full h-full'>
-      {signUpCompleted && userData && (
-        <SignUpCompleteAlert username={userData.username} />
+      {isSubmitted && (
+        <Card className='w-full max-w-[500px] m-auto'>
+          <CardHeader className='space-y-1 text-center'>
+            <CardTitle className='text-2xl mb-2'>
+              회원가입이 완료되었습니다!
+            </CardTitle>
+            <CardDescription>
+              환영합니다! 이제 서비스를 자유롭게 이용하실 수 있습니다.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className='flex justify-center mt-10 gap-4'>
+            <Button onClick={() => navigate('/sign-in')}>로그인 하기</Button>
+          </CardContent>
+        </Card>
       )}
-      {!signUpCompleted && (
+      {!isSubmitted && (
         <Card className='w-full max-w-[500px] m-auto'>
           <CardHeader className='space-y-1'>
-            <CardTitle className='text-2xl'>회원가입</CardTitle>
+            <CardTitle className='text-2xl mb-2'>회원가입</CardTitle>
             <CardDescription>
-              Enter your email below to create your account
+              회원가입을 위해 아래 정보를 입력해주세요.
             </CardDescription>
           </CardHeader>
           <CardContent className='grid gap-4'>
@@ -91,29 +98,25 @@ export default function SignUp() {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className='space-y-8'
               >
-                <SignUpFormField
+                <EmailFormField
                   form={form}
-                  name='username'
-                  label='사용자 이름'
+                  label={true}
+                  button={true}
+                  icon={false}
+                  placeholder={false}
                 />
-                <SignUpFormField
-                  form={form}
-                  name='email'
-                  type='email'
-                  label='이메일'
-                />
-                <SignUpFormField
-                  form={form}
-                  name='password'
-                  type='password'
-                  label='비밀번호'
-                />
-                <SignUpFormField
-                  form={form}
-                  name='confirmedPassword'
-                  type='password'
-                  label='비밀번호 확인'
-                />
+                <section className='flex gap-5'>
+                  <PasswordFormField
+                    form={form}
+                    name='password'
+                    label='비밀번호'
+                  />
+                  <PasswordFormField
+                    form={form}
+                    name='confirmedPassword'
+                    label='비밀번호 확인'
+                  />
+                </section>
                 <Button type='submit' className='w-full'>
                   가입하기
                 </Button>
