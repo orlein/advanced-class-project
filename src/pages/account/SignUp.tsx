@@ -14,7 +14,6 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import PasswordFormField from '@/components/PasswordFormField';
 import EmailFormField from '@/components/EmailFormField';
-import { truncate } from 'fs/promises';
 
 const formSchema = z
   .object({
