@@ -74,7 +74,7 @@ export default function MyProfile() {
     return (
         <div className='min-h-screen px-8 py-12'>
             <Card className='w-full max-w-5xl mx-auto shadow-lg p-8 '>
-                <CardHeader className='flex flex-row items-start justify-between py-6'>
+                <CardHeader className='flex flex-row items-start justify-between py-6 flex-wrap'>
                     <div className='flex-1 pr-8'>
                         <h2 className='text-2xl font-bold mb-4'>자기소개</h2>
                         {editingField === 'bio' ? (
@@ -110,7 +110,7 @@ export default function MyProfile() {
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className='w-full p-8 grid grid-cols-2 gap-8'>
+                <CardContent className='w-full p-8 grid grid-cols-1 md:grid-cols-2 gap-8'>
                     {[
                         {field: 'username', label: '사용자 이름', type: 'text'},
                         {field: 'email', label: '이메일', type: 'text'},
