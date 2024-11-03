@@ -23,6 +23,7 @@ const SOCIAL_LOGIN_BUTTONS = {
 interface SignInFormFieldProp {
   currentTab: 'Sign in' | 'Email' | 'Password';
 }
+
 const emailSchemaObject = {
   email: z
     .string()
