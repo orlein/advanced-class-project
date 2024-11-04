@@ -3,7 +3,7 @@ import { updateLoginState } from './thunk';
 
 interface AuthState {
   isSignedIn: boolean;
-  user: object | null;
+  user: { id: string; email: string } | null;
 }
 
 const initialState: AuthState = {
