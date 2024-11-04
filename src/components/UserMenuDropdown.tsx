@@ -15,7 +15,9 @@ import {
 } from './ui/dropdown-menu';
 import { useNavigate } from 'react-router-dom';
 import { useTheme, Theme } from '@/components/theme-provider';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useDispatch } from 'react-redux';
+import { updateLoginState } from '@/RTK/thunk';
+import { AppDispatch } from '@/RTK/store';
 
 const dropdownMenuItems = [
   { title: '나의 프로필', icon: User, url: 'my-profile', divider: true },
@@ -29,11 +31,11 @@ interface SetDropdownOpen {
 export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
-  const { signOut } = useAuthContext();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleClick = (title: string, url?: string) => {
     if (title === '로그아웃') {
-      signOut();
+      dispatch(updateLoginState());
     }
     if (url) {
       navigate(url);
