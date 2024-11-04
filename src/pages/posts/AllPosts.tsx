@@ -1,9 +1,9 @@
-import {DataTable} from "@/components/ui/DataTable.tsx";
+import {PostList} from "@/components/ui/PostList.tsx";
 
 export default function AllPosts() {
-  return (
-      <div>
-        <DataTable />
-      </div>
-  )
+    return (
+        <div>
+            <PostList/>
+        </div>
+    )
 }
