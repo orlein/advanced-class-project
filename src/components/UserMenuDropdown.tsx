@@ -1,4 +1,3 @@
-import { LogOut, User, Moon, Sun, Laptop } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Profile from '../assets/profile.jpg';
 import {
@@ -7,22 +6,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
 } from './ui/dropdown-menu';
 import { useNavigate } from 'react-router-dom';
-import { useTheme, Theme } from '@/components/theme-provider';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateLoginState } from '@/RTK/thunk';
-import { AppDispatch } from '@/RTK/store';
-
-const dropdownMenuItems = [
-  { title: '나의 프로필', icon: User, url: 'my-profile', divider: true },
-  { title: '로그아웃', icon: LogOut, url: '/', divider: false },
-];
+import { AppDispatch, RootState } from '@/RTK/store';
+import { useSidebar } from './ui/sidebar';
+import { useWideScreen } from '@/hooks/use-wideScreen';
+import { DROPDOWN_MENU_ITEMS } from '@/util/dropdownOptions';
+import ThemeMenu from './ThemeMenu';
 
 interface SetDropdownOpen {
   setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,9 +22,10 @@ interface SetDropdownOpen {
 
 export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
+  const { setOpen, setOpenMobile } = useSidebar();
+  const isWideScreen = useWideScreen();
   const dispatch = useDispatch<AppDispatch>();
-
+  const user = useSelector((state: RootState) => state.user);
   const handleClick = (title: string, url?: string) => {
     if (title === '로그아웃') {
       dispatch(updateLoginState());
@@ -41,6 +34,8 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
       navigate(url);
     }
     setDropdownOpen(false);
+    setOpen(isWideScreen);
+    setOpenMobile(false);
   };
 
   return (
@@ -59,48 +54,27 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
           </Avatar>
           <div className='grid flex-1 text-left text-sm leading-tight'>
             <span className='truncate font-semibold'>username</span>
-            <span className='truncate text-xs'>username@username.com</span>
+            <span className='truncate text-xs'>{user!.email}</span>
           </div>
         </div>
       </DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
-        {dropdownMenuItems.map((item) => (
-          <DropdownMenuItem
-            key={item.title}
-            onClick={() => handleClick(item.title, item.url)}
-            className='hover:bg-accent hover:text-accent-foreground'
-          >
-            <item.icon className='mr-2 h-4 w-4' />
-            <span>{item.title}</span>
-          </DropdownMenuItem>
-        ))}
-        {/* 테마 변경 메뉴 추가 */}
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <Sun className='mr-2 h-4 w-4' />
-            <span>테마 변경</span>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup
-              value={theme}
-              onValueChange={(value) => setTheme(value as Theme)}
+        {DROPDOWN_MENU_ITEMS.map((item) =>
+          item.url ? (
+            <DropdownMenuItem
+              key={item.title}
+              onClick={() => handleClick(item.title, item.url)}
+              className='hover:bg-accent hover:text-accent-foreground h-10'
             >
-              <DropdownMenuRadioItem value='light'>
-                <Sun className='mr-2 h-4 w-4' />
-                <span>라이트 모드</span>
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value='dark'>
-                <Moon className='mr-2 h-4 w-4' />
-                <span>다크 모드</span>
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value='system'>
-                <Laptop className='mr-2 h-4 w-4' />
-                <span>시스템 설정</span>
-              </DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
+              <item.icon className='mr-2 h-4 w-4' />
+              <span>{item.title}</span>
+            </DropdownMenuItem>
+          ) : (
+            <ThemeMenu key={item.title} />
+          )
+        )}
+        {/* 테마 변경 메뉴 추가 */}
       </DropdownMenuGroup>
     </DropdownMenuContent>
   );
