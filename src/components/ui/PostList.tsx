@@ -19,8 +19,8 @@ import {
     useReactTable,
 } from "@tanstack/react-table"
 
-import { Button } from "@/components/ui/button.tsx"
-import { Checkbox } from "@/components/ui/checkbox.tsx"
+import {Button} from "@/components/ui/button.tsx"
+import {Checkbox} from "@/components/ui/checkbox.tsx"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -30,7 +30,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx"
-import { Input } from "@/components/ui/input.tsx"
+import {Input} from "@/components/ui/input.tsx"
 import {
     Table,
     TableBody,
@@ -39,52 +39,59 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table.tsx"
+import {useNavigate} from "react-router-dom";
 
 const data: Payment[] = [
     {
-        id: "m5gr84i9",
+        id: "1",
         amount: 316,
+        title: 'Ice Cream Shop Tagline Ideas',
         No: 1,
         email: "ken99@yahoo.com",
     },
     {
-        id: "3u1reuv4",
+        id: "2",
         amount: 242,
+        title: 'Best Coffee Shop Slogans',
         No: 2,
         email: "Abe45@gmail.com",
     },
     {
-        id: "derv1ws0",
+        id: "3",
         amount: 837,
+        title: 'Best Coffee Shop Slogans',
         No: 3,
         email: "Monserrat44@gmail.com",
     },
     {
-        id: "5kma53ae",
+        id: "4",
         amount: 874,
+        title: 'Best Coffee Shop Slogans',
         No: 4,
         email: "Silas22@gmail.com",
     },
     {
-        id: "bhqecj4p",
+        id: "5",
         amount: 721,
+        title: 'Best Coffee Shop Slogans',
         No: 5,
         email: "carmella@hotmail.com",
     },
-
 ]
+
 
 export type Payment = {
     id: string
     amount: number
     No: number
     email: string
+    title: string
 }
 
 const columns: ColumnDef<Payment>[] = [
     {
         id: "select",
-        header: ({ table }) => (
+        header: ({table}) => (
             <Checkbox
                 checked={
                     table.getIsAllPageRowsSelected() ||
@@ -94,7 +101,7 @@ const columns: ColumnDef<Payment>[] = [
                 aria-label="Select all"
             />
         ),
-        cell: ({ row }) => (
+        cell: ({row}) => (
             <Checkbox
                 checked={row.getIsSelected()}
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -107,32 +114,38 @@ const columns: ColumnDef<Payment>[] = [
     {
         accessorKey: "No",
         header: "No",
-        cell: ({ row }) => (
+        cell: ({row}) => (
             <div className="capitalize">{row.getValue("No")}</div>
         ),
     },
     {
         accessorKey: "email",
-        header: ({ column }) => {
+        header: "email",
+        cell: ({row}) => (
+            <div className="capitalize">{row.getValue("email")}</div>
+        ),
+    },
+    {
+        accessorKey: "title",
+        header: ({column}) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Email
-                    <CaretSortIcon className="ml-2 h-4 w-4" />
+                    title
+                    <CaretSortIcon className="ml-2 h-4 w-4"/>
                 </Button>
             )
         },
-        cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+        cell: ({row}) => <div className="lowercase">{row.getValue("title")}</div>,
     },
     {
         accessorKey: "amount",
         header: () => <div className="text-right">Amount</div>,
-        cell: ({ row }) => {
+        cell: ({row}) => {
             const amount = parseFloat(row.getValue("amount"))
 
-            // Format the amount as a dollar amount
             const formatted = new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD",
@@ -144,7 +157,7 @@ const columns: ColumnDef<Payment>[] = [
     {
         id: "actions",
         enableHiding: false,
-        cell: ({ row }) => {
+        cell: ({row}) => {
             const payment = row.original
 
             return (
@@ -152,7 +165,7 @@ const columns: ColumnDef<Payment>[] = [
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
                             <span className="sr-only">Open menu</span>
-                            <DotsHorizontalIcon className="h-4 w-4" />
+                            <DotsHorizontalIcon className="h-4 w-4"/>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" aria-label="Actions">
@@ -162,7 +175,7 @@ const columns: ColumnDef<Payment>[] = [
                         >
                             Copy payment ID
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator/>
                         <DropdownMenuItem>View customer</DropdownMenuItem>
                         <DropdownMenuItem>View payment details</DropdownMenuItem>
                     </DropdownMenuContent>
@@ -172,15 +185,12 @@ const columns: ColumnDef<Payment>[] = [
     },
 ]
 
-export function DataTable() {
+export function PostList() {
     const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-        []
-    )
-    const [columnVisibility, setColumnVisibility] =
-        React.useState<VisibilityState>({})
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
-
+    const navigate = useNavigate();
     const table = useReactTable({
         data,
         columns,
@@ -214,10 +224,10 @@ export function DataTable() {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">
-                            Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+                            Columns <ChevronDownIcon className="ml-2 h-4 w-4"/>
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" aria-label="Columns"> {/* aria-label 추가 */}
+                    <DropdownMenuContent align="end" aria-label="Columns">
                         {table
                             .getAllColumns()
                             .filter((column) => column.getCanHide())
@@ -244,18 +254,13 @@ export function DataTable() {
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
-                                        </TableHead>
-                                    )
-                                })}
+                                {headerGroup.headers.map((header) => (
+                                    <TableHead key={header.id}>
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(header.column.columnDef.header, header.getContext())}
+                                    </TableHead>
+                                ))}
                             </TableRow>
                         ))}
                     </TableHeader>
@@ -265,16 +270,16 @@ export function DataTable() {
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    onClick={() => navigate(`/posts/${row.original.id}`)}
+                                    className="cursor-pointer transition-colors"
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>
+
                             ))
                         ) : (
                             <TableRow>
