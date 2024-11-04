@@ -34,7 +34,6 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { useAuthContext } from '@/contexts/AuthContext';
 import Profile from '../assets/profile.jpg';
 import { useWideScreen } from '@/hooks/use-wideScreen';
 import UserMenuDropdown from './UserMenuDropdown';
@@ -46,6 +45,8 @@ import {
 } from './ui/dropdown-menu';
 import { useTheme, Theme } from '@/components/theme-provider';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/RTK/store';
 
 const menuItems = [
   { title: '홈', icon: HomeIcon, url: '/' },
@@ -99,8 +100,8 @@ const menuItems = [
 
 export function LeftSideBar() {
   const navigate = useNavigate();
-  const { user } = useAuthContext();
   const isWideScreen = useWideScreen();
+  const user = useSelector((state: RootState) => state.user);
   const { open, setOpen, setOpenMobile, isMobile } = useSidebar();
   const [openIndices, setOpenIndices] = useState<boolean[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);

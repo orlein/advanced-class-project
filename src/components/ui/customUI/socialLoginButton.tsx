@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../button';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useDispatch } from 'react-redux';
+import { updateLoginState } from '@/RTK/thunk';
+import { AppDispatch } from '@/RTK/store';
 
 interface SocialNetworkServicesLogos {
   logoURL: string;
@@ -11,10 +13,10 @@ export default function SocialLoginButton({
   logoURL,
   name,
 }: SocialNetworkServicesLogos) {
-  const { signIn } = useAuthContext();
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const handleSocialLogin = () => {
-    signIn();
+    dispatch(updateLoginState());
     navigate('/');
   };
   return (

@@ -12,7 +12,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import SocialLoginButton from './ui/customUI/socialLoginButton';
 import ResetPassword from '@/pages/account/ResetPassword';
 import CheckBoxFormField from './CheckBoxFormField';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useDispatch } from 'react-redux';
+import { updateLoginState } from '@/RTK/thunk';
+import { AppDispatch } from '@/RTK/store';
 
 const SOCIAL_LOGIN_BUTTONS = {
   구글: Google,
@@ -23,6 +25,7 @@ const SOCIAL_LOGIN_BUTTONS = {
 interface SignInFormFieldProp {
   currentTab: 'Sign in' | 'Email' | 'Password';
 }
+
 const emailSchemaObject = {
   email: z
     .string()
@@ -57,7 +60,7 @@ export default function SignInFormField({ currentTab }: SignInFormFieldProp) {
           isEmailToBeSaved: false,
         }
       : { email: '' };
-  const { signIn } = useAuthContext();
+  const dispatch = useDispatch<AppDispatch>();
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues,
@@ -66,7 +69,7 @@ export default function SignInFormField({ currentTab }: SignInFormFieldProp) {
     if (data) {
       console.log(data);
       if (currentTab === 'Sign in') {
-        signIn();
+        dispatch(updateLoginState());
         navigate('/');
       }
     }
