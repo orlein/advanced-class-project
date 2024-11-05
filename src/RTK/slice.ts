@@ -1,9 +1,23 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { updateLoginState } from './thunk';
+import { updateLoginState, updateUserInfo } from './thunk';
+
+export interface User {
+  id: string;
+  email: string;
+  username: string;
+  birthday: string;
+  mainLanguage: string;
+  location: string;
+  bio: string;
+  externalUrl: string;
+  interests: string;
+  profileImageUrl: string;
+  isPrivate: boolean;
+}
 
 interface AuthState {
   isSignedIn: boolean;
-  user: { id: string; email: string } | null;
+  user: User | null;
 }
 
 const initialState: AuthState = {
@@ -15,23 +29,20 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    signIn: (state) => {
+    signIn: state => {
       state.isSignedIn = true;
     },
-    signOut: (state) => {
+    signOut: state => {
       state.isSignedIn = false;
       state.user = null;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(updateLoginState.pending, (state) => {
-        state.user = null;
-      })
-      .addCase(updateLoginState.rejected, (state) => {
-        state.user = null;
-      })
       .addCase(updateLoginState.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(updateUserInfo.fulfilled, (state, action) => {
         state.user = action.payload;
       });
   },
