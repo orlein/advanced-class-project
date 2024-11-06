@@ -1,6 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { Form } from './ui/form';
 import EmailFormField from './EmailFormField';
 import PasswordFormField from './PasswordFormField';
@@ -8,13 +5,12 @@ import Google from '../assets/Google.png';
 import Kakao from '../assets/Kakao.png';
 import Naver from '../assets/Naver.png';
 import { Button } from './ui/button';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SocialLoginButton from './ui/customUI/socialLoginButton';
 import ResetPassword from '@/pages/account/ResetPassword';
 import CheckBoxFormField from './CheckBoxFormField';
-import { useDispatch } from 'react-redux';
-import { updateLoginState } from '@/RTK/thunk';
-import { AppDispatch } from '@/RTK/store';
+import { CurrentTab } from '@/types/signin';
+import useSignInForm from '@/hooks/useSignInForm';
 
 const SOCIAL_LOGIN_BUTTONS = {
   구글: Google,
@@ -23,56 +19,11 @@ const SOCIAL_LOGIN_BUTTONS = {
 };
 
 interface SignInFormFieldProp {
-  currentTab: 'Sign in' | 'Email' | 'Password';
+  currentTab: CurrentTab;
 }
 
-const emailSchemaObject = {
-  email: z
-    .string()
-    .trim()
-    .nonempty({ message: '이메일 주소를 입력해 주세요.' })
-    .email({ message: '이메일 주소를 확인해 주세요.' }),
-};
-
-const emailSchema = z.object({ ...emailSchemaObject });
-const formSchema = z.object({
-  ...emailSchemaObject,
-  password: z
-    .string()
-    .trim()
-    .nonempty('비밀번호를 입력해 주세요.')
-    .regex(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&-])[A-Za-z\d@$!%*?&-]{8,15}$/g, {
-      message: '비밀번호를 확인해 주세요.',
-    })
-    .optional(),
-  isEmailToBeSaved: z.boolean().default(false).optional(),
-});
-
 export default function SignInFormField({ currentTab }: SignInFormFieldProp) {
-  const navigate = useNavigate();
-  const schema = currentTab === 'Sign in' ? formSchema : emailSchema;
-  const defaultValues =
-    currentTab === 'Sign in'
-      ? {
-          email: '',
-          password: '',
-          isEmailToBeSaved: false,
-        }
-      : { email: '' };
-  const dispatch = useDispatch<AppDispatch>();
-  const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
-    defaultValues,
-  });
-  const onSubmit = (data: z.infer<typeof schema>) => {
-    if (data) {
-      console.log(data);
-      if (currentTab === 'Sign in') {
-        dispatch(updateLoginState());
-        navigate('/');
-      }
-    }
-  };
+  const { form, onSubmit } = useSignInForm(currentTab);
 
   return (
     <article className="flex flex-col items-center justify-center gap-7 h-full">
