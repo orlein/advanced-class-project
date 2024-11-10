@@ -31,25 +31,22 @@ class SupabaseApi {
         headers: { accept: 'application/json', 'Content-Type': 'application/json' },
       })
       .then(res => {
-        sessionStorage.setItem('accessToken', res.data.accessToken);
+        localStorage.setItem('accessToken', res.data.accessToken);
         return res.data.account;
       });
   }
 
-  async signOut(userData: UserEmailAndPassword) {
-    return await this.httpClient.post('/accounts/sign-out', userData, {
-      headers: { accept: '*/*' },
-    });
-  }
-
-  async getUserInfo(accessToken: string): Promise<UserBasicInfo> {
-    return await this.httpClient.get('/accounts/me', {
-      headers: {
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+  async getUserInfo(): Promise<UserBasicInfo> {
+    const accessToken = localStorage.getItem('accessToken');
+    return await this.httpClient
+      .get('/accounts/me', {
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then(res => res.data);
   }
 }
 

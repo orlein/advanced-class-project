@@ -1,17 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { signIn, signOut, signUp } from './thunk';
-import { ExtraUserInfo, UserEmailAndPassword } from '@/lib/interfaces/userInfoInterfaces';
+import { signIn, signUp } from './thunk';
+import { ExtraUserInfo } from '@/lib/interfaces/userInfoInterfaces';
 
 interface AuthState {
   isSignedIn: boolean;
-  userSignInInfo: UserEmailAndPassword | null;
   user: ExtraUserInfo | null;
   error: string | null;
 }
 
 const initialState: AuthState = {
   isSignedIn: false,
-  userSignInInfo: null,
   user: null,
   error: null,
 };
@@ -20,6 +18,11 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    signOut: state => {
+      localStorage.removeItem('accessToken');
+      state.user = null;
+      state.isSignedIn = false;
+    },
     updateUserInfo: (state, action) => {
       state.user = action.payload;
     },
@@ -37,7 +40,7 @@ const authSlice = createSlice({
       })
       .addCase(signIn.fulfilled, (state, action) => {
         const userInfo = {
-          ...action.payload.signedInUser,
+          ...action.payload,
           username: '',
           birthday: '',
           mainLanguage: '',
@@ -48,11 +51,7 @@ const authSlice = createSlice({
           profileImageUrl: '',
         };
         state.user = userInfo;
-        state.userSignInInfo = action.payload.userData;
         state.isSignedIn = true;
-      })
-      .addCase(signOut.fulfilled, state => {
-        (state.user = null), (state.isSignedIn = false);
       });
   },
 });
