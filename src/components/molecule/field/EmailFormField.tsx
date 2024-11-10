@@ -1,14 +1,8 @@
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from './ui/form';
-import { Input } from './ui/input';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
+import { Input } from '../../ui/input';
 import { Mail } from 'lucide-react';
-import { Button } from './ui/button';
+import { Button } from '../../ui/button';
 
 interface PasswordFormFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;
@@ -32,22 +26,22 @@ export default function EmailFormField<T extends FieldValues>({
         name={'email' as Path<T>}
         render={({ field }) => (
           <FormItem>
-            <section className='relative flex items-end gap-3'>
+            <section className="relative flex items-end gap-3">
               {icon && (
-                <Mail className='size-5 absolute top-1/2 -translate-y-1/2 left-3 text-muted-foreground' />
+                <Mail className="size-5 absolute top-1/2 -translate-y-1/2 left-3 text-muted-foreground" />
               )}
-              <div className='w-full flex-grow'>
+              <div className="w-full flex-grow">
                 {label && <FormLabel>이메일</FormLabel>}
                 <FormControl>
                   <Input
                     {...field}
-                    type='email'
+                    type="email"
                     placeholder={placeholder ? '이메일을 입력해 주세요.' : ''}
                     className={`${icon && 'pl-10'}`}
                   />
                 </FormControl>
               </div>
-              {button && <Button type='button'>이메일 인증</Button>}
+              {button && <Button type="button">이메일 인증</Button>}
             </section>
             <FormMessage />
           </FormItem>
