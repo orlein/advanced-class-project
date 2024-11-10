@@ -9,11 +9,7 @@ interface ItemProps {
   url?: string;
 }
 
-export default function DropdownMenuItemContent({
-  icon: Icon,
-  text,
-  url,
-}: ItemProps) {
+export default function DropdownMenuItemContent({ icon: Icon, text, url }: ItemProps) {
   const navigate = useNavigate();
   const { setOpen, setOpenMobile } = useSidebar();
   const isWideScreen = useWideScreen();
@@ -25,7 +21,7 @@ export default function DropdownMenuItemContent({
   return (
     <SidebarMenuButton
       onClick={handleClick}
-      className='hover:bg-accent hover:text-accent-foreground'
+      className="hover:bg-accent hover:text-accent-foreground"
     >
       <Icon />
       <p>{text}</p>
