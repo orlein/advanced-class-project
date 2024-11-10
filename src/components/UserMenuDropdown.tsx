@@ -13,7 +13,7 @@ import { useSidebar } from './ui/sidebar';
 import { useWideScreen } from '@/hooks/use-wideScreen';
 import { DROPDOWN_MENU_ITEMS } from '@/constants/dropdownOptions';
 import ThemeMenu from './ThemeMenu';
-import { signOut } from '@/RTK/thunk';
+import authSlice from '@/RTK/slice';
 
 interface SetDropdownOpen {
   setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,10 +25,9 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
   const isWideScreen = useWideScreen();
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.user);
-  const userSignInInfo = useSelector((state: RootState) => state.userSignInInfo);
   const handleClick = (title: string, url?: string) => {
     if (title === '로그아웃') {
-      userSignInInfo && dispatch(signOut(userSignInInfo));
+      dispatch(authSlice.actions.signOut());
     }
     if (url) {
       navigate(url);

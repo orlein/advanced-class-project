@@ -23,6 +23,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { useForm, Controller } from 'react-hook-form';
 import authSlice from '@/RTK/slice';
 import { ExtraUserInfo } from '@/lib/interfaces/userInfoInterfaces';
+import SupabaseApi from '@/api/SupabaseApi';
 
 export default function MyProfile() {
   const { toast } = useToast();
@@ -39,6 +40,7 @@ export default function MyProfile() {
   } = useForm<ExtraUserInfo>({
     defaultValues: user || {},
   });
+  SupabaseApi.getUserInfo().then(res => console.log('myprofile', res));
 
   const onSubmit = (data: ExtraUserInfo) => {
     dispatch(authSlice.actions.updateUserInfo(data));
