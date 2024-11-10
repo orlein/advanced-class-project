@@ -1,5 +1,5 @@
 import { AppDispatch } from '@/RTK/store';
-import { updateLoginState } from '@/RTK/thunk';
+import { signIn } from '@/RTK/thunk';
 import { emailSchema } from '@/lib/schemas/emailSchema';
 import { signInSchema } from '@/lib/schemas/signInSchema';
 import { CurrentTab } from '@/types/signin';
@@ -30,7 +30,9 @@ const useSignInForm = (currentTab: CurrentTab) => {
 
   const onSubmit = (data: z.infer<typeof schema>) => {
     if (data && currentTab === 'Sign in') {
-      dispatch(updateLoginState());
+      const { email, password } = data as z.infer<typeof signInSchema>;
+      const signInData = { email, password };
+      dispatch(signIn(signInData));
       navigate('/');
     }
   };

@@ -1,52 +1,60 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { updateLoginState, updateUserInfo } from './thunk';
-
-export interface User {
-  id: string;
-  email: string;
-  username: string;
-  birthday: string;
-  mainLanguage: string;
-  location: string;
-  bio: string;
-  externalUrl: string;
-  interests: string;
-  profileImageUrl: string;
-  isPrivate: boolean;
-}
+import { signIn, signOut, signUp } from './thunk';
+import { ExtraUserInfo, UserEmailAndPassword } from '@/lib/interfaces/userInfoInterfaces';
 
 interface AuthState {
   isSignedIn: boolean;
-  user: User | null;
+  userSignInInfo: UserEmailAndPassword | null;
+  user: ExtraUserInfo | null;
+  error: string | null;
 }
 
 const initialState: AuthState = {
   isSignedIn: false,
+  userSignInInfo: null,
   user: null,
+  error: null,
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    signIn: state => {
-      state.isSignedIn = true;
-    },
-    signOut: state => {
-      state.isSignedIn = false;
-      state.user = null;
+    updateUserInfo: (state, action) => {
+      state.user = action.payload;
     },
   },
   extraReducers: builder => {
     builder
-      .addCase(updateLoginState.fulfilled, (state, action) => {
-        state.user = action.payload;
+      .addCase(signUp.pending, state => {
+        state.error = null;
       })
-      .addCase(updateUserInfo.fulfilled, (state, action) => {
-        state.user = action.payload;
+      .addCase(signUp.fulfilled, state => {
+        state.error = null;
+      })
+      .addCase(signUp.rejected, (state, action) => {
+        state.error = action.payload as string;
+      })
+      .addCase(signIn.fulfilled, (state, action) => {
+        const userInfo = {
+          ...action.payload.signedInUser,
+          username: '',
+          birthday: '',
+          mainLanguage: '',
+          location: '',
+          bio: '',
+          externalUrl: '',
+          interests: '',
+          profileImageUrl: '',
+        };
+        state.user = userInfo;
+        state.userSignInInfo = action.payload.userData;
+        state.isSignedIn = true;
+      })
+      .addCase(signOut.fulfilled, state => {
+        (state.user = null), (state.isSignedIn = false);
       });
   },
 });
 
-export const { signIn, signOut } = authSlice.actions;
 export default authSlice;

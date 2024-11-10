@@ -1,22 +1,12 @@
 import { Form } from './ui/form';
 import EmailFormField from './EmailFormField';
 import PasswordFormField from './PasswordFormField';
-import Google from '../assets/Google.png';
-import Kakao from '../assets/Kakao.png';
-import Naver from '../assets/Naver.png';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
-import SocialLoginButton from './ui/customUI/socialLoginButton';
 import ResetPassword from '@/pages/account/ResetPassword';
 import CheckBoxFormField from './CheckBoxFormField';
 import { CurrentTab } from '@/types/signin';
 import useSignInForm from '@/hooks/useSignInForm';
-
-const SOCIAL_LOGIN_BUTTONS = {
-  구글: Google,
-  카카오: Kakao,
-  네이버: Naver,
-};
 
 interface SignInFormFieldProp {
   currentTab: CurrentTab;
@@ -53,23 +43,6 @@ export default function SignInFormField({ currentTab }: SignInFormFieldProp) {
               </span>
             </Link>
           </p>
-          <section className="w-full flex flex-col items-center gap-7">
-            <div className="w-full">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                </div>
-              </div>
-            </div>
-            <section className="flex gap-5">
-              {Object.entries(SOCIAL_LOGIN_BUTTONS).map(([name, url]) => (
-                <SocialLoginButton key={name} logoURL={url} name={name} />
-              ))}
-            </section>
-          </section>
         </>
       )}
       {currentTab === 'Password' && <ResetPassword />}

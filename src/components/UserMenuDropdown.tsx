@@ -8,12 +8,12 @@ import {
 } from './ui/dropdown-menu';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateLoginState } from '@/RTK/thunk';
 import { AppDispatch, RootState } from '@/RTK/store';
 import { useSidebar } from './ui/sidebar';
 import { useWideScreen } from '@/hooks/use-wideScreen';
 import { DROPDOWN_MENU_ITEMS } from '@/constants/dropdownOptions';
 import ThemeMenu from './ThemeMenu';
+import { signOut } from '@/RTK/thunk';
 
 interface SetDropdownOpen {
   setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,9 +25,10 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
   const isWideScreen = useWideScreen();
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: RootState) => state.user);
+  const userSignInInfo = useSelector((state: RootState) => state.userSignInInfo);
   const handleClick = (title: string, url?: string) => {
     if (title === '로그아웃') {
-      dispatch(updateLoginState());
+      userSignInInfo && dispatch(signOut(userSignInInfo));
     }
     if (url) {
       navigate(url);
