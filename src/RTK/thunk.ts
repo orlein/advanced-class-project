@@ -3,7 +3,6 @@ import {
   UserEmailAndPassword,
   SignUpUser,
   UserBasicInfo,
-  ExtraUserInfo,
 } from '@/lib/interfaces/userInfoInterfaces';
 import SupabaseApi from '@/api/SupabaseApi';
 

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getUserInfo, signIn, signUp } from './thunk';
+import { signIn, signUp } from './thunk';
 import { ExtraUserInfo } from '@/lib/interfaces/userInfoInterfaces';
 
 interface AuthState {
