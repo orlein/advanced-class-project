@@ -1,7 +1,7 @@
-import { User } from '@/RTK/slice';
+import { ExtraUserInfo } from '@/lib/interfaces/userInfoInterfaces';
 
 interface SelectMenus {
-  field: keyof User;
+  field: keyof ExtraUserInfo;
   label: string;
   placeholder: string;
   options: string[];

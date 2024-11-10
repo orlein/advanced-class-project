@@ -11,7 +11,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { PencilIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
 import { useState } from 'react';
-import { z } from 'zod';
 import { Input } from '@/components/ui/input.tsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/RTK/store';
@@ -21,6 +20,7 @@ import { Label } from '@/components/ui/label';
 import { SELECT_MENUS } from '@/constants/myProfileMenus';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
+import { useForm, Controller } from 'react-hook-form';
 import authSlice from '@/RTK/slice';
 import { ExtraUserInfo } from '@/lib/interfaces/userInfoInterfaces';
 
@@ -28,24 +28,28 @@ export default function MyProfile() {
   const { toast } = useToast();
   const user = useSelector((state: RootState) => state.user);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const emailSchema = z.string().email({ message: '유효한 이메일 주소를 입력해주세요.' });
   const dispatch = useDispatch<AppDispatch>();
-  const [formData, setFormData] = useState<ExtraUserInfo | null>(user);
-  const [, setErrors] = useState<{ [key: string]: string }>({});
-  const handleInputChange = (field: keyof ExtraUserInfo, value: string) => {
-    dispatch(authSlice.actions.updateUserInfo({ ...user, [field]: value }));
-    // 유효성 검사
-    if (field === 'email') {
-      try {
-        emailSchema.parse(value);
-        setErrors(prev => ({ ...prev, email: '' }));
-      } catch (e) {
-        if (e instanceof z.ZodError) {
-          setErrors(prev => ({ ...prev, email: e.errors[0].message }));
-        }
-      }
-    }
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<ExtraUserInfo>({
+    defaultValues: user || {},
+  });
+
+  const onSubmit = (data: ExtraUserInfo) => {
+    dispatch(authSlice.actions.updateUserInfo(data));
+    setIsEditing(false);
+    toast({
+      title: '프로필 업데이트',
+      description: '프로필이 성공적으로 업데이트되었습니다.',
+      duration: 3000,
+    });
   };
+
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       dispatch(
@@ -57,6 +61,7 @@ export default function MyProfile() {
       setIsEditing(false);
     }
   };
+
   const handlePrivateAccount = (isPrivate: boolean) => {
     dispatch(authSlice.actions.updateUserInfo({ ...user, isPrivate }));
     toast({
@@ -65,12 +70,16 @@ export default function MyProfile() {
       duration: 3000,
     });
   };
+
   React.useEffect(() => {
-    setFormData(user);
-  }, [user]);
+    if (user) {
+      reset(user);
+    }
+  }, [user, reset]);
+
   return (
     <>
-      {formData && (
+      {user && (
         <div className="min-h-screen ">
           <Card className="w-full max-w-4xl mx-auto shadow-lg p-4 flex flex-col gap-5 relative">
             <CardHeader className="grid grid-cols-1 place-items-center items-center md:grid-cols-2 md:gap-10 md:justify-center md:items-center h-[300px] mb-10">
@@ -86,7 +95,7 @@ export default function MyProfile() {
 
               <div className="relative pt-2 mb-2">
                 <Avatar className="size-40 rounded-full mb-4 md:mb-0">
-                  <AvatarImage src={formData.profileImageUrl} alt="profile" />
+                  <AvatarImage src={user.profileImageUrl} alt="profile" />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div
@@ -110,21 +119,19 @@ export default function MyProfile() {
                 {isEditing ? (
                   <Input
                     type="text"
-                    value={formData.username}
-                    onChange={e => handleInputChange('username', e.target.value)}
+                    {...register('username', { required: '이름은 필수 항목입니다.' })}
                     className={`text-xl p-2 w-full h-10 text-center border border-muted-foreground rounded-md font-bold placeholder:font-normal`}
                     placeholder="username"
                   />
                 ) : (
                   <p className="h-10 relative top-[5.7px] md:top-[1.3px] w-full text-2xl md:text-3xl font-bold border border-background  text-center">
-                    {formData.username}
+                    {user.username}
                   </p>
                 )}
                 {isEditing ? (
                   <Input
                     type="text"
-                    value={formData.bio}
-                    onChange={e => handleInputChange('bio', e.target.value)}
+                    {...register('bio')}
                     className={`${
                       isEditing ? 'text-sm' : 'text-sm md:text-md'
                     } p-2 w-full h-9 text-center border border-muted-foreground rounded-md`}
@@ -132,87 +139,95 @@ export default function MyProfile() {
                   />
                 ) : (
                   <p className="h-9 w-full p-2 relative -top-[0.4px] text-sm border border-background content-center text-center">
-                    {formData.bio}
+                    {user.bio}
                   </p>
                 )}
               </div>
             </CardHeader>
-            <CardContent className="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                { field: 'email', label: '이메일', type: 'text' },
-                { field: 'birthday', label: '생일', type: 'text' },
-                { field: 'externalUrl', label: '외부 URL', type: 'text' },
-                { field: 'interests', label: '관심사', type: 'text' },
-              ].map(({ field, label, type }) => (
-                <div key={field} className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex gap-3 items-center">
-                      <h2 className="pl-3 text-xl font-semibold mb-1">{label}</h2>
-                    </div>
-                    <Input
-                      type={type}
-                      value={formData[field as keyof typeof formData] as string}
-                      onChange={e =>
-                        handleInputChange(field as keyof typeof formData, e.target.value)
-                      }
-                      className="w-full p-3 border border-muted-foreground rounded-md text-sm disabled:opacity-100 disabled:border-background disabled:shadow-none"
-                      disabled={!isEditing}
-                    />
-                  </div>
-                </div>
-              ))}
-              {SELECT_MENUS.map(menu => (
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h2 className="pl-3 text-xl font-medium mb-1">{menu.label}</h2>
-                    <Select
-                      value={formData[menu.field] as string}
-                      onValueChange={value => handleInputChange(menu.field, value)}
-                    >
-                      <SelectTrigger
-                        className="w-full border border-muted-foreground rounded-md disabled:opacity-100 disabled:border-background disabled:shadow-none"
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <CardContent className="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+                {[
+                  { field: 'email', label: '이메일', type: 'text' },
+                  { field: 'birthday', label: '생일', type: 'text' },
+                  { field: 'externalUrl', label: '외부 URL', type: 'text' },
+                  { field: 'interests', label: '관심사', type: 'text' },
+                ].map(({ field, label, type }) => (
+                  <div key={field} className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex gap-3 items-center">
+                        <h2 className="pl-3 text-xl font-semibold mb-1">{label}</h2>
+                      </div>
+                      <Input
+                        type={type}
+                        {...register(field as keyof ExtraUserInfo)}
+                        className="w-full p-3 border border-muted-foreground rounded-md text-sm disabled:opacity-100 disabled:border-background disabled:shadow-none"
                         disabled={!isEditing}
-                      >
-                        <SelectValue placeholder={menu.placeholder} />
-                        {isEditing && <CaretSortIcon className="h-4 w-4 opacity-50" />}
-                      </SelectTrigger>
-                      <SelectContent>
-                        {menu.options.map(option => (
-                          <SelectItem key={option} value={option}>
-                            {option}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      />
+                      {errors[field as keyof ExtraUserInfo] && (
+                        <span className="text-red-500 text-sm">
+                          {errors[field as keyof ExtraUserInfo]?.message}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </CardContent>
-            <div className="flex justify-center my-5">
-              {isEditing ? (
-                <div className="flex gap-4">
+                ))}
+                {SELECT_MENUS.map(menu => (
+                  <div key={menu.field} className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h2 className="pl-3 text-xl font-medium mb-1">{menu.label}</h2>
+                      <Controller
+                        name={menu.field as keyof ExtraUserInfo}
+                        control={control}
+                        render={({ field }) => (
+                          <Select
+                            value={field.value as string}
+                            onValueChange={field.onChange}
+                            disabled={!isEditing}
+                          >
+                            <SelectTrigger className="w-full border border-muted-foreground rounded-md disabled:opacity-100 disabled:border-background disabled:shadow-none">
+                              <SelectValue placeholder={menu.placeholder} />
+                              {isEditing && <CaretSortIcon className="h-4 w-4 opacity-50" />}
+                            </SelectTrigger>
+                            <SelectContent>
+                              {menu.options.map(option => (
+                                <SelectItem key={option} value={option}>
+                                  {option}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+              <div className="flex justify-center my-5">
+                {isEditing ? (
+                  <div className="flex gap-4">
+                    <Button
+                      onClick={() => {
+                        reset(user);
+                        setIsEditing(false);
+                      }}
+                      className="font-semibold py-3 px-8 rounded-md transition"
+                    >
+                      취소하기
+                    </Button>
+                    <Button type="submit" className="font-semibold py-3 px-8 rounded-md transition">
+                      저장하기
+                    </Button>
+                  </div>
+                ) : (
                   <Button
-                    onClick={() => setIsEditing(prev => !prev)}
+                    onClick={() => setIsEditing(true)}
                     className="font-semibold py-3 px-8 rounded-md transition"
                   >
-                    취소하기
+                    수정하기
                   </Button>
-                  <Button
-                    onClick={() => setIsEditing(prev => !prev)}
-                    className="font-semibold py-3 px-8 rounded-md transition"
-                  >
-                    저장하기
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  onClick={() => setIsEditing(prev => !prev)}
-                  className="font-semibold py-3 px-8 rounded-md transition"
-                >
-                  수정하기
-                </Button>
-              )}
-            </div>
+                )}
+              </div>
+            </form>
           </Card>
           <Toaster />
         </div>
