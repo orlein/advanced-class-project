@@ -10,25 +10,16 @@ import { DemoShareDocument } from '@/components/cards/share-document';
 import { DemoTeamMembers } from '@/components/cards/team-members';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 
-function DemoContainer({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function DemoContainer({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div
-      className={cn(
-        'flex items-center justify-center [&>div]:w-full',
-        className
-      )}
-      {...props}
-    />
+    <div className={cn('flex items-center justify-center [&>div]:w-full', className)} {...props} />
   );
 }
 
 export default function HomePage() {
   return (
-    <div className='grid items-start justify-center gap-6 rounded-lg p-8 md:grid lg:grid-cols-2 xl:grid-cols-3'>
-      <div className='col-span-2 grid items-start gap-6 lg:col-span-1'>
+    <div className="grid items-start justify-center gap-6 rounded-lg p-8 md:grid lg:grid-cols-2 xl:grid-cols-3">
+      <div className="col-span-2 grid items-start gap-6 lg:col-span-1">
         <DemoContainer>
           <DemoCreateAccount />
         </DemoContainer>
@@ -36,7 +27,7 @@ export default function HomePage() {
           <DemoPaymentMethod />
         </DemoContainer>
       </div>
-      <div className='col-span-2 grid items-start gap-6 lg:col-span-1'>
+      <div className="col-span-2 grid items-start gap-6 lg:col-span-1">
         <DemoContainer>
           <DemoTeamMembers />
         </DemoContainer>
@@ -50,7 +41,7 @@ export default function HomePage() {
           <DemoNotifications />
         </DemoContainer>
       </div>
-      <div className='col-span-2 grid items-start gap-6 lg:col-span-2 lg:grid-cols-2 xl:col-span-1 xl:grid-cols-1'>
+      <div className="col-span-2 grid items-start gap-6 lg:col-span-2 lg:grid-cols-2 xl:col-span-1 xl:grid-cols-1">
         <DemoContainer>
           <DemoReportAnIssue />
         </DemoContainer>

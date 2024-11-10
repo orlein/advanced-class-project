@@ -1,6 +1,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useState } from 'react';
-import SignInFormField from '@/components/SignInFormField';
+import SignInFormField from '@/components/organism/SignInFormField';
 
 export default function SignIn() {
   const [currentTab, setCurrentTab] = useState<'Sign in' | 'Email' | 'Password'>('Sign in');

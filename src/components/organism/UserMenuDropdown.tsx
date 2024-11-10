@@ -5,11 +5,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
-} from './ui/dropdown-menu';
+} from '../ui/dropdown-menu';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/RTK/store';
-import { useSidebar } from './ui/sidebar';
+import { useSidebar } from '../ui/sidebar';
 import { useWideScreen } from '@/hooks/use-wideScreen';
 import { DROPDOWN_MENU_ITEMS } from '@/constants/dropdownOptions';
 import ThemeMenu from './ThemeMenu';
