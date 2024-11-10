@@ -8,9 +8,9 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-} from './ui/dropdown-menu';
+} from '../ui/dropdown-menu';
 import { useTheme, Theme } from '@/components/theme-provider';
-import { SidebarMenuButton } from './ui/sidebar';
+import { SidebarMenuButton } from '../ui/sidebar';
 
 export default function ThemeMenu({ isInFooter = false }: { isInFooter?: boolean }) {
   const { theme, setTheme } = useTheme();

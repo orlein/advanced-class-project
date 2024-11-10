@@ -1,5 +1,5 @@
-import { NotificationForm } from '@/components/NotificationForm';
+import { NotificationForm } from '@/components/organism/NotificationForm';
 
 export default function NotificationSetting() {
-    return <NotificationForm />;
+  return <NotificationForm />;
 }
