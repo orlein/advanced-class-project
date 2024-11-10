@@ -15,14 +15,14 @@ import { z } from 'zod';
 import { Input } from '@/components/ui/input.tsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/RTK/store';
-import { User } from '@/RTK/slice';
-import { updateUserInfo } from '@/RTK/thunk';
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { SELECT_MENUS } from '@/constants/myProfileMenus';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
+import authSlice from '@/RTK/slice';
+import { ExtraUserInfo } from '@/lib/interfaces/userInfoInterfaces';
 
 export default function MyProfile() {
   const { toast } = useToast();
@@ -30,10 +30,10 @@ export default function MyProfile() {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const emailSchema = z.string().email({ message: '유효한 이메일 주소를 입력해주세요.' });
   const dispatch = useDispatch<AppDispatch>();
-  const [formData, setFormData] = useState<User | null>(user);
+  const [formData, setFormData] = useState<ExtraUserInfo | null>(user);
   const [, setErrors] = useState<{ [key: string]: string }>({});
-  const handleInputChange = (field: keyof User, value: string) => {
-    dispatch(updateUserInfo({ ...user!, [field]: value }));
+  const handleInputChange = (field: keyof ExtraUserInfo, value: string) => {
+    dispatch(authSlice.actions.updateUserInfo({ ...user, [field]: value }));
     // 유효성 검사
     if (field === 'email') {
       try {
@@ -49,13 +49,16 @@ export default function MyProfile() {
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       dispatch(
-        updateUserInfo({ ...user!, profileImageUrl: URL.createObjectURL(e.target.files[0]) }),
+        authSlice.actions.updateUserInfo({
+          ...user,
+          profileImageUrl: URL.createObjectURL(e.target.files[0]),
+        }),
       );
       setIsEditing(false);
     }
   };
   const handlePrivateAccount = (isPrivate: boolean) => {
-    dispatch(updateUserInfo({ ...user!, isPrivate }));
+    dispatch(authSlice.actions.updateUserInfo({ ...user, isPrivate }));
     toast({
       title: '계정 설정',
       description: isPrivate ? '비공개 계정으로 설정되었습니다.' : '공개 계정으로 설정되었습니다.',

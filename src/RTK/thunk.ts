@@ -1,22 +1,30 @@
-import { onAuthStateChange } from '@/api/FakeAuthApi';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { RootState } from './store';
-import { signIn, signOut } from './slice';
-import { User } from '@/RTK/slice';
+import {
+  UserEmailAndPassword,
+  SignUpUser,
+  UserBasicInfo,
+} from '@/lib/interfaces/userInfoInterfaces';
+import SupabaseApi from '@/api/SupabaseApi';
 
-export const updateLoginState = createAsyncThunk(
-  'auth/updateLoginState',
-  async (_, { dispatch, getState }) => {
-    const state = getState() as RootState;
-    const isCurrentlySignedIn = state.isSignedIn;
-    isCurrentlySignedIn && dispatch(signOut());
-    !isCurrentlySignedIn && dispatch(signIn());
-    return onAuthStateChange(!isCurrentlySignedIn);
+export const signUp = createAsyncThunk(
+  'auth/signUp',
+  async (userData: SignUpUser, { rejectWithValue }) => {
+    try {
+      await SupabaseApi.signUp(userData);
+    } catch (err) {
+      return rejectWithValue(err);
+    }
   },
 );
 
-export const updateUserInfo = createAsyncThunk('auth/updateUserInfo', async (updatedUser: User) => {
-  // 서버에 유저 정보 변경 요청하기
+export const signIn = createAsyncThunk<
+  { signedInUser: UserBasicInfo; userData: UserEmailAndPassword },
+  UserEmailAndPassword
+>('auth/signIn', async userData => {
+  const signedInUser = await SupabaseApi.signIn(userData);
+  return { signedInUser, userData };
+});
 
-  return updatedUser;
+export const signOut = createAsyncThunk('auth/signOut', async (user: UserEmailAndPassword) => {
+  await SupabaseApi.signOut(user);
 });

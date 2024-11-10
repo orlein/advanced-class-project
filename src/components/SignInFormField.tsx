@@ -4,23 +4,13 @@ import { z } from 'zod';
 import { Form } from './ui/form';
 import EmailFormField from './EmailFormField';
 import PasswordFormField from './PasswordFormField';
-import Google from '../assets/Google.png';
-import Kakao from '../assets/Kakao.png';
-import Naver from '../assets/Naver.png';
 import { Button } from './ui/button';
 import { Link, useNavigate } from 'react-router-dom';
-import SocialLoginButton from './ui/customUI/socialLoginButton';
 import ResetPassword from '@/pages/account/ResetPassword';
 import CheckBoxFormField from './CheckBoxFormField';
 import { useDispatch } from 'react-redux';
-import { updateLoginState } from '@/RTK/thunk';
+import { signIn } from '@/RTK/thunk';
 import { AppDispatch } from '@/RTK/store';
-
-const SOCIAL_LOGIN_BUTTONS = {
-  구글: Google,
-  카카오: Kakao,
-  네이버: Naver,
-};
 
 interface SignInFormFieldProp {
   currentTab: 'Sign in' | 'Email' | 'Password';
@@ -43,8 +33,7 @@ const formSchema = z.object({
     .nonempty('비밀번호를 입력해 주세요.')
     .regex(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&-])[A-Za-z\d@$!%*?&-]{8,15}$/g, {
       message: '비밀번호를 확인해 주세요.',
-    })
-    .optional(),
+    }),
   isEmailToBeSaved: z.boolean().default(false).optional(),
 });
 
@@ -65,12 +54,11 @@ export default function SignInFormField({ currentTab }: SignInFormFieldProp) {
     defaultValues,
   });
   const onSubmit = (data: z.infer<typeof schema>) => {
-    if (data) {
-      console.log(data);
-      if (currentTab === 'Sign in') {
-        dispatch(updateLoginState());
-        navigate('/');
-      }
+    if (data && currentTab === 'Sign in') {
+      const { email, password } = data as z.infer<typeof formSchema>;
+      const signInData = { email, password };
+      dispatch(signIn(signInData));
+      navigate('/');
     }
   };
 
@@ -102,23 +90,6 @@ export default function SignInFormField({ currentTab }: SignInFormFieldProp) {
               </span>
             </Link>
           </p>
-          <section className="w-full flex flex-col items-center gap-7">
-            <div className="w-full">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                </div>
-              </div>
-            </div>
-            <section className="flex gap-5">
-              {Object.entries(SOCIAL_LOGIN_BUTTONS).map(([name, url]) => (
-                <SocialLoginButton key={name} logoURL={url} name={name} />
-              ))}
-            </section>
-          </section>
         </>
       )}
       {currentTab === 'Password' && <ResetPassword />}
