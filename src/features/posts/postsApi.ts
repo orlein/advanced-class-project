@@ -35,32 +35,30 @@ export const postsApi = createApi({
   reducerPath: 'postsApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://ozadv6.beavercoding.net/api',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
+    prepareHeaders: headers => {
+      const token = sessionStorage.getItem('accessToken');
+      if (token) headers.set('Authorization', `Bearer ${token}`);
       return headers;
     },
   }),
   tagTypes: ['Posts'],
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     getPosts: builder.query<{ data: Post[]; meta: never }, { page?: number; limit?: number }>({
       query: ({ page = 1, limit = 10 }) => `posts?page=${page}&limit=${limit}`,
-      providesTags: (result) =>
+      providesTags: result =>
         result
           ? [
-            ...result.data.map(({ id }) => ({ type: 'Posts' as const, id })),
-            { type: 'Posts', id: 'LIST' },
-          ]
+              ...result.data.map(({ id }) => ({ type: 'Posts' as const, id })),
+              { type: 'Posts', id: 'LIST' },
+            ]
           : [{ type: 'Posts', id: 'LIST' }],
     }),
     getPostById: builder.query<Post, string>({
-      query: (id) => `posts/${id}`,
+      query: id => `posts/${id}`,
       providesTags: (result, error, id) => [{ type: 'Posts', id }],
     }),
     createPost: builder.mutation<Post, NewPost>({
-      query: (body) => ({
+      query: body => ({
         url: 'posts',
         method: 'POST',
         body,
@@ -76,7 +74,7 @@ export const postsApi = createApi({
       invalidatesTags: (result, error, { id }) => [{ type: 'Posts', id }],
     }),
     deletePost: builder.mutation<void, string>({
-      query: (id) => ({
+      query: id => ({
         url: `posts/${id}`,
         method: 'DELETE',
       }),

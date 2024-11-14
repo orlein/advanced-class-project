@@ -8,12 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import PasswordFormField from '@/components/molecule/field/PasswordFormField';
 import EmailFormField from '@/components/molecule/field/EmailFormField';
-import { AppDispatch } from '@/RTK/store';
-import { signUp } from '@/RTK/thunk';
-import { useDispatch } from 'react-redux';
-import { useToast } from '@/hooks/use-toast';
-import { ToastAction } from '@radix-ui/react-toast';
+// import { useToast } from '@/hooks/use-toast';
+// import { ToastAction } from '@radix-ui/react-toast';
 import { Toaster } from '@/components/ui/toaster';
+import { useSignUpMutation } from '@/api/accountApi';
 
 const formSchema = z
   .object({
@@ -59,26 +57,27 @@ export default function SignUp() {
     },
   });
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const [signUp] = useSignUpMutation();
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const onSubmit = (data: userInfoType) => {
-    dispatch(signUp(data)).then(res => {
-      console.log(res);
-      if (res.meta.requestStatus === 'rejected') {
-        toast({
-          description: res.payload as string,
-          variant: 'destructive',
-          duration: 5000,
-          action: (
-            <ToastAction altText="확인" className="text-sm">
-              확인
-            </ToastAction>
-          ),
-        });
-      } else setIsSubmitted(true);
+    signUp(data).then(() => {
+      // if (res.error && 'status' in res.error && res.error.status === 409) {
+      //   toast({
+      //     description: '이미 가입한 이메일입니다.',
+      //     variant: 'destructive',
+      //     duration: 3000,
+      //     action: (
+      //       <ToastAction altText="확인" className="text-sm">
+      //         확인
+      //       </ToastAction>
+      //     ),
+      //   });
+      // } else if (!res.error)
+      setIsSubmitted(true);
     });
   };
+
   return (
     <section className="flex items-center justify-center w-full h-full">
       <Toaster />
