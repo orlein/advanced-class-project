@@ -6,12 +6,14 @@ interface AuthState {
   isSignedIn: boolean;
   user: ExtraUserInfo | null;
   error: string | null;
+  token: string | null;
 }
 
 const initialState: AuthState = {
   isSignedIn: sessionStorage.getItem('accessToken') ? true : false,
   user: sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')!) : null,
   error: null,
+  token: sessionStorage.getItem('accessToken') || null,
 };
 
 const authSlice = createSlice({
@@ -20,6 +22,7 @@ const authSlice = createSlice({
   reducers: {
     setLoggedIn: (state, action: PayloadAction<UserSignInResponse>) => {
       state.isSignedIn = true;
+      state.token = action.payload.accessToken;
       sessionStorage.setItem('accessToken', action.payload.accessToken);
     },
     setUser: (state, action: PayloadAction<ExtraUserInfo>) => {

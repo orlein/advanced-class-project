@@ -30,6 +30,10 @@ export interface NewPost {
   isLikeAllowed?: boolean;
 }
 
+export interface LikeStatus {
+  type: 'like' | 'dislike';
+}
+
 export const postsApi = createApi({
   reducerPath: 'postsApi',
   baseQuery: fetchBaseQuery({
@@ -79,6 +83,38 @@ export const postsApi = createApi({
       }),
       invalidatesTags: [{ type: 'Posts', id: 'LIST' }],
     }),
+    likePost: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `posts/${id}/like`,
+        method: 'POST',
+      }),
+      invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
+    }),
+    unlikePost: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `posts/${id}/like`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
+    }),
+    dislikePost: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `posts/${id}/dislike`,
+        method: 'POST',
+      }),
+      invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
+    }),
+    undislikePost: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `posts/${id}/dislike`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
+    }),
+    getLikeStatus: builder.query<LikeStatus, string>({
+      query: (id) => `posts/${id}/like-status`,
+      providesTags: (_result, _error, id) => [{ type: 'Posts', id }],
+    }),
   }),
 });
 
@@ -88,4 +124,9 @@ export const {
   useCreatePostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
+  useLikePostMutation,
+  useUnlikePostMutation,
+  useDislikePostMutation,
+  useUndislikePostMutation,
+  useGetLikeStatusQuery,
 } = postsApi;
