@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { RootState } from '@/RTK/store.ts';
 
 export interface Post {
   id: string;
@@ -55,7 +54,7 @@ export const postsApi = createApi({
     }),
     getPostById: builder.query<Post, string>({
       query: id => `posts/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Posts', id }],
+      providesTags: (_result, _error, id) => [{ type: 'Posts', id }],
     }),
     createPost: builder.mutation<Post, NewPost>({
       query: body => ({
@@ -71,7 +70,7 @@ export const postsApi = createApi({
         method: 'PATCH',
         body: data,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Posts', id }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Posts', id }],
     }),
     deletePost: builder.mutation<void, string>({
       query: id => ({
