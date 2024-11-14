@@ -17,11 +17,12 @@ export const postsRouter = [
       { index: true, element: <AllPosts /> },
       { path: 'sort/likes', element: <SortedPosts /> },
       { path: 'new', element: <NewPost /> },
+      { path: ':post_id/edit', element: <EditPost /> },
+      { path: ':post_id', element: <PostDetail /> },
+      { path: 'sort/likes', element: <SortedPosts /> },
       {
         path: ':post_id',
-        element: <PostDetail />,
         children: [
-          { path: 'edit', element: <EditPost /> },
           {
             path: 'comments',
             element: <Comments />,
