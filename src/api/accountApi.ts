@@ -11,7 +11,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 const accountApi = createApi({
   reducerPath: 'accountApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_BASE_URL,
+    baseUrl: 'https://ozadv6.beavercoding.net/api',
     prepareHeaders: headers => {
       const token = sessionStorage.getItem('accessToken');
       if (token) headers.set('Authorization', `Bearer ${token}`);
