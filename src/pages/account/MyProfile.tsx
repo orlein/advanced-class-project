@@ -18,7 +18,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
 import { useForm } from 'react-hook-form';
-import { useUpdateUserInfoMutation } from '@/api/AccountApi';
+import { useUpdateUserInfoMutation } from '@/api/accountApi';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -151,12 +151,7 @@ export default function MyProfile() {
                             <PencilIcon size={18} className="text-background" />
                           </FormLabel>
                           <FormControl>
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              onChange={field.onChange}
-                              defaultValue={user?.username}
-                            />
+                            <Input type="file" accept="image/*" onChange={field.onChange} />
                           </FormControl>
                         </div>
                       </FormItem>
