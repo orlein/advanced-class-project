@@ -1,25 +1,23 @@
-import { AppDispatch } from '@/RTK/store';
-import { signIn } from '@/RTK/thunk';
+import { useSignInMutation } from '@/api/AccountApi';
 import { emailSchema } from '@/lib/schemas/emailSchema';
 import { signInSchema } from '@/lib/schemas/signInSchema';
 import { CurrentTab } from '@/types/signin';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
 const useSignInForm = (currentTab: CurrentTab) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  const [signIn] = useSignInMutation();
 
   const schema = currentTab === 'Sign in' ? signInSchema : emailSchema;
   const defaultValues =
     currentTab === 'Sign in'
       ? {
-          email: '',
+          email: localStorage.getItem('savedEmail') ?? '',
           password: '',
-          isEmailToBeSaved: false,
+          isEmailToBeSaved: localStorage.getItem('savedEmail') ? true : false,
         }
       : { email: '' };
 
@@ -30,9 +28,12 @@ const useSignInForm = (currentTab: CurrentTab) => {
 
   const onSubmit = (data: z.infer<typeof schema>) => {
     if (data && currentTab === 'Sign in') {
-      const { email, password } = data as z.infer<typeof signInSchema>;
+      const { email, password, isEmailToBeSaved } = data as z.infer<typeof signInSchema>;
+      isEmailToBeSaved
+        ? localStorage.setItem('savedEmail', email)
+        : localStorage.removeItem('savedEmail');
       const signInData = { email, password };
-      dispatch(signIn(signInData));
+      signIn(signInData);
       navigate('/');
     }
   };

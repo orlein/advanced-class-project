@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { signIn, signUp } from './thunk';
-import { ExtraUserInfo } from '@/lib/interfaces/userInfoInterfaces';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { ExtraUserInfo, UserSignInResponse } from '@/lib/interfaces/userInfoInterfaces';
 
 interface AuthState {
   isSignedIn: boolean;
@@ -9,8 +9,8 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  isSignedIn: false,
-  user: null,
+  isSignedIn: sessionStorage.getItem('accessToken') ? true : false,
+  user: sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')!) : null,
   error: null,
 };
 
@@ -18,8 +18,20 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    signOut: state => {
-      localStorage.removeItem('accessToken');
+    setLoggedIn: (state, action: PayloadAction<UserSignInResponse>) => {
+      state.isSignedIn = true;
+      sessionStorage.setItem('accessToken', action.payload.accessToken);
+    },
+    setUser: (state, action: PayloadAction<ExtraUserInfo>) => {
+      state.user = {
+        ...action.payload,
+      };
+      state.isSignedIn = true;
+      sessionStorage.setItem('user', JSON.stringify(action.payload));
+    },
+    clearUser: state => {
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('user');
       state.user = null;
       state.isSignedIn = false;
     },
@@ -27,33 +39,7 @@ const authSlice = createSlice({
       state.user = action.payload;
     },
   },
-  extraReducers: builder => {
-    builder
-      .addCase(signUp.pending, state => {
-        state.error = null;
-      })
-      .addCase(signUp.fulfilled, state => {
-        state.error = null;
-      })
-      .addCase(signUp.rejected, (state, action) => {
-        state.error = action.payload as string;
-      })
-      .addCase(signIn.fulfilled, (state, action) => {
-        const userInfo = {
-          ...action.payload,
-          username: '',
-          birthday: '',
-          mainLanguage: '',
-          location: '',
-          bio: '',
-          externalUrl: '',
-          interests: '',
-          profileImageUrl: '',
-        };
-        state.user = userInfo;
-        state.isSignedIn = true;
-      });
-  },
 });
 
+export const { setLoggedIn, setUser, clearUser, updateUserInfo } = authSlice.actions;
 export default authSlice;

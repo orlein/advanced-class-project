@@ -29,11 +29,11 @@ import { MENU_ITEMS } from '@/constants/sidebarMenuItems';
 export function LeftSideBar() {
   const navigate = useNavigate();
   const isWideScreen = useWideScreen();
-  const user = useSelector((state: RootState) => state.user);
+  const isSignedIn = useSelector((state: RootState) => state.auth.isSignedIn);
+  const user = useSelector((state: RootState) => state.auth.user);
   const { open, setOpen, setOpenMobile, isMobile } = useSidebar();
   const [openIndices, setOpenIndices] = useState<boolean[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
-
   const handleIconClick = (index?: number) => {
     if (!open) setOpen(true);
     setOpenIndices(prevState => {
@@ -42,7 +42,6 @@ export function LeftSideBar() {
       return newState;
     });
   };
-
   const handleMenuClick = (url: string) => {
     navigate(url);
     if (!isMobile) {
@@ -52,7 +51,6 @@ export function LeftSideBar() {
     }
     if (!isWideScreen) setOpenIndices([]);
   };
-
   return (
     <Sidebar collapsible="icon" className="z-50">
       <SidebarHeader className="h-16 justify-center bg-background">
@@ -117,7 +115,7 @@ export function LeftSideBar() {
       </SidebarContent>
       <SidebarFooter className="bg-background">
         <SidebarMenu>
-          {!user && (
+          {!isSignedIn && (
             <>
               {/* 테마 변경 메뉴 */}
               <SidebarMenuItem>
@@ -137,7 +135,7 @@ export function LeftSideBar() {
               </SidebarMenuItem>
             </>
           )}
-          {user && (
+          {isSignedIn && (
             <SidebarMenuItem>
               <DropdownMenu onOpenChange={setDropdownOpen} open={dropdownOpen}>
                 <SidebarMenuButton
@@ -146,14 +144,14 @@ export function LeftSideBar() {
                   onClick={() => handleIconClick()}
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.profileImageUrl} alt="profile" />
+                    <AvatarImage src={user?.profileImageUrl} alt="profile" />
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <DropdownMenuTrigger asChild>
                     <div className="flex items-center justify-between w-full">
                       <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">{user.username}</span>
-                        <span className="truncate text-xs">{user.email}</span>
+                        <span className="truncate font-semibold">{user?.username}</span>
+                        <span className="truncate text-xs">{user?.email}</span>
                       </div>
                       <ChevronsUpDown className="ml-auto size-4" />
                     </div>

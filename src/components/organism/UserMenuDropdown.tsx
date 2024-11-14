@@ -24,10 +24,11 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
   const { setOpen, setOpenMobile } = useSidebar();
   const isWideScreen = useWideScreen();
   const dispatch = useDispatch<AppDispatch>();
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.auth.user);
+
   const handleClick = (title: string, url?: string) => {
     if (title === '로그아웃') {
-      dispatch(authSlice.actions.signOut());
+      dispatch(authSlice.actions.clearUser());
     }
     if (url) {
       navigate(url);
@@ -48,12 +49,12 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
       <DropdownMenuLabel className="p-0 font-normal">
         <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm h-14">
           <Avatar className="h-8 w-8 rounded-lg">
-            <AvatarImage src={user!.profileImageUrl} alt="profile" />
+            <AvatarImage src={user?.profileImageUrl} alt="profile" />
             <AvatarFallback className="rounded-lg">CN</AvatarFallback>
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">{user!.username}</span>
-            <span className="truncate text-xs">{user!.email}</span>
+            <span className="truncate font-semibold">{user?.username}</span>
+            <span className="truncate text-xs">{user?.email}</span>
           </div>
         </div>
       </DropdownMenuLabel>
