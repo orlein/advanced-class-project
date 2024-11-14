@@ -1,6 +1,13 @@
 import { z } from 'zod';
 
-const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&-])[A-Za-z\d@$!%*?&-]{8,15}$/g;
+const passwordValidationSchema = z
+  .string()
+  .min(8, '비밀번호는 최소 8자 이상이어야 합니다.')
+  .max(15, '비밀번호는 최대 15자 이하여야 합니다.')
+  .regex(/(?=.*[A-Za-z])/, '최소 하나 이상의 영문자가 포함되어야 합니다.')
+  .regex(/(?=.*\d)/, '최소 하나 이상의 숫자가 포함되어야 합니다.')
+  .regex(/(?=.*[@$!%*?&-])/, '최소 하나 이상의 특수 문자(@$!%*?&-)가 포함되어야 합니다.')
+  .regex(/^(?!.*(.)\1\1)/, '동일한 문자가 3번 이상 연속될 수 없습니다.');
 
 export const userSchema = z.object({
   id: z.string(),
@@ -21,15 +28,9 @@ export const userSchema = z.object({
   bio: z.string(),
   interests: z.string(),
   profileImageUrl: z.string(),
-  currentPassword: z.string().trim().nonempty('비밀번호를 입력해 주세요.').regex(passwordRegex, {
-    message: '비밀번호를 확인해 주세요.',
-  }),
-  password: z.string().trim().nonempty('비밀번호를 입력해 주세요.').regex(passwordRegex, {
-    message: '비밀번호를 확인해 주세요.',
-  }),
-  confirmPassword: z.string().trim().nonempty('비밀번호를 입력해 주세요.').regex(passwordRegex, {
-    message: '비밀번호를 확인해 주세요.',
-  }),
+  currentPassword: passwordValidationSchema,
+  password: passwordValidationSchema,
+  confirmPassword: passwordValidationSchema,
 });
 
 export const passwordSchema = userSchema.pick({ password: true });
