@@ -1,5 +1,3 @@
-// src/RTK/store.ts
-
 import { configureStore } from '@reduxjs/toolkit';
 import authSlice from './slice';
 import { postsApi } from '@/features/posts/postsApi';
