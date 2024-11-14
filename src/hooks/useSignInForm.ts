@@ -1,7 +1,7 @@
 import { useSignInMutation } from '@/api/accountApi';
-import { emailSchema } from '@/lib/schemas/emailSchema';
-import { signInSchema } from '@/lib/schemas/signInSchema';
-import { CurrentTab } from '@/types/signin';
+import { emailSchema, signInFormSchema } from '@/lib/schemas/userInfoSchema';
+import { CurrentTab } from '@/types/signInTab';
+import { SignInFormData, SignInRequestData } from '@/types/userData';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +10,7 @@ import { z } from 'zod';
 const useSignInForm = (currentTab: CurrentTab) => {
   const navigate = useNavigate();
   const [signIn] = useSignInMutation();
-
-  const schema = currentTab === 'Sign in' ? signInSchema : emailSchema;
+  const schema = currentTab === 'Sign in' ? signInFormSchema : emailSchema;
   const defaultValues =
     currentTab === 'Sign in'
       ? {
@@ -27,14 +26,16 @@ const useSignInForm = (currentTab: CurrentTab) => {
   });
 
   const onSubmit = (data: z.infer<typeof schema>) => {
-    if (data && currentTab === 'Sign in') {
-      const { email, password, isEmailToBeSaved } = data as z.infer<typeof signInSchema>;
+    if (currentTab === 'Sign in') {
+      const { email, password, isEmailToBeSaved } = data as SignInFormData;
       isEmailToBeSaved
         ? localStorage.setItem('savedEmail', email)
         : localStorage.removeItem('savedEmail');
-      const signInData = { email, password };
-      signIn(signInData);
+      const signInRequest: SignInRequestData = { email, password };
+      signIn(signInRequest);
       navigate('/');
+    } else {
+      // 이메일 찾기 및 비밀번호 찾기 로직 구현 필요
     }
   };
   return { form, onSubmit, currentTab };

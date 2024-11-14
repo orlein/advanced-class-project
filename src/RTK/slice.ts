@@ -1,10 +1,9 @@
+import { SignInResponseData, UserInfoData } from '@/types/userData';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-import { ExtraUserInfo, UserSignInResponse } from '@/lib/interfaces/userInfoInterfaces';
 
 interface AuthState {
   isSignedIn: boolean;
-  user: ExtraUserInfo | null;
+  user: UserInfoData | null;
   error: string | null;
   token: string | null;
 }
@@ -20,12 +19,12 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setLoggedIn: (state, action: PayloadAction<UserSignInResponse>) => {
+    setLoggedIn: (state, action: PayloadAction<SignInResponseData>) => {
       state.isSignedIn = true;
       state.token = action.payload.accessToken;
       sessionStorage.setItem('accessToken', action.payload.accessToken);
     },
-    setUser: (state, action: PayloadAction<ExtraUserInfo>) => {
+    setUser: (state, action: PayloadAction<UserInfoData>) => {
       state.user = {
         ...action.payload,
       };

@@ -1,7 +1,7 @@
 import { UseFormReturn } from 'react-hook-form';
 import { NotificationSwitch } from '../molecule/NotificationSwitch';
 import { NOTIFICATION_SECTION } from '@/constants/notification';
-import { NotificationSectionKey } from '@/types/Notifiation';
+import { NotificationSectionKey } from '@/types/notification';
 import { NotificationsFormValues } from '@/lib/schemas/notificationSchema';
 
 interface NotificationSectionProps {

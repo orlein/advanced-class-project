@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetPostByIdQuery, useUpdatePostMutation } from "@/features/posts/postsApi";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { useGetPostByIdQuery, useUpdatePostMutation } from '@/features/posts/postsApi';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function EditPost() {
   const { id } = useParams<{ id: string }>();
@@ -54,13 +54,13 @@ export default function EditPost() {
           <Input
             placeholder="제목을 입력하세요"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
           />
           <Textarea
             placeholder="내용을 입력하세요"
             className="min-h-[300px] resize-none"
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={e => setContent(e.target.value)}
           />
           <div className="flex items-center gap-2 mt-4">
             <Button variant="default" onClick={handleSubmit} disabled={isUpdating}>
