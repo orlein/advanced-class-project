@@ -5,14 +5,14 @@ import {
   useDeletePostMutation,
   useLikePostMutation,
   useUnlikePostMutation,
-  useDislikePostMutation,
-  useUndislikePostMutation,
   useGetLikeStatusQuery,
 } from '@/features/posts/postsApi';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { ThumbsUp } from 'lucide-react';
+import { useGetCurrentUserQuery } from '@/api/accountApi';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export default function PostDetail() {
   const navigate = useNavigate();
@@ -23,17 +23,36 @@ export default function PostDetail() {
 
   const [likePost] = useLikePostMutation();
   const [unlikePost] = useUnlikePostMutation();
-  const [dislikePost] = useDislikePostMutation();
-  const [undislikePost] = useUndislikePostMutation();
 
-  const { data: likeData } = useGetLikeStatusQuery(post_id!);
-  const [likeStatus, setLikeStatus] = useState<'liked' | 'disliked' | null>(null);
+  const { data: currentUser } = useGetCurrentUserQuery();
+
+  const { data: likeStatus, error: likeError } = useGetLikeStatusQuery(post_id!, {
+    skip: !post_id || !currentUser,
+  });
+
+  const [currentLikeStatus, setCurrentLikeStatus] = useState<'like' | null>(null);
+  const [likeCount, setLikeCount] = useState<number>(post?.likeCount || 0);
 
   useEffect(() => {
-    if (likeData) {
-      setLikeStatus(likeData.type === 'like' ? 'liked' : 'disliked');
+    if (likeStatus !== undefined) {
+      setCurrentLikeStatus(likeStatus);
+    } else if (
+      likeError &&
+      (likeError as FetchBaseQueryError).status === 404
+    ) {
+      setCurrentLikeStatus(null);
     }
-  }, [likeData]);
+  }, [likeStatus, likeError]);
+
+  const handleEdit = () => {
+    navigate(`/posts/${post_id}/edit`);
+  };
+
+  useEffect(() => {
+    if (post) {
+      setLikeCount(post.likeCount || 0);
+    }
+  }, [post]);
 
   const handleDelete = async () => {
     if (window.confirm('정말로 삭제하시겠습니까?')) {
@@ -47,35 +66,29 @@ export default function PostDetail() {
     }
   };
 
-  const handleEdit = () => {
-    navigate(`/posts/${post_id}/edit`);
-  };
-
   const handleLike = async () => {
+    if (!currentUser) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    if (currentUser.id === post?.accountId) {
+      alert('자신의 게시물은 추천할 수 없습니다.');
+      return;
+    }
+
     try {
-      if (likeStatus === 'liked') {
+      if (currentLikeStatus === 'like') {
         await unlikePost(post_id!).unwrap();
-        setLikeStatus(null);
+        setCurrentLikeStatus(null);
+        setLikeCount((prev) => prev - 1);
       } else {
         await likePost(post_id!).unwrap();
-        setLikeStatus('liked');
+        setCurrentLikeStatus('like');
+        setLikeCount((prev) => prev + 1);
       }
     } catch (error) {
-      console.error('Failed to like post:', error);
-    }
-  };
-
-  const handleDislike = async () => {
-    try {
-      if (likeStatus === 'disliked') {
-        await undislikePost(post_id!).unwrap();
-        setLikeStatus(null);
-      } else {
-        await dislikePost(post_id!).unwrap();
-        setLikeStatus('disliked');
-      }
-    } catch (error) {
-      console.error('Failed to dislike post:', error);
+      console.error('Failed to toggle like:', error);
     }
   };
 
@@ -108,25 +121,25 @@ export default function PostDetail() {
         <CardContent>
           <div className="prose lg:prose-xl mb-8 max-w-none">{post.content}</div>
           <div className="flex items-center gap-4 mt-4">
-            <Button variant={likeStatus === 'liked' ? 'default' : 'outline'} onClick={handleLike}>
-              <ThumbsUp className="mr-2 h-4 w-4" />
-              좋아요 {post.likeCount}
-            </Button>
             <Button
-              variant={likeStatus === 'disliked' ? 'default' : 'outline'}
-              onClick={handleDislike}
+              variant={currentLikeStatus === 'like' ? 'default' : 'outline'}
+              onClick={handleLike}
             >
-              <ThumbsDown className="mr-2 h-4 w-4" />
-              싫어요 {post.dislikeCount}
+              <ThumbsUp className="mr-2 h-4 w-4" />
+              좋아요 {likeCount}
             </Button>
           </div>
           <div className="flex justify-end gap-4 mt-8">
-            <Button variant="default" onClick={handleEdit}>
-              수정
-            </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              삭제
-            </Button>
+            {currentUser?.id === post.accountId && (
+              <>
+                <Button variant="default" onClick={handleEdit}>
+                  수정
+                </Button>
+                <Button variant="destructive" onClick={handleDelete}>
+                  삭제
+                </Button>
+              </>
+            )}
             <Button variant="outline" onClick={() => navigate('/posts')}>
               목록으로 돌아가기
             </Button>

@@ -8,6 +8,31 @@ import {
 import { setUser, setLoggedIn } from '@/RTK/slice';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+export interface User {
+  id: string;
+  username: string;
+  roles: string[];
+}
+
+export const authApi = createApi({
+  reducerPath: 'authApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://ozadv6.beavercoding.net/api',
+    prepareHeaders: (headers) => {
+      const token = sessionStorage.getItem('accessToken');
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: (builder) => ({
+    getCurrentUser: builder.query<User, void>({
+      query: () => 'accounts/me',
+    }),
+  }),
+});
+
 const accountApi = createApi({
   reducerPath: 'accountApi',
   baseQuery: fetchBaseQuery({
@@ -90,3 +115,5 @@ export const {
   useUpdateUserInfoMutation,
 } = accountApi;
 export default accountApi;
+export const { useGetCurrentUserQuery } = authApi;
+

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { useCreatePostMutation } from '@/features/posts/postsApi';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -68,6 +68,7 @@ export default function NewPostCreate() {
           </div>
         </CardContent>
       </Card>
+      <Outlet />
     </div>
   );
 }
