@@ -1,4 +1,4 @@
-import {PostList} from "@/components/ui/PostList.tsx";
+import PostList from "@/components/ui/PostList.tsx";
 
 export default function AllPosts() {
     return (
