@@ -1,7 +1,8 @@
 import { tagColors } from '@/constants/challenge';
+import { TagType } from '@/types/challenge';
 
 interface TagProps {
-  tag: keyof typeof tagColors;
+  tag: TagType;
 }
 
 const Tag = ({ tag }: TagProps) => {

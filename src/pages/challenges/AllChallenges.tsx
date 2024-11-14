@@ -1,6 +1,7 @@
 import Tag from '@/components/atom/Tag';
 import ChallengeCard from '@/components/molecule/ChallengeCard';
 import { tags } from '@/constants/challenge';
+import { Challenge } from '@/types/challenge';
 
 export default function AllChallenges() {
   return (
@@ -39,7 +40,7 @@ export default function AllChallenges() {
     </div>
   );
 }
-const challenges = [
+const challenges: Challenge[] = [
   {
     title: '30일 명상 챌린지',
     startDate: '2024-06-01',
@@ -182,7 +183,7 @@ const challenges = [
     title: '30일 자아 성찰 챌린지',
     startDate: '2026-05-01',
     endDate: '2026-05-31',
-    tags: ['성찰', '자기계발', '챌린지'],
+    tags: ['자기계발', '챌린지'],
   },
   {
     title: '30일 친구와의 소통 챌린지',
@@ -218,7 +219,7 @@ const challenges = [
     title: '30일 새로운 사람 만나기 챌린지',
     startDate: '2026-11-01',
     endDate: '2026-11-30',
-    tags: ['사람', '만남', '챌린지'],
+    tags: ['사람', '챌린지'],
   },
   {
     title: '30일 자기계발 도서 읽기 챌린지',
@@ -230,7 +231,7 @@ const challenges = [
     title: '30일 새로운 언어 배우기 챌린지',
     startDate: '2027-01-01',
     endDate: '2027-01-30',
-    tags: ['언어', '배우기', '챌린지'],
+    tags: ['배우기', '챌린지'],
   },
   {
     title: '30일 새로운 기술 도전 챌린지',
@@ -242,7 +243,7 @@ const challenges = [
     title: '30일 새로운 운동 시도 챌린지',
     startDate: '2027-03-01',
     endDate: '2027-03-31',
-    tags: ['운동', '시도', '챌린지'],
+    tags: ['운동', '챌린지'],
   },
   {
     title: '30일 새로운 요리법 도전 챌린지',
@@ -254,19 +255,19 @@ const challenges = [
     title: '30일 새로운 취미 찾기 챌린지',
     startDate: '2027-05-01',
     endDate: '2027-05-31',
-    tags: ['취미', '찾기', '챌린지'],
+    tags: ['취미', '챌린지'],
   },
   {
     title: '30일 새로운 친구 만들기 챌린지',
     startDate: '2027-06-01',
     endDate: '2027-06-30',
-    tags: ['친구', '만들기', '챌린지'],
+    tags: ['친구', '챌린지'],
   },
   {
     title: '30일 새로운 경험 쌓기 챌린지',
     startDate: '2027-07-01',
     endDate: '2027-07-30',
-    tags: ['경험', '쌓기', '챌린지'],
+    tags: ['챌린지'],
   },
   {
     title: '30일 새로운 목표 설정 챌린지',
@@ -284,7 +285,7 @@ const challenges = [
     title: '30일 새로운 기술 연습 챌린지',
     startDate: '2027-10-01',
     endDate: '2027-10-30',
-    tags: ['기술', '연습', '챌린지'],
+    tags: ['기술', '챌린지'],
   },
   {
     title: '30일 새로운 취미 도전 챌린지',
@@ -314,13 +315,13 @@ const challenges = [
     title: '다이어트 챌린지',
     startDate: '2024-03-01',
     endDate: '2024-03-31',
-    tags: ['다이어트', '건강', '챌린지'],
+    tags: ['건강', '챌린지'],
   },
   {
     title: '코딩 챌린지',
     startDate: '2024-04-01',
     endDate: '2024-04-30',
-    tags: ['코딩', '기술', '챌린지'],
+    tags: ['기술', '챌린지'],
   },
   {
     title: '사진 촬영 챌린지',
@@ -328,4 +329,4 @@ const challenges = [
     endDate: '2024-05-31',
     tags: ['사진', '예술', '챌린지'],
   },
-];
+] as const;

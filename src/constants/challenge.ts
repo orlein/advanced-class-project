@@ -1,3 +1,5 @@
+import { TagType } from '@/types/challenge';
+
 export const tagColors = {
   명상: 'bg-[#1abc9c]', // 청록색 계열
   정신건강: 'bg-[#2ecc71]', // 연두색 계열
@@ -57,7 +59,7 @@ export const tagColors = {
   대화: 'bg-[#8e44ad]', // 진한 보라색 계열
 } as const;
 
-export const tags = [
+export const tags: TagType[] = [
   '명상',
   '정신건강',
   '챌린지',
