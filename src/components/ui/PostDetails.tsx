@@ -108,10 +108,7 @@ export default function PostDetail() {
         <CardContent>
           <div className="prose lg:prose-xl mb-8 max-w-none">{post.content}</div>
           <div className="flex items-center gap-4 mt-4">
-            <Button
-              variant={likeStatus === 'liked' ? 'default' : 'outline'}
-              onClick={handleLike}
-            >
+            <Button variant={likeStatus === 'liked' ? 'default' : 'outline'} onClick={handleLike}>
               <ThumbsUp className="mr-2 h-4 w-4" />
               좋아요 {post.likeCount}
             </Button>

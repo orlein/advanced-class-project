@@ -1,17 +1,17 @@
 import {
-  ExtraUserInfo,
-  SignUpUser,
-  UserEmailAndPassword,
-  UserSignInResponse,
-} from '@/lib/interfaces/userInfoInterfaces';
-import { ProfileFields } from '@/lib/schemas/userInfoSchema';
+  ProfileData,
+  SignInRequestData,
+  SignInResponseData,
+  SignUpRequestData,
+  UserInfoData,
+} from '@/types/userData';
 import { setUser, setLoggedIn } from '@/RTK/slice';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const accountApi = createApi({
   reducerPath: 'accountApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_BASE_URL,
+    baseUrl: 'https://ozadv6.beavercoding.net/api',
     prepareHeaders: headers => {
       const token = sessionStorage.getItem('accessToken');
       if (token) headers.set('Authorization', `Bearer ${token}`);
@@ -21,7 +21,7 @@ const accountApi = createApi({
     },
   }),
   endpoints: builder => ({
-    signUp: builder.mutation<void, SignUpUser>({
+    signUp: builder.mutation<void, SignUpRequestData>({
       query: userData => ({
         url: '/accounts/sign-up',
         method: 'POST',
@@ -35,7 +35,7 @@ const accountApi = createApi({
         }
       },
     }),
-    signIn: builder.mutation<UserSignInResponse, UserEmailAndPassword>({
+    signIn: builder.mutation<SignInResponseData, SignInRequestData>({
       query: userData => ({
         url: '/accounts/sign-in',
         method: 'POST',
@@ -51,7 +51,7 @@ const accountApi = createApi({
         }
       },
     }),
-    getUserInfo: builder.query<ExtraUserInfo, void>({
+    getUserInfo: builder.query<UserInfoData, void>({
       query: () => ({
         url: '/accounts/me',
         method: 'GET',
@@ -65,7 +65,7 @@ const accountApi = createApi({
         }
       },
     }),
-    updateUserInfo: builder.mutation<ExtraUserInfo, ProfileFields>({
+    updateUserInfo: builder.mutation<UserInfoData, ProfileData>({
       query: userData => ({
         url: `/accounts/${userData.id}`,
         method: 'PATCH',
