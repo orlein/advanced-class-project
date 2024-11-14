@@ -5,16 +5,11 @@ import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
 import ResetPassword from '@/pages/account/ResetPassword';
 import CheckBoxFormField from '../molecule/field/CheckBoxFormField';
-import { CurrentTab } from '@/types/signin';
 import useSignInForm from '@/hooks/useSignInForm';
+import { CurrentTab } from '@/types/signInTab';
 
-interface SignInFormFieldProp {
-  currentTab: CurrentTab;
-}
-
-export default function SignInFormField({ currentTab }: SignInFormFieldProp) {
+export default function SignInFormField({ currentTab }: { currentTab: CurrentTab }) {
   const { form, onSubmit } = useSignInForm(currentTab);
-
   return (
     <article className="flex flex-col items-center justify-center gap-7 h-full">
       <Form {...form}>

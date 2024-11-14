@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
@@ -12,44 +11,12 @@ import EmailFormField from '@/components/molecule/field/EmailFormField';
 // import { ToastAction } from '@radix-ui/react-toast';
 import { Toaster } from '@/components/ui/toaster';
 import { useSignUpMutation } from '@/api/accountApi';
-
-const formSchema = z
-  .object({
-    email: z
-      .string()
-      .trim()
-      .nonempty({ message: '이메일 주소를 입력해주세요.' })
-      .email({ message: '이메일 주소를 확인해주세요.' }),
-    password: z
-      .string()
-      .trim()
-      .nonempty('비밀번호를 입력해주세요.')
-      .regex(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&-])[A-Za-z\d@$!%*?&-]{8,15}$/g, {
-        message: '비밀번호를 확인해주세요.',
-      }),
-    confirmPassword: z
-      .string()
-      .trim()
-      .nonempty('비밀번호를 입력해주세요.')
-      .regex(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&-])[A-Za-z\d@$!%*?&-]{8,15}$/g, {
-        message: '비밀번호를 확인해주세요.',
-      }),
-    // mainLanguage: z.string(),
-    // nationality: z.string(),
-    // bio: z.string(),
-    // externalUrls: z.array(z.string()),
-    // interests: z.array(z.string()),
-    // isEmailVerified: z.boolean(),
-  })
-  .refine(data => data.password === data.confirmPassword, {
-    message: '비밀번호가 일치하지 않습니다',
-    path: ['confirmedPassword'],
-  });
-export type userInfoType = z.infer<typeof formSchema>;
+import { SignUpRequestData } from '@/types/userData';
+import { signUpRequestSchema } from '@/lib/schemas/userInfoSchema';
 
 export default function SignUp() {
-  const form = useForm<userInfoType>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SignUpRequestData>({
+    resolver: zodResolver(signUpRequestSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -60,7 +27,7 @@ export default function SignUp() {
   const [signUp] = useSignUpMutation();
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   // const { toast } = useToast();
-  const onSubmit = (data: userInfoType) => {
+  const onSubmit = (data: SignUpRequestData) => {
     signUp(data).then(() => {
       // if (res.error && 'status' in res.error && res.error.status === 409) {
       //   toast({

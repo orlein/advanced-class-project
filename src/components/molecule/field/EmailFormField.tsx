@@ -4,7 +4,7 @@ import { Input } from '../../ui/input';
 import { Mail } from 'lucide-react';
 import { Button } from '../../ui/button';
 
-interface PasswordFormFieldProps<T extends FieldValues> {
+interface EmailFormFieldProps<T extends FieldValues> {
   form: UseFormReturn<T>;
   label?: boolean;
   placeholder?: boolean;
@@ -18,7 +18,7 @@ export default function EmailFormField<T extends FieldValues>({
   icon = true,
   placeholder = true,
   button = false,
-}: PasswordFormFieldProps<T>) {
+}: EmailFormFieldProps<T>) {
   return (
     <>
       <FormField

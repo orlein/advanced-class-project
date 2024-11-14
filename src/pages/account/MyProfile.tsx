@@ -14,12 +14,10 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
 import { useSelector } from 'react-redux';
 import { Switch } from '@/components/ui/switch';
-
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
 import { useForm } from 'react-hook-form';
 import { useUpdateUserInfoMutation } from '@/api/accountApi';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
@@ -31,6 +29,7 @@ import {
 } from '@/components/ui/form';
 import { RootState } from '@/RTK/store';
 import { profileSchema } from '@/lib/schemas/userInfoSchema';
+import { ProfileData } from '@/types/userData';
 
 const locationOptions = [
   '서울특별시',
@@ -56,7 +55,7 @@ export default function MyProfile() {
   const { toast } = useToast();
   const user = useSelector((state: RootState) => state.auth.user);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const form = useForm<z.infer<typeof profileSchema>>({
+  const form = useForm<ProfileData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       id: user?.id,
@@ -70,7 +69,7 @@ export default function MyProfile() {
   });
   const [updateUserInfo] = useUpdateUserInfoMutation();
 
-  const onSubmit = (data: z.infer<typeof profileSchema>) => {
+  const onSubmit = (data: ProfileData) => {
     updateUserInfo(data);
     setIsEditing(false);
     toast({

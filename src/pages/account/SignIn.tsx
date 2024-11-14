@@ -1,11 +1,12 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { useState } from 'react';
 import SignInFormField from '@/components/organism/SignInFormField';
+import { CurrentTab } from '@/types/signInTab';
 
 export default function SignIn() {
-  const [currentTab, setCurrentTab] = useState<'Sign in' | 'Email' | 'Password'>('Sign in');
+  const [currentTab, setCurrentTab] = useState<CurrentTab>('Sign in');
   const handleCurrentTab = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setCurrentTab(e.currentTarget.innerText as 'Sign in' | 'Email' | 'Password');
+    setCurrentTab(e.currentTarget.innerText as CurrentTab);
   };
   return (
     <>

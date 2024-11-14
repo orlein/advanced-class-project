@@ -1,4 +1,4 @@
-import { NotificationSectionKey } from '@/types/Notifiation';
+import { NotificationSectionKey } from '@/types/notification';
 
 export const POST_NOTIFICATION_SWITCH = [
   {
