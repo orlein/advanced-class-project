@@ -1,5 +1,6 @@
 import Tag from '@/components/atom/Tag';
 import ChallengeCard from '@/components/molecule/ChallengeCard';
+import { tags } from '@/constants/challenge';
 
 export default function AllChallenges() {
   return (
@@ -327,17 +328,4 @@ const challenges = [
     endDate: '2024-05-31',
     tags: ['사진', '예술', '챌린지'],
   },
-];
-
-const tags = [
-  '운동',
-  '건강',
-  '챌린지',
-  '독서',
-  '자기계발',
-  '다이어트',
-  '코딩',
-  '기술',
-  '사진',
-  '예술',
 ];

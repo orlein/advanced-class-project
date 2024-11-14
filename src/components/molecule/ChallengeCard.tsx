@@ -1,6 +1,7 @@
+import { Challenge } from '@/types/challenge';
 import Tag from '../atom/Tag';
 
-const ChallengeCard = ({ title, startDate, endDate, tags }) => {
+const ChallengeCard = ({ title, startDate, endDate, tags }: Challenge) => {
   return (
     <div className="bg-black padding-[10px] flex flex-col gap-5 py-[15px] px-[10px]">
       <img className="w-[300px] h-[300px]" />
