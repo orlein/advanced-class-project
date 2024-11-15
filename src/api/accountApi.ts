@@ -18,7 +18,7 @@ export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://ozadv6.beavercoding.net/api',
-    prepareHeaders: (headers) => {
+    prepareHeaders: headers => {
       const token = sessionStorage.getItem('accessToken');
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
@@ -26,7 +26,7 @@ export const authApi = createApi({
       return headers;
     },
   }),
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     getCurrentUser: builder.query<User, void>({
       query: () => 'accounts/me',
     }),
@@ -86,7 +86,7 @@ const accountApi = createApi({
       onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
         try {
           const { data } = await queryFulfilled;
-          data && dispatch(setUser(data));
+          data && dispatch(setUser({ ...data }));
         } catch (err: any) {
           throw new Error(`\n🚨 getUserInfo Error! \nError Status: ${err.error.status}`);
         }
@@ -101,8 +101,7 @@ const accountApi = createApi({
       onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
         try {
           const { data } = await queryFulfilled;
-          console.log(data);
-          data && dispatch(setUser(data));
+          data && dispatch(setUser({ ...data }));
         } catch (err: any) {
           throw new Error(`\n🚨 updateUserInfo Error! \nError Status: ${err.error.status}`);
         }
@@ -119,4 +118,3 @@ export const {
 } = accountApi;
 export default accountApi;
 export const { useGetCurrentUserQuery } = authApi;
-

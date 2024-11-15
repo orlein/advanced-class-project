@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardHeader } from '@/components/ui/card.tsx';
+import { Card } from '@/components/ui/card.tsx';
 import {
   Select,
   SelectTrigger,
@@ -7,8 +7,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
-import { PencilIcon, User2 } from 'lucide-react';
+import { Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
@@ -17,7 +16,7 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
 import { useForm } from 'react-hook-form';
-import { useUpdateUserInfoMutation } from '@/api/accountApi';
+import { useGetUserInfoQuery, useUpdateUserInfoMutation } from '@/api/accountApi';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
@@ -34,8 +33,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { Label } from '@/components/ui/label';
 import ProfileImage from '@/components/molecule/ProfileImage';
+import { Toggle } from '@/components/ui/toggle';
 
-const nationalityOptions = [
+const NATIONALITY_OPTIONS = [
   '서울특별시',
   '부산광역시',
   '대구광역시',
@@ -55,7 +55,7 @@ const nationalityOptions = [
   '제주특별자치도',
 ];
 
-const tagOptions = [
+const TAG_OPTIONS = [
   '태그1',
   '태그2',
   '태그3',
@@ -67,22 +67,24 @@ const tagOptions = [
   '태그9',
 ];
 
+const DISABLED_STYLE =
+  'disabled:border-none disabled:shadow-none disabled:cursor-default disabled:opacity-100';
+
 export default function MyProfile() {
   const { toast } = useToast();
   const id = useSelector((state: RootState) => state.auth.userId);
-  const userState = useSelector((state: RootState) => state.auth.user);
   const [user, setUser] = useState<ProfileData>();
   const [updateUserInfo] = useUpdateUserInfoMutation();
+  const { data, isLoading } = useGetUserInfoQuery();
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [profileImage, setProfileImage] = useState<string>(userState?.profileImageUrl ?? '');
+  const [profileImage, setProfileImage] = useState<string>(data?.profileImageUrl ?? '');
   const [tags, setTags] = useState<string[]>([]);
-  console.log(userState);
   const defaultValues = {
-    username: userState?.username,
-    bio: userState?.bio,
-    nationality: userState?.nationality,
-    isPrivate: userState?.isPrivate,
-    profileImageUrl: userState?.profileImageUrl,
+    username: data?.username,
+    bio: data?.bio ?? '',
+    nationality: data?.nationality ?? '',
+    isPrivate: data?.isPrivate ?? false,
+    profileImageUrl: data?.profileImageUrl ?? '',
   };
   const form = useForm<ProfileData>({
     resolver: zodResolver(profileSchema),
@@ -92,9 +94,13 @@ export default function MyProfile() {
   const onSubmit = (data: ProfileData) => {
     // 관심사 추가 api 요청 필요
     // 현재는 상태로만 구현해둠
-    console.log(data);
     if (id) {
-      updateUserInfo({ id, ...data, profileImageUrl: profileImage }).then(res => {
+      updateUserInfo({
+        id,
+        ...data,
+        profileImageUrl: profileImage,
+        nationality: data.nationality === 'null' ? null : data.nationality,
+      }).then(res => {
         if (!res.error) {
           setIsEditing(false);
           toast({
@@ -121,13 +127,15 @@ export default function MyProfile() {
   const handlePrivateAccount = (isPrivate: boolean) => {
     toast({
       title: '계정 설정',
-      description: isPrivate ? '비공개 계정으로 설정되었습니다.' : '공개 계정으로 설정되었습니다.',
+      description: `${
+        isPrivate ? '비공개 계정으로 설정되었습니다.' : '공개 계정으로 설정되었습니다.'
+      } 저장하기를 눌러 주세요.`,
       duration: 3000,
     });
   };
 
-  const handleSelectTags = e => {
-    const clickedTag = e.target.innerText;
+  const handleSelectTags = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const clickedTag = e.currentTarget.innerText;
     if (tags.includes(clickedTag)) {
       setTags(prev => prev.filter(tag => tag !== clickedTag));
     } else {
@@ -137,28 +145,28 @@ export default function MyProfile() {
 
   const handleReset = () => {
     form.reset(defaultValues);
-    setProfileImage(userState?.profileImageUrl ?? '');
+    setProfileImage(data?.profileImageUrl ?? '');
     setIsEditing(false);
   };
 
   React.useEffect(() => {
-    if (userState) {
-      const { username, bio, nationality, isPrivate, profileImageUrl } = userState;
+    if (!isLoading && data) {
+      const { username, bio, nationality, isPrivate, profileImageUrl } = data;
       setUser({ username, bio, nationality, isPrivate, profileImageUrl });
     }
-  }, [userState]);
+  }, [data, isLoading]);
 
   React.useEffect(() => {
     if (user) form.reset(user);
   }, [user, form]);
 
-  if (!userState) return <></>;
+  if (!data) return <></>;
   return (
     <>
-      <div className="min-h-screen ">
+      <div className="h-full flex items-center justify-center">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Card className="w-full max-w-xl mx-auto shadow-lg px-4 pt-14 pb-7 flex flex-col items-center gap-5 relative">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+            <Card className="w-full max-w-xl mx-auto shadow-lg px-6 pt-14 pb-7 flex flex-col items-center gap-5 relative">
               <div className="flex items-center absolute top-2 right-2">
                 <FormField
                   control={form.control}
@@ -169,7 +177,7 @@ export default function MyProfile() {
                         비공개 계정
                         <FormControl>
                           <Switch
-                            className="dark:data-[state=unchecked]:bg-muted-foreground"
+                            className="dark:data-[state=unchecked]:bg-muted-foreground disabled:cursor-default"
                             checked={field.value || false}
                             onCheckedChange={e => {
                               handlePrivateAccount(!field.value);
@@ -184,35 +192,37 @@ export default function MyProfile() {
                 />
               </div>
 
-              <section className="w-full flex flex-col sm:flex-row justify-center items-center gap-7">
+              <section className="w-full flex flex-col sm:flex-row justify-center items-center gap-5">
                 <div className="relative">
-                  <ProfileImage url={profileImage} size="40" />
-                  <div className="absolute bottom-2 right-2 rounded-full size-9 cursor-pointer bg-foreground shadow-lg flex justify-center items-center">
-                    <FormField
-                      control={form.control}
-                      name="profileImageUrl"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            <PencilIcon size={20} className="text-background cursor-pointer" />
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              type="file"
-                              accept="image/*"
-                              onChange={e => {
-                                if (e.target.files) {
-                                  handleAvatarChange(e);
-                                  field.onChange(e);
-                                }
-                              }}
-                              className="hidden"
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <ProfileImage url={profileImage} size="big" />
+                  {isEditing && (
+                    <div className="absolute bottom-2 right-2 rounded-full size-9 cursor-pointer bg-foreground shadow-lg flex justify-center items-center">
+                      <FormField
+                        control={form.control}
+                        name="profileImageUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              <Camera size={20} className="text-background cursor-pointer" />
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={e => {
+                                  if (e.target.files) {
+                                    handleAvatarChange(e);
+                                    field.onChange(e);
+                                  }
+                                }}
+                                className="hidden"
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col gap-3 items-start w-full">
                   <FormField
@@ -220,12 +230,13 @@ export default function MyProfile() {
                     name="username"
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel className="pl-2">닉네임</FormLabel>
+                        <FormLabel className="font-bold pl-2">닉네임</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value || ''}
                             type="text"
-                            className="text-lg p-2 outline-none border border-muted-foreground rounded-md font-bold placeholder:font-normal disabled:border-none disabled:opacity-100"
+                            className={`${DISABLED_STYLE} disabled:pl-[9px] text-lg p-2 outline-none border border-muted-foreground rounded-md font-bold placeholder:font-normal`}
                             placeholder="username"
                             disabled={!isEditing}
                           />
@@ -239,11 +250,12 @@ export default function MyProfile() {
                     name="bio"
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel className="pl-2">자기소개</FormLabel>
+                        <FormLabel className="font-bold pl-2">자기소개</FormLabel>
                         <FormControl>
-                          <Input
+                          <Textarea
                             {...field}
-                            className="p-2 border border-muted-foreground rounded-md placeholder:font-normal disabled:border-none disabled:opacity-100 resize-none"
+                            value={field.value || ''}
+                            className={`${DISABLED_STYLE} disabled:pl-[9px] disabled:py-[5px] py-1 px-2 h-20 resize-none leading-relaxed border border-muted-foreground rounded-md placeholder:font-normal`}
                             placeholder="자기소개를 입력해 주세요."
                             disabled={!isEditing}
                           />
@@ -259,23 +271,23 @@ export default function MyProfile() {
                 name="nationality"
                 render={({ field }) => (
                   <FormItem className="w-full">
-                    <FormLabel className="pl-3">지역</FormLabel>
+                    <FormLabel className="font-bold pl-3">지역</FormLabel>
                     <Select
-                      {...field}
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      defaultValue={field.value || ''}
                       disabled={!isEditing}
                     >
                       <FormControl>
                         <SelectTrigger
-                          className={`${isEditing && 'disabled:border-none disabled:opacity-100'}`}
+                          className={`${DISABLED_STYLE} disabled:pl-[13px] border border-muted-foreground`}
                         >
                           <SelectValue placeholder="지역을 선택하세요." />
                           {isEditing && <CaretSortIcon className="h-4 w-4 opacity-50" />}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {nationalityOptions.map(option => (
+                        <SelectItem value="null">지역을 선택하세요.</SelectItem>
+                        {NATIONALITY_OPTIONS.map(option => (
                           <SelectItem value={option} key={option}>
                             {option}
                           </SelectItem>
@@ -286,20 +298,39 @@ export default function MyProfile() {
                 )}
               />
               <section className="w-full px-2">
-                <Label>관심사</Label>
-                <section className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
+                <Label className="pl-1 font-bold">관심사</Label>
+                <section
+                  className={`grid ${tags.length === 0 && !isEditing && 'grid-cols-1'} ${
+                    (tags.length > 0 || isEditing) && 'grid-cols-2 md:grid-cols-3 gap-3'
+                  } mt-3`}
+                >
                   {isEditing &&
-                    tagOptions.map(tag => (
-                      <Button type="button" key={tag} onClick={handleSelectTags}>
+                    TAG_OPTIONS.map(tag => (
+                      <Toggle
+                        variant="outline"
+                        key={tag}
+                        onClick={handleSelectTags}
+                        pressed={tags.includes(tag)}
+                      >
                         {tag}
-                      </Button>
+                      </Toggle>
                     ))}
                   {!isEditing &&
+                    tags.length !== 0 &&
                     tags.map(tag => (
-                      <Button type="button" key={tag} onClick={handleSelectTags}>
+                      <Toggle
+                        variant="outline"
+                        key={tag}
+                        onClick={handleSelectTags}
+                        disabled
+                        className={DISABLED_STYLE}
+                      >
                         {tag}
-                      </Button>
+                      </Toggle>
                     ))}
+                  {!isEditing && tags.length === 0 && (
+                    <p className="pl-2 text-sm">관심사를 선택하세요.</p>
+                  )}
                 </section>
               </section>
 

@@ -25,7 +25,7 @@ export const userSchema = z.object({
     .nonempty({ message: '닉네임을 입력해 주세요.' })
     .min(2, { message: '최소 2자 이상이어야 합니다.' })
     .max(20, { message: '최대 20자 이하여야 합니다.' }),
-  nationality: z.string().optional(),
+  nationality: z.string().nullable().optional(),
   bio: z.string().max(50, { message: '최대 50자 이하여야 합니다.' }).optional(),
   interests: z.string().optional(),
   profileImageUrl: z.string().optional(),
@@ -93,4 +93,10 @@ export const userInfoSchema = userSchema.omit({
   currentPassword: true,
   password: true,
   confirmPassword: true,
+});
+
+export const UserInfoOnSidebar = userSchema.pick({
+  email: true,
+  username: true,
+  profileImageUrl: true,
 });

@@ -9,6 +9,7 @@ import {
   signInRequestSchema,
   signInResponseSchema,
   signUpRequestSchema,
+  UserInfoOnSidebar,
   userInfoSchema,
 } from '../lib/schemas/userInfoSchema';
 
@@ -26,3 +27,4 @@ export type SignInResponseData = {
   refreshToken: string;
 };
 export type UserInfoData = z.infer<typeof userInfoSchema>;
+export type UserInfoOnSidebarData = z.infer<typeof UserInfoOnSidebar>;
