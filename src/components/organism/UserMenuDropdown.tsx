@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -7,8 +6,8 @@ import {
   DropdownMenuItem,
 } from '../ui/dropdown-menu';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/RTK/store';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/RTK/store';
 import { useSidebar } from '../ui/sidebar';
 import { useWideScreen } from '@/hooks/use-wideScreen';
 import { DROPDOWN_MENU_ITEMS } from '@/constants/dropdownOptions';

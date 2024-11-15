@@ -20,7 +20,6 @@ import { useState } from 'react';
 import { useWideScreen } from '@/hooks/use-wideScreen';
 import UserMenuDropdown from './UserMenuDropdown';
 import { DropdownMenu, DropdownMenuTrigger } from '../ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/RTK/store';
 import ThemeMenu from './ThemeMenu';
