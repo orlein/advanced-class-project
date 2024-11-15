@@ -1,5 +1,5 @@
 import {
-  ProfileData,
+  ProfileUpdateRequestData,
   SignInRequestData,
   SignInResponseData,
   SignUpRequestData,
@@ -44,8 +44,10 @@ const accountApi = createApi({
       onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
         try {
           const { data } = await queryFulfilled;
-          data && dispatch(setLoggedIn(data));
-          dispatch(accountApi.endpoints.getUserInfo.initiate());
+          if (data) {
+            dispatch(setLoggedIn(data));
+            dispatch(accountApi.endpoints.getUserInfo.initiate());
+          }
         } catch (err: any) {
           throw new Error(`\n🚨 signIn Error! \nError Status: ${err.error.status}`);
         }
@@ -65,7 +67,7 @@ const accountApi = createApi({
         }
       },
     }),
-    updateUserInfo: builder.mutation<UserInfoData, ProfileData>({
+    updateUserInfo: builder.mutation<UserInfoData, ProfileUpdateRequestData>({
       query: userData => ({
         url: `/accounts/${userData.id}`,
         method: 'PATCH',
@@ -74,6 +76,7 @@ const accountApi = createApi({
       onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
         try {
           const { data } = await queryFulfilled;
+          console.log(data);
           data && dispatch(setUser(data));
         } catch (err: any) {
           throw new Error(`\n🚨 updateUserInfo Error! \nError Status: ${err.error.status}`);

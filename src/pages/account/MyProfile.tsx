@@ -8,7 +8,7 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
-import { PencilIcon } from 'lucide-react';
+import { PencilIcon, User2 } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
@@ -30,8 +30,12 @@ import {
 import { RootState } from '@/RTK/store';
 import { profileSchema } from '@/lib/schemas/userInfoSchema';
 import { ProfileData } from '@/types/userData';
+import { Textarea } from '@/components/ui/textarea';
+import { CaretSortIcon } from '@radix-ui/react-icons';
+import { Label } from '@/components/ui/label';
+import ProfileImage from '@/components/molecule/ProfileImage';
 
-const locationOptions = [
+const nationalityOptions = [
   '서울특별시',
   '부산광역시',
   '대구광역시',
@@ -51,125 +55,179 @@ const locationOptions = [
   '제주특별자치도',
 ];
 
+const tagOptions = [
+  '태그1',
+  '태그2',
+  '태그3',
+  '태그4',
+  '태그5',
+  '태그6',
+  '태그7',
+  '태그8',
+  '태그9',
+];
+
 export default function MyProfile() {
   const { toast } = useToast();
-  const user = useSelector((state: RootState) => state.auth.user);
+  const id = useSelector((state: RootState) => state.auth.userId);
+  const userState = useSelector((state: RootState) => state.auth.user);
+  const [user, setUser] = useState<ProfileData>();
+  const [updateUserInfo] = useUpdateUserInfoMutation();
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [profileImage, setProfileImage] = useState<string>(userState?.profileImageUrl ?? '');
+  const [tags, setTags] = useState<string[]>([]);
+  console.log(userState);
+  const defaultValues = {
+    username: userState?.username,
+    bio: userState?.bio,
+    nationality: userState?.nationality,
+    isPrivate: userState?.isPrivate,
+    profileImageUrl: userState?.profileImageUrl,
+  };
   const form = useForm<ProfileData>({
     resolver: zodResolver(profileSchema),
-    defaultValues: {
-      id: user?.id,
-      username: user?.username,
-      bio: user?.bio,
-      // interests: user?.interests,
-      location: user?.location,
-      isPrivate: user?.isPrivate,
-      profileImageUrl: user?.profileImageUrl,
-    },
+    defaultValues,
   });
-  const [updateUserInfo] = useUpdateUserInfoMutation();
 
   const onSubmit = (data: ProfileData) => {
-    updateUserInfo(data);
-    setIsEditing(false);
+    // 관심사 추가 api 요청 필요
+    // 현재는 상태로만 구현해둠
+    console.log(data);
+    if (id) {
+      updateUserInfo({ id, ...data, profileImageUrl: profileImage }).then(res => {
+        if (!res.error) {
+          setIsEditing(false);
+          toast({
+            title: '프로필 업데이트',
+            description: '프로필이 성공적으로 업데이트되었습니다.',
+            duration: 3000,
+          });
+        }
+      });
+    }
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const profileImageInput = e.target.files?.[0];
+    if (profileImageInput) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result as string);
+      };
+      reader.readAsDataURL(profileImageInput);
+    }
+  };
+
+  const handlePrivateAccount = (isPrivate: boolean) => {
     toast({
-      title: '프로필 업데이트',
-      description: '프로필이 성공적으로 업데이트되었습니다.',
+      title: '계정 설정',
+      description: isPrivate ? '비공개 계정으로 설정되었습니다.' : '공개 계정으로 설정되었습니다.',
       duration: 3000,
     });
   };
 
-  // const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files[0]) {
-  //     // useUpdateUserInfoQuery({
-  //     //   ...user,
-  //     //   profileImageUrl: URL.createObjectURL(e.target.files[0]),
-  //     // }),
-  //     setIsEditing(false);
-  //   }
-  // };
+  const handleSelectTags = e => {
+    const clickedTag = e.target.innerText;
+    if (tags.includes(clickedTag)) {
+      setTags(prev => prev.filter(tag => tag !== clickedTag));
+    } else {
+      setTags(prev => [...prev, clickedTag]);
+    }
+  };
 
-  // const handlePrivateAccount = (isPrivate: boolean) => {
-  //   toast({
-  //     title: '계정 설정',
-  //     description: isPrivate ? '비공개 계정으로 설정되었습니다.' : '공개 계정으로 설정되었습니다.',
-  //     duration: 3000,
-  //   });
-  // };
+  const handleReset = () => {
+    form.reset(defaultValues);
+    setProfileImage(userState?.profileImageUrl ?? '');
+    setIsEditing(false);
+  };
 
   React.useEffect(() => {
-    if (user) {
-      form.reset(user);
+    if (userState) {
+      const { username, bio, nationality, isPrivate, profileImageUrl } = userState;
+      setUser({ username, bio, nationality, isPrivate, profileImageUrl });
     }
-  }, [user, form.reset]);
+  }, [userState]);
 
-  if (!user) return <></>;
+  React.useEffect(() => {
+    if (user) form.reset(user);
+  }, [user, form]);
 
+  if (!userState) return <></>;
   return (
     <>
       <div className="min-h-screen ">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Card className="w-full max-w-4xl mx-auto shadow-lg p-4 flex flex-col gap-5 relative">
-              <CardHeader className="grid grid-cols-1 place-items-center items-center md:grid-cols-2 md:gap-10 md:justify-center md:items-center h-[300px] mb-10">
-                <div className="flex items-center space-x-2 absolute top-3 right-3">
-                  <FormField
-                    control={form.control}
-                    name="isPrivate"
-                    render={({ field }) => (
-                      <FormItem>
+            <Card className="w-full max-w-xl mx-auto shadow-lg px-4 pt-14 pb-7 flex flex-col items-center gap-5 relative">
+              <div className="flex items-center absolute top-2 right-2">
+                <FormField
+                  control={form.control}
+                  name="isPrivate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        비공개 계정
                         <FormControl>
                           <Switch
                             className="dark:data-[state=unchecked]:bg-muted-foreground"
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
+                            checked={field.value || false}
+                            onCheckedChange={e => {
+                              handlePrivateAccount(!field.value);
+                              field.onChange(e);
+                            }}
+                            disabled={!isEditing}
                           />
                         </FormControl>
-                        <FormLabel>비공개 계정 설정</FormLabel>
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                      </FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-                <div className="relative pt-2 mb-2">
-                  <Avatar className="size-40 rounded-full mb-4 md:mb-0">
-                    <AvatarImage src={user.profileImageUrl} alt="profile" />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                  </Avatar>
-                  <FormField
-                    control={form.control}
-                    name="profileImageUrl"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div
-                          className={`${
-                            isEditing ? 'block' : 'hidden'
-                          } absolute bottom-3 right-0 rounded-full size-8 cursor-pointer bg-foreground shadow-lg flex justify-center items-center`}
-                        >
+              <section className="w-full flex flex-col sm:flex-row justify-center items-center gap-7">
+                <div className="relative">
+                  <ProfileImage url={profileImage} size="40" />
+                  <div className="absolute bottom-2 right-2 rounded-full size-9 cursor-pointer bg-foreground shadow-lg flex justify-center items-center">
+                    <FormField
+                      control={form.control}
+                      name="profileImageUrl"
+                      render={({ field }) => (
+                        <FormItem>
                           <FormLabel>
-                            <PencilIcon size={18} className="text-background" />
+                            <PencilIcon size={20} className="text-background cursor-pointer" />
                           </FormLabel>
                           <FormControl>
-                            <Input type="file" accept="image/*" onChange={field.onChange} />
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={e => {
+                                if (e.target.files) {
+                                  handleAvatarChange(e);
+                                  field.onChange(e);
+                                }
+                              }}
+                              className="hidden"
+                            />
                           </FormControl>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2 items-start w-full">
+                <div className="flex flex-col gap-3 items-start w-full">
                   <FormField
                     control={form.control}
                     name="username"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>닉네임</FormLabel>
+                      <FormItem className="w-full">
+                        <FormLabel className="pl-2">닉네임</FormLabel>
                         <FormControl>
                           <Input
+                            {...field}
                             type="text"
-                            className={`text-xl p-2 w-full h-10 text-center border border-muted-foreground rounded-md font-bold placeholder:font-normal`}
+                            className="text-lg p-2 outline-none border border-muted-foreground rounded-md font-bold placeholder:font-normal disabled:border-none disabled:opacity-100"
                             placeholder="username"
-                            onChange={field.onChange}
+                            disabled={!isEditing}
                           />
                         </FormControl>
                         <FormMessage />
@@ -180,14 +238,14 @@ export default function MyProfile() {
                     control={form.control}
                     name="bio"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>자기소개</FormLabel>
+                      <FormItem className="w-full">
+                        <FormLabel className="pl-2">자기소개</FormLabel>
                         <FormControl>
                           <Input
-                            type="text"
-                            className={`text-xl p-2 w-full h-10 text-center border border-muted-foreground rounded-md font-bold placeholder:font-normal`}
-                            placeholder="bio"
-                            onChange={field.onChange}
+                            {...field}
+                            className="p-2 border border-muted-foreground rounded-md placeholder:font-normal disabled:border-none disabled:opacity-100 resize-none"
+                            placeholder="자기소개를 입력해 주세요."
+                            disabled={!isEditing}
                           />
                         </FormControl>
                         <FormMessage />
@@ -195,38 +253,29 @@ export default function MyProfile() {
                     )}
                   />
                 </div>
-              </CardHeader>
-              {/* <FormField
-              control={form.control}
-              name="interests"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>관심사</FormLabel>
-                  <FormControl>
-                    <Input
-                      type={type}
-                      {...register(field as keyof ExtraUserInfo)}
-                      className="w-full p-3 border border-muted-foreground rounded-md text-sm disabled:opacity-100 disabled:border-background disabled:shadow-none"
-                      disabled={!isEditing}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />  */}
-
+              </section>
               <FormField
                 control={form.control}
-                name="location"
+                name="nationality"
                 render={({ field }) => (
-                  <FormItem>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormItem className="w-full">
+                    <FormLabel className="pl-3">지역</FormLabel>
+                    <Select
+                      {...field}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={!isEditing}
+                    >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger
+                          className={`${isEditing && 'disabled:border-none disabled:opacity-100'}`}
+                        >
                           <SelectValue placeholder="지역을 선택하세요." />
+                          {isEditing && <CaretSortIcon className="h-4 w-4 opacity-50" />}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {locationOptions.map(option => (
+                        {nationalityOptions.map(option => (
                           <SelectItem value={option} key={option}>
                             {option}
                           </SelectItem>
@@ -236,8 +285,48 @@ export default function MyProfile() {
                   </FormItem>
                 )}
               />
-              <Button className="font-semibold py-3 px-8 rounded-md transition">취소하기</Button>
-              <Button className="font-semibold py-3 px-8 rounded-md transition">수정하기</Button>
+              <section className="w-full px-2">
+                <Label>관심사</Label>
+                <section className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
+                  {isEditing &&
+                    tagOptions.map(tag => (
+                      <Button type="button" key={tag} onClick={handleSelectTags}>
+                        {tag}
+                      </Button>
+                    ))}
+                  {!isEditing &&
+                    tags.map(tag => (
+                      <Button type="button" key={tag} onClick={handleSelectTags}>
+                        {tag}
+                      </Button>
+                    ))}
+                </section>
+              </section>
+
+              {isEditing && (
+                <div className="flex gap-3">
+                  <Button
+                    type="reset"
+                    onClick={handleReset}
+                    className="font-semibold py-3 px-8 rounded-md transition"
+                  >
+                    취소하기
+                  </Button>
+                  <Button
+                    type="submit"
+                    onClick={form.handleSubmit(onSubmit)}
+                    className="font-semibold py-3 px-8 rounded-md transition"
+                  >
+                    저장하기
+                  </Button>
+                </div>
+              )}
+
+              {!isEditing && (
+                <Button type="button" onClick={() => setIsEditing(true)}>
+                  수정하기
+                </Button>
+              )}
             </Card>
             <Toaster />
           </form>

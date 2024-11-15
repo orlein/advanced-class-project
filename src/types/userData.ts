@@ -3,6 +3,7 @@ import {
   emailSchema,
   passwordSchema,
   profileSchema,
+  profileUpdateRequestSchema,
   resetPasswordSchema,
   signInFormSchema,
   signInRequestSchema,
@@ -18,6 +19,7 @@ export type SignInRequestData = z.infer<typeof signInRequestSchema>;
 export type SignInFormData = z.infer<typeof signInFormSchema>;
 export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
 export type ProfileData = z.infer<typeof profileSchema>;
+export type ProfileUpdateRequestData = z.infer<typeof profileUpdateRequestSchema>;
 export type SignInResponseData = {
   account: z.infer<typeof signInResponseSchema>;
   accessToken: string;

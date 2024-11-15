@@ -13,11 +13,13 @@ import { Toaster } from '@/components/ui/toaster';
 import { useSignUpMutation } from '@/api/accountApi';
 import { SignUpRequestData } from '@/types/userData';
 import { signUpRequestSchema } from '@/lib/schemas/userInfoSchema';
+import UsernameFormField from '@/components/molecule/field/UsernameFormField';
 
 export default function SignUp() {
   const form = useForm<SignUpRequestData>({
     resolver: zodResolver(signUpRequestSchema),
     defaultValues: {
+      username: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -70,17 +72,10 @@ export default function SignUp() {
           <CardContent className="grid gap-4">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <EmailFormField
-                  form={form}
-                  label={true}
-                  button={true}
-                  icon={false}
-                  placeholder={false}
-                />
-                <section className="flex gap-5">
-                  <PasswordFormField form={form} name="password" label="비밀번호" />
-                  <PasswordFormField form={form} name="confirmPassword" label="비밀번호 확인" />
-                </section>
+                <UsernameFormField form={form} />
+                <EmailFormField form={form} label={true} icon={false} placeholder={false} />
+                <PasswordFormField form={form} name="password" label="비밀번호" />
+                <PasswordFormField form={form} name="confirmPassword" label="비밀번호 확인" />
                 <Button type="submit" className="w-full">
                   가입하기
                 </Button>
