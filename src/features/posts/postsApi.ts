@@ -30,38 +30,36 @@ export interface NewPost {
   isLikeAllowed?: boolean;
 }
 
-export interface LikeStatus {
-  type: 'like' | 'dislike';
-}
-
 export const postsApi = createApi({
   reducerPath: 'postsApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://ozadv6.beavercoding.net/api',
-    prepareHeaders: headers => {
+    prepareHeaders: (headers) => {
       const token = sessionStorage.getItem('accessToken');
-      if (token) headers.set('Authorization', `Bearer ${token}`);
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
       return headers;
     },
   }),
   tagTypes: ['Posts'],
-  endpoints: builder => ({
+  endpoints: (builder) => ({
     getPosts: builder.query<{ data: Post[]; meta: never }, { page?: number; limit?: number }>({
       query: ({ page = 1, limit = 10 }) => `posts?page=${page}&limit=${limit}`,
-      providesTags: result =>
+      providesTags: (result) =>
         result
           ? [
-              ...result.data.map(({ id }) => ({ type: 'Posts' as const, id })),
-              { type: 'Posts', id: 'LIST' },
-            ]
+            ...result.data.map(({ id }) => ({ type: 'Posts' as const, id })),
+            { type: 'Posts', id: 'LIST' },
+          ]
           : [{ type: 'Posts', id: 'LIST' }],
     }),
     getPostById: builder.query<Post, string>({
-      query: id => `posts/${id}`,
+      query: (id) => `posts/${id}`,
       providesTags: (_result, _error, id) => [{ type: 'Posts', id }],
     }),
     createPost: builder.mutation<Post, NewPost>({
-      query: body => ({
+      query: (body) => ({
         url: 'posts',
         method: 'POST',
         body,
@@ -77,7 +75,7 @@ export const postsApi = createApi({
       invalidatesTags: (_result, _error, { id }) => [{ type: 'Posts', id }],
     }),
     deletePost: builder.mutation<void, string>({
-      query: id => ({
+      query: (id) => ({
         url: `posts/${id}`,
         method: 'DELETE',
       }),
@@ -88,32 +86,21 @@ export const postsApi = createApi({
         url: `posts/${id}/like`,
         method: 'POST',
       }),
-      invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
+      // invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
     }),
     unlikePost: builder.mutation<void, string>({
       query: (id) => ({
         url: `posts/${id}/like`,
         method: 'DELETE',
       }),
-      invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
+      // invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
     }),
-    dislikePost: builder.mutation<void, string>({
-      query: (id) => ({
-        url: `posts/${id}/dislike`,
-        method: 'POST',
-      }),
-      invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
-    }),
-    undislikePost: builder.mutation<void, string>({
-      query: (id) => ({
-        url: `posts/${id}/dislike`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
-    }),
-    getLikeStatus: builder.query<LikeStatus, string>({
+    getLikeStatus: builder.query<'like' | null, string>({
       query: (id) => `posts/${id}/like-status`,
       providesTags: (_result, _error, id) => [{ type: 'Posts', id }],
+      transformResponse: (response: { type: 'like' | 'dislike' | null }) => {
+        return response.type === 'like' ? 'like' : null;
+      }
     }),
   }),
 });
@@ -126,7 +113,5 @@ export const {
   useDeletePostMutation,
   useLikePostMutation,
   useUnlikePostMutation,
-  useDislikePostMutation,
-  useUndislikePostMutation,
   useGetLikeStatusQuery,
 } = postsApi;

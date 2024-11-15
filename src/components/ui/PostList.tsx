@@ -1,30 +1,33 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
-import { CaretSortIcon, ChevronDownIcon } from '@radix-ui/react-icons';
+import { useMemo, useState } from "react";
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  FilterFn,
-} from '@tanstack/react-table';
+    CaretSortIcon,
+    ChevronDownIcon,
+} from "@radix-ui/react-icons";
+import {
+    ColumnDef,
+    ColumnFiltersState,
+    SortingState,
+    VisibilityState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    useReactTable,
+    FilterFn,
+} from "@tanstack/react-table";
 
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -54,10 +57,8 @@ export default function PostList() {
   const [rowSelection, setRowSelection] = useState({});
   const [globalFilter, setGlobalFilter] = useState('');
 
-  // API에서 데이터 가져오기
-  const { data, isLoading, error } = useGetPostsQuery({ page: 1, limit: 100 });
+  const { data, isLoading, error } = useGetPostsQuery({ page: 1, limit: 20 });
 
-  // 데이터 메모이제이션
   const tableData: PostData[] = useMemo(
     () =>
       data?.data.map((post, index) => ({
@@ -71,13 +72,17 @@ export default function PostList() {
     [data],
   );
 
-  // 필터 함수 정의
   const textFilter: FilterFn<PostData> = (row, columnId, filterValue) => {
-    const rowValue = row.getValue<string>(columnId);
-    return rowValue?.toLowerCase().includes(filterValue.toLowerCase());
+    const rowValue = row.getValue<unknown>(columnId);
+    if (typeof rowValue === 'string') {
+      return rowValue.toLowerCase().includes(filterValue.toLowerCase());
+    }
+    if (typeof rowValue === 'number') {
+      return rowValue.toString().includes(filterValue);
+    }
+    return false;
   };
 
-  // 컬럼 메모이제이션
   const columns = useMemo<ColumnDef<PostData>[]>(
     () => [
       {
@@ -88,14 +93,14 @@ export default function PostList() {
               table.getIsAllPageRowsSelected() ||
               (table.getIsSomePageRowsSelected() && 'indeterminate')
             }
-            onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
             aria-label="Select all"
           />
         ),
         cell: ({ row }) => (
           <Checkbox
             checked={row.getIsSelected()}
-            onCheckedChange={value => row.toggleSelected(!!value)}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
             aria-label="Select row"
           />
         ),
@@ -122,21 +127,27 @@ export default function PostList() {
         },
         cell: ({ row }) => <div>{row.getValue('title')}</div>,
         filterFn: textFilter,
+        enableGlobalFilter: true,
       },
       {
         accessorKey: 'accountId',
         header: '작성자',
         cell: ({ row }) => <div>{row.getValue('accountId')}</div>,
+        enableGlobalFilter: false,
       },
       {
         accessorKey: 'viewCount',
         header: () => <div className="text-right">조회수</div>,
-        cell: ({ row }) => <div className="text-right">{row.getValue('viewCount')}</div>,
+        cell: ({ row }) => (
+          <div className="text-right">{row.getValue('viewCount')}</div>
+        ),
       },
       {
         accessorKey: 'createdAt',
         header: '작성일',
-        cell: ({ row }) => <div>{new Date(row.getValue('createdAt')).toLocaleDateString()}</div>,
+        cell: ({ row }) => (
+          <div>{new Date(row.getValue('createdAt')).toLocaleDateString()}</div>
+        ),
       },
     ],
     [],
