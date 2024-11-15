@@ -20,11 +20,11 @@ import { useState } from 'react';
 import { useWideScreen } from '@/hooks/use-wideScreen';
 import UserMenuDropdown from './UserMenuDropdown';
 import { DropdownMenu, DropdownMenuTrigger } from '../ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/RTK/store';
 import ThemeMenu from './ThemeMenu';
 import { MENU_ITEMS } from '@/constants/sidebarMenuItems';
+import ProfileImage from '../molecule/ProfileImage';
 
 export function LeftSideBar() {
   const navigate = useNavigate();
@@ -135,7 +135,7 @@ export function LeftSideBar() {
               </SidebarMenuItem>
             </>
           )}
-          {isSignedIn && (
+          {isSignedIn && user && (
             <SidebarMenuItem>
               <DropdownMenu onOpenChange={setDropdownOpen} open={dropdownOpen}>
                 <SidebarMenuButton
@@ -143,10 +143,7 @@ export function LeftSideBar() {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                   onClick={() => handleIconClick()}
                 >
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user?.profileImageUrl} alt="profile" />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                  </Avatar>
+                  <ProfileImage url={user.profileImageUrl} size="small" />
                   <DropdownMenuTrigger asChild>
                     <div className="flex items-center justify-between w-full">
                       <div className="grid flex-1 text-left text-sm leading-tight">

@@ -1,5 +1,5 @@
 import {
-  ProfileData,
+  ProfileUpdateRequestData,
   SignInRequestData,
   SignInResponseData,
   SignUpRequestData,
@@ -18,7 +18,7 @@ export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://ozadv6.beavercoding.net/api',
-    prepareHeaders: (headers) => {
+    prepareHeaders: headers => {
       const token = sessionStorage.getItem('accessToken');
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
@@ -26,7 +26,7 @@ export const authApi = createApi({
       return headers;
     },
   }),
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     getCurrentUser: builder.query<User, void>({
       query: () => 'accounts/me',
     }),
@@ -69,8 +69,10 @@ const accountApi = createApi({
       onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
         try {
           const { data } = await queryFulfilled;
-          data && dispatch(setLoggedIn(data));
-          dispatch(accountApi.endpoints.getUserInfo.initiate());
+          if (data) {
+            dispatch(setLoggedIn(data));
+            dispatch(accountApi.endpoints.getUserInfo.initiate());
+          }
         } catch (err: any) {
           throw new Error(`\n🚨 signIn Error! \nError Status: ${err.error.status}`);
         }
@@ -84,13 +86,13 @@ const accountApi = createApi({
       onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
         try {
           const { data } = await queryFulfilled;
-          data && dispatch(setUser(data));
+          data && dispatch(setUser({ ...data }));
         } catch (err: any) {
           throw new Error(`\n🚨 getUserInfo Error! \nError Status: ${err.error.status}`);
         }
       },
     }),
-    updateUserInfo: builder.mutation<UserInfoData, ProfileData>({
+    updateUserInfo: builder.mutation<UserInfoData, ProfileUpdateRequestData>({
       query: userData => ({
         url: `/accounts/${userData.id}`,
         method: 'PATCH',
@@ -99,7 +101,7 @@ const accountApi = createApi({
       onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
         try {
           const { data } = await queryFulfilled;
-          data && dispatch(setUser(data));
+          data && dispatch(setUser({ ...data }));
         } catch (err: any) {
           throw new Error(`\n🚨 updateUserInfo Error! \nError Status: ${err.error.status}`);
         }
@@ -116,4 +118,3 @@ export const {
 } = accountApi;
 export default accountApi;
 export const { useGetCurrentUserQuery } = authApi;
-

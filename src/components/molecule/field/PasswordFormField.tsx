@@ -31,7 +31,7 @@ export default function PasswordFormField<T extends FieldValues>({
         control={form.control}
         name={name}
         render={({ field }) => (
-          <FormItem className={`${label && 'h-20'} w-full`}>
+          <FormItem className={`${label && 'h-[72px]'} w-full`}>
             {label && <FormLabel>{label}</FormLabel>}
             <div className="relative">
               <FormControl>
@@ -58,7 +58,7 @@ export default function PasswordFormField<T extends FieldValues>({
             <FormMessage />
           </FormItem>
         )}
-      />{' '}
+      />
     </>
   );
 }

@@ -4,13 +4,15 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface AuthState {
   isSignedIn: boolean;
   user: UserInfoData | null;
+  userId: string | null;
   error: string | null;
   token: string | null;
 }
 
 const initialState: AuthState = {
   isSignedIn: sessionStorage.getItem('accessToken') ? true : false,
-  user: sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')!) : null,
+  user: JSON.parse(sessionStorage.getItem('user')!),
+  userId: sessionStorage.getItem('userId') ?? null,
   error: null,
   token: sessionStorage.getItem('accessToken') || null,
 };
@@ -23,6 +25,7 @@ const authSlice = createSlice({
       state.isSignedIn = true;
       state.token = action.payload.accessToken;
       sessionStorage.setItem('accessToken', action.payload.accessToken);
+      sessionStorage.setItem('userId', action.payload.account.id);
     },
     setUser: (state, action: PayloadAction<UserInfoData>) => {
       state.user = {
