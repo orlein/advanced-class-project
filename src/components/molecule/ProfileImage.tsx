@@ -6,11 +6,13 @@ const ProfileImage = ({
   variant,
 }: {
   url: string | undefined;
-  variant: 'sidebar' | 'post' | 'profile';
+  variant: 'sidebar' | 'list' | 'post' | 'profile';
 }) => {
   const STYLE =
     variant === 'sidebar'
       ? 'size-8 rounded-lg'
+      : variant === 'list'
+      ? 'size-9 rounded-full'
       : variant === 'post'
       ? 'size-10 rounded-full'
       : 'size-48 rounded-full';

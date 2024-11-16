@@ -25,6 +25,7 @@ import { RootState } from '@/RTK/store';
 import ThemeMenu from './ThemeMenu';
 import { MENU_ITEMS } from '@/constants/sidebarMenuItems';
 import ProfileImage from '../molecule/ProfileImage';
+import { ScrollArea } from '../ui/scroll-area';
 
 export function LeftSideBar() {
   const navigate = useNavigate();
@@ -59,59 +60,61 @@ export function LeftSideBar() {
         </SidebarMenuItem>
       </SidebarHeader>
       <SidebarContent className="bg-background">
-        {MENU_ITEMS.map((item, index) => (
-          <SidebarMenuItem key={item.title}>
-            {item.collapsible && (
-              <Collapsible
-                defaultOpen={false}
-                open={openIndices[index] || false}
-                onOpenChange={() => handleIconClick(index)}
-                className="group/collapsible"
-              >
+        <ScrollArea>
+          {MENU_ITEMS.map((item, index) => (
+            <SidebarMenuItem key={item.title}>
+              {item.collapsible && (
+                <Collapsible
+                  defaultOpen={false}
+                  open={openIndices[index] || false}
+                  onOpenChange={() => handleIconClick(index)}
+                  className="group/collapsible"
+                >
+                  <SidebarGroup>
+                    <CollapsibleTrigger>
+                      <SidebarMenuButton asChild>
+                        <div className="hover:bg-accent hover:text-accent-foreground">
+                          <item.icon />
+                          <span>{item.title}</span>
+                          <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                        </div>
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {item.collapsible.map((subItem, subIndex) => (
+                          <SidebarMenuSubItem key={subIndex}>
+                            <SidebarMenuSubButton asChild>
+                              <div
+                                className="block rounded-md px-2 py-1 text-sm hover:bg-accent hover:text-accent-foreground"
+                                onClick={() => handleMenuClick(subItem.url)}
+                              >
+                                {subItem.title}
+                              </div>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarGroup>
+                </Collapsible>
+              )}
+              {!item.collapsible && (
                 <SidebarGroup>
-                  <CollapsibleTrigger>
-                    <SidebarMenuButton asChild>
-                      <div className="hover:bg-accent hover:text-accent-foreground">
-                        <item.icon />
-                        <span>{item.title}</span>
-                        <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                      </div>
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {item.collapsible.map((subItem, subIndex) => (
-                        <SidebarMenuSubItem key={subIndex}>
-                          <SidebarMenuSubButton asChild>
-                            <div
-                              className="block rounded-md px-2 py-1 text-sm hover:bg-accent hover:text-accent-foreground"
-                              onClick={() => handleMenuClick(subItem.url)}
-                            >
-                              {subItem.title}
-                            </div>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
+                  <SidebarMenuButton asChild>
+                    <div
+                      onClick={() => handleMenuClick(item.url!)}
+                      className="hover:bg-accent hover:text-accent-foreground"
+                    >
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </div>
+                  </SidebarMenuButton>
                 </SidebarGroup>
-              </Collapsible>
-            )}
-            {!item.collapsible && (
-              <SidebarGroup>
-                <SidebarMenuButton asChild>
-                  <div
-                    onClick={() => handleMenuClick(item.url!)}
-                    className="hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </div>
-                </SidebarMenuButton>
-              </SidebarGroup>
-            )}
-          </SidebarMenuItem>
-        ))}
+              )}
+            </SidebarMenuItem>
+          ))}
+        </ScrollArea>
       </SidebarContent>
       <SidebarFooter className="bg-background">
         <SidebarMenu>
