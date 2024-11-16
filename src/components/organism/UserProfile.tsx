@@ -1,16 +1,6 @@
-import * as React from 'react';
 import { Card } from '@/components/ui/card.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { useState } from 'react';
-import { Input } from '@/components/ui/input.tsx';
-import { useSelector } from 'react-redux';
-import { Switch } from '@/components/ui/switch';
-import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
-import { useGetUserInfoQuery, useUpdateUserInfoMutation } from '@/api/accountApi';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { RootState } from '@/RTK/store';
-import { ProfileData } from '@/types/userData';
 import ProfileImage from '@/components/molecule/ProfileImage';
 
 const USER = {
@@ -22,8 +12,6 @@ const USER = {
 };
 
 const UserProfile = () => {
-  const { toast } = useToast();
-
   if (!USER) return <></>;
   return (
     <>
