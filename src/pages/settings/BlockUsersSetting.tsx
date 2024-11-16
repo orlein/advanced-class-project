@@ -18,21 +18,23 @@ import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import UserProfile from '@/components/organism/UserProfile';
 
-type BlockedUser = { username: string; profileImageUrl: string; email: string };
+type BlockedUser = { username: string; bio: string; profileImageUrl: string; email: string };
 type BlockedList = BlockedUser[];
 
 const BLOCKED_USERS_DUMMY_DATA: BlockedList = [
-  { username: '차단유저1', profileImageUrl: '', email: 'email_1@email.com' },
-  { username: '차단유저2', profileImageUrl: '', email: 'email_2@email.com' },
-  { username: '차단유저3', profileImageUrl: '', email: 'email_3@email.com' },
-  { username: '차단유저4', profileImageUrl: '', email: 'email_4@email.com' },
-  { username: '차단유저5', profileImageUrl: '', email: 'email_5@email.com' },
-  { username: '차단유저6', profileImageUrl: '', email: 'email_6@email.com' },
+  { username: '차단유저1', bio: '자기소개', profileImageUrl: '', email: 'email_1@email.com' },
+  { username: '차단유저2', bio: '자기소개', profileImageUrl: '', email: 'email_2@email.com' },
+  { username: '차단유저3', bio: '자기소개', profileImageUrl: '', email: 'email_3@email.com' },
+  { username: '차단유저4', bio: '자기소개', profileImageUrl: '', email: 'email_4@email.com' },
+  { username: '차단유저5', bio: '자기소개', profileImageUrl: '', email: 'email_5@email.com' },
+  { username: '차단유저6', bio: '자기소개', profileImageUrl: '', email: 'email_6@email.com' },
 ];
+
 export default function BlockUsersSetting() {
   const { toast } = useToast();
   const [blockedList, setBlockedList] = useState<BlockedList | []>(BLOCKED_USERS_DUMMY_DATA);
   const handleUnblock = (blockedUser: string) => {
+    // 차단 유저 업데이트 api 요청 구현 필요
     setBlockedList(prev => prev.filter(user => user.username !== blockedUser));
     toast({
       description: `${blockedUser}님을 차단 해제하였습니다.`,
@@ -81,7 +83,6 @@ export default function BlockUsersSetting() {
             </div>
           ))}
       </Card>
-
       <UserProfile />
       <Toaster />
     </section>

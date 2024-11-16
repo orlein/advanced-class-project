@@ -163,7 +163,7 @@ export default function MyProfile() {
 
               <section className="w-full flex flex-col sm:flex-row justify-center items-center gap-5">
                 <div className="relative">
-                  <ProfileImage url={profileImage} variant="profile" />
+                  <ProfileImage url={profileImage} variant="myProfile" />
                   {isEditing && (
                     <div className="absolute bottom-2 right-2 rounded-full size-9 cursor-pointer bg-foreground shadow-lg flex justify-center items-center">
                       <FormField

@@ -2,6 +2,7 @@ import { Card } from '@/components/ui/card.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Toaster } from '@/components/ui/toaster';
 import ProfileImage from '@/components/molecule/ProfileImage';
+import { Badge } from '../ui/badge';
 
 const USER = {
   username: '포로리',
@@ -15,10 +16,10 @@ const UserProfile = () => {
   if (!USER) return <></>;
   return (
     <>
-      <div className="h-full flex items-center justify-center">
+      <div className="w-80 flex items-center justify-center">
         <Card className="w-full max-w-xl mx-auto shadow-lg flex flex-col items-center gap-5 relative p-6">
           <section className="w-full flex flex-col justify-center items-center gap-5">
-            <ProfileImage url={USER.profileImageUrl} variant="profile" />
+            <ProfileImage url={USER.profileImageUrl} variant="userProfile" />
             <div className="flex flex-col items-center gap-2">
               <p className="text-xl font-bold">{USER.username}</p>
               <p className="text-sm">{USER.bio}</p>
@@ -34,7 +35,7 @@ const UserProfile = () => {
                 <p className="font-bold">관심사</p>
                 <div className="grid grid-cols-2 gap-2">
                   {USER.tags.map(tag => (
-                    <Button variant="outline">{tag}</Button>
+                    <Badge>{tag}</Badge>
                   ))}
                 </div>
               </div>

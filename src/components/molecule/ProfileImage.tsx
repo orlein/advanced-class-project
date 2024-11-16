@@ -6,7 +6,7 @@ const ProfileImage = ({
   variant,
 }: {
   url: string | undefined;
-  variant: 'sidebar' | 'list' | 'post' | 'profile';
+  variant: 'sidebar' | 'list' | 'post' | 'myProfile' | 'userProfile';
 }) => {
   const STYLE =
     variant === 'sidebar'
@@ -15,7 +15,9 @@ const ProfileImage = ({
       ? 'size-9 rounded-full'
       : variant === 'post'
       ? 'size-10 rounded-full'
-      : 'size-48 rounded-full';
+      : variant === 'myProfile'
+      ? 'size-48 rounded-full'
+      : 'size-40 rounded-full';
   return (
     <Avatar className={STYLE}>
       <AvatarImage src={url} alt="profile" className="object-cover" />
