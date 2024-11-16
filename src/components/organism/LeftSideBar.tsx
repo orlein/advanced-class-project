@@ -143,7 +143,7 @@ export function LeftSideBar() {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                   onClick={() => handleIconClick()}
                 >
-                  <ProfileImage url={user.profileImageUrl} size="small" />
+                  <ProfileImage url={user.profileImageUrl} variant="sidebar" />
                   <DropdownMenuTrigger asChild>
                     <div className="flex items-center justify-between w-full">
                       <div className="grid flex-1 text-left text-sm leading-tight">
