@@ -60,7 +60,7 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
     >
       <DropdownMenuLabel className="p-0 font-normal">
         <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm h-14">
-          <ProfileImage url={user.profileImageUrl} size="small" />
+          <ProfileImage url={user.profileImageUrl} variant="sidebar" />
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">{user.username}</span>
             <span className="truncate text-xs">{user.email}</span>
