@@ -15,8 +15,7 @@ import { Card, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
-import { useEffect, useState } from 'react';
-import { clsx } from 'clsx';
+import { useState } from 'react';
 import UserProfile from '@/components/organism/UserProfile';
 
 type BlockedUser = { username: string; profileImageUrl: string; email: string };
