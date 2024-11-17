@@ -3,6 +3,7 @@ import { emailSchema, signInFormSchema } from '@/lib/schemas/userInfoSchema';
 import { CurrentTab } from '@/types/signInTab';
 import { SignInFormData, SignInRequestData } from '@/types/userData';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
@@ -10,6 +11,7 @@ import { z } from 'zod';
 const useSignInForm = (currentTab: CurrentTab) => {
   const navigate = useNavigate();
   const [signIn] = useSignInMutation();
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
   const schema = currentTab === 'Sign in' ? signInFormSchema : emailSchema;
   const defaultValues =
     currentTab === 'Sign in'
@@ -32,13 +34,17 @@ const useSignInForm = (currentTab: CurrentTab) => {
         ? localStorage.setItem('savedEmail', email)
         : localStorage.removeItem('savedEmail');
       const signInRequest: SignInRequestData = { email, password };
-      signIn(signInRequest);
-      navigate('/');
+      signIn(signInRequest).then(res => {
+        const error = res.error;
+        if (error) {
+          setIsAlertOpen(true);
+        } else if (!error) navigate('/');
+      });
     } else {
       // 이메일 찾기 및 비밀번호 찾기 로직 구현 필요
     }
   };
-  return { form, onSubmit, currentTab };
+  return { form, onSubmit, currentTab, isAlertOpen, setIsAlertOpen };
 };
 
 export default useSignInForm;
