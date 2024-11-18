@@ -5,8 +5,6 @@ export const baseQuery = fetchBaseQuery({
   prepareHeaders: headers => {
     const token = sessionStorage.getItem('accessToken');
     if (token) headers.set('Authorization', `Bearer ${token}`);
-    headers.set('accept', 'application/json');
-    headers.set('Content-Type', 'application/json');
     return headers;
   },
 });
