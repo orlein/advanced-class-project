@@ -13,12 +13,15 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { ThumbsUp } from 'lucide-react';
 import { useGetCurrentUserQuery } from '@/api/accountApi';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
+import ReactMarkdown from 'react-markdown';
 
 export default function PostDetail() {
   const navigate = useNavigate();
   const { post_id } = useParams<{ post_id: string }>();
 
-  const { data: post, isLoading, error } = useGetPostByIdQuery(post_id!);
+  const { data: post, isLoading, error, refetch: refetchPost } = useGetPostByIdQuery(post_id!);
   const [deletePost] = useDeletePostMutation();
 
   const [likePost] = useLikePostMutation();
@@ -31,7 +34,6 @@ export default function PostDetail() {
   });
 
   const [currentLikeStatus, setCurrentLikeStatus] = useState<'like' | null>(null);
-  const [likeCount, setLikeCount] = useState<number>(post?.likeCount || 0);
 
   useEffect(() => {
     if (likeStatus !== undefined) {
@@ -46,24 +48,6 @@ export default function PostDetail() {
 
   const handleEdit = () => {
     navigate(`/posts/${post_id}/edit`);
-  };
-
-  useEffect(() => {
-    if (post) {
-      setLikeCount(post.likeCount || 0);
-    }
-  }, [post]);
-
-  const handleDelete = async () => {
-    if (window.confirm('정말로 삭제하시겠습니까?')) {
-      try {
-        await deletePost(post_id!).unwrap();
-        console.log('Post deleted');
-        navigate('/posts');
-      } catch (error) {
-        console.error('Failed to delete post:', error);
-      }
-    }
   };
 
   const handleLike = async () => {
@@ -81,14 +65,26 @@ export default function PostDetail() {
       if (currentLikeStatus === 'like') {
         await unlikePost(post_id!).unwrap();
         setCurrentLikeStatus(null);
-        setLikeCount((prev) => prev - 1);
       } else {
         await likePost(post_id!).unwrap();
         setCurrentLikeStatus('like');
-        setLikeCount((prev) => prev + 1);
       }
+      // 좋아요 상태 변경 후 게시물 데이터 갱신
+      refetchPost();
     } catch (error) {
       console.error('Failed to toggle like:', error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('정말로 삭제하시겠습니까?')) {
+      try {
+        await deletePost(post_id!).unwrap();
+        console.log('Post deleted');
+        navigate('/posts');
+      } catch (error) {
+        console.error('Failed to delete post:', error);
+      }
     }
   };
 
@@ -119,25 +115,35 @@ export default function PostDetail() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="prose lg:prose-xl mb-8 max-w-none">{post.content}</div>
+          <div className="prose lg:prose-xl mb-8 max-w-none">
+            <ReactMarkdown
+              children={post.content}
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeSanitize]}
+            />
+          </div>
           <div className="flex items-center gap-4 mt-4">
             <Button
               variant={currentLikeStatus === 'like' ? 'default' : 'outline'}
               onClick={handleLike}
             >
               <ThumbsUp className="mr-2 h-4 w-4" />
-              좋아요 {likeCount}
+              좋아요 {post.likeCount ?? 0}
             </Button>
           </div>
           <div className="flex justify-end gap-4 mt-8">
-            {currentUser?.id === post.accountId && (
+            {currentUser && (
               <>
-                <Button variant="default" onClick={handleEdit}>
-                  수정
-                </Button>
-                <Button variant="destructive" onClick={handleDelete}>
-                  삭제
-                </Button>
+                {currentUser.id === post.accountId && (
+                  <Button variant="default" onClick={handleEdit}>
+                    수정
+                  </Button>
+                )}
+                {(currentUser.id === post.accountId || currentUser.role === 'admin') && (
+                  <Button variant="destructive" onClick={handleDelete}>
+                    삭제
+                  </Button>
+                )}
               </>
             )}
             <Button variant="outline" onClick={() => navigate('/posts')}>
