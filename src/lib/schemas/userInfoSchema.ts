@@ -94,9 +94,3 @@ export const userInfoSchema = userSchema.omit({
   password: true,
   confirmPassword: true,
 });
-
-export const UserInfoOnSidebar = userSchema.pick({
-  email: true,
-  username: true,
-  profileImageUrl: true,
-});
