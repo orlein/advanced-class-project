@@ -11,6 +11,7 @@ const imageApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ['imageUpload'],
   endpoints: builder => ({
     uploadImage: builder.mutation<{ url: string }, FormData>({
       query: imageData => ({
@@ -18,6 +19,7 @@ const imageApi = createApi({
         method: 'POST',
         body: imageData,
       }),
+      invalidatesTags: ['imageUpload'],
       onQueryStarted: async (_, { queryFulfilled }) => {
         try {
           await queryFulfilled;
