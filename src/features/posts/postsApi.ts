@@ -17,6 +17,7 @@ export interface Post {
   updatedAt: string;
   likeCount?: number;
   dislikeCount?: number;
+  authorUsername?: string;
 }
 
 export interface NewPost {
@@ -30,6 +31,10 @@ export interface NewPost {
   isLikeAllowed?: boolean;
 }
 
+interface LikeStatusResponse {
+  type: 'like' | 'dislike' | null;
+}
+
 export const postsApi = createApi({
   reducerPath: 'postsApi',
   baseQuery: fetchBaseQuery({
@@ -39,6 +44,8 @@ export const postsApi = createApi({
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
+      headers.set('accept', 'application/json');
+      headers.set('Content-Type', 'application/json');
       return headers;
     },
   }),
@@ -82,25 +89,27 @@ export const postsApi = createApi({
       invalidatesTags: [{ type: 'Posts', id: 'LIST' }],
     }),
     likePost: builder.mutation<void, string>({
-      query: (id) => ({
-        url: `posts/${id}/like`,
+      query: (postId) => ({
+        url: `posts/${postId}/like`,
         method: 'POST',
       }),
-      // invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
+      invalidatesTags: (_result, _error, postId) => [{ type: 'Posts', id: postId }],
     }),
     unlikePost: builder.mutation<void, string>({
-      query: (id) => ({
-        url: `posts/${id}/like`,
+      query: (postId) => ({
+        url: `posts/${postId}/like`,
         method: 'DELETE',
       }),
-      // invalidatesTags: (_result, _error, id) => [{ type: 'Posts', id }],
+      invalidatesTags: (_result, _error, postId) => [{ type: 'Posts', id: postId }],
     }),
     getLikeStatus: builder.query<'like' | null, string>({
-      query: (id) => `posts/${id}/like-status`,
-      providesTags: (_result, _error, id) => [{ type: 'Posts', id }],
-      transformResponse: (response: { type: 'like' | 'dislike' | null }) => {
+      query: (postId) => ({
+        url: `posts/${postId}/like-status`,
+      }),
+      transformResponse: (response: LikeStatusResponse) => {
         return response.type === 'like' ? 'like' : null;
-      }
+      },
+      providesTags: (_result, _error, postId) => [{ type: 'Posts', id: postId }],
     }),
   }),
 });
