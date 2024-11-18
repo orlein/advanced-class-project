@@ -6,33 +6,31 @@ import {
   DropdownMenuItem,
 } from '../ui/dropdown-menu';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/RTK/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/RTK/store';
 import { useSidebar } from '../ui/sidebar';
 import { useWideScreen } from '@/hooks/use-wideScreen';
 import { DROPDOWN_MENU_ITEMS } from '@/constants/dropdownOptions';
 import ThemeMenu from './ThemeMenu';
 import authSlice from '@/RTK/slice';
-import { useGetUserInfoQuery } from '@/api/accountApi';
-import { useEffect, useState } from 'react';
-import { UserInfoOnSidebarData } from '@/types/userData';
+import accountApi, { useGetUserInfoQuery } from '@/api/accountApi';
 import ProfileImage from '../molecule/ProfileImage';
 
 interface SetDropdownOpen {
   setDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
+const UserMenuDropdown = ({ setDropdownOpen }: SetDropdownOpen) => {
   const navigate = useNavigate();
   const { setOpen, setOpenMobile } = useSidebar();
   const isWideScreen = useWideScreen();
   const dispatch = useDispatch<AppDispatch>();
-  const [user, setUser] = useState<UserInfoOnSidebarData>();
-  const { data, isLoading } = useGetUserInfoQuery();
-
+  const isSignedIn = useSelector((state: RootState) => state.auth.isSignedIn);
+  const { data: user, isLoading } = useGetUserInfoQuery(undefined, { skip: !isSignedIn });
   const handleClick = (title: string, url?: string) => {
     if (title === '로그아웃') {
       dispatch(authSlice.actions.clearUser());
+      dispatch(accountApi.util.resetApiState());
     }
     if (url) {
       navigate(url);
@@ -41,15 +39,7 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
     setOpen(isWideScreen);
     setOpenMobile(false);
   };
-
-  useEffect(() => {
-    if (!isLoading && data) {
-      const { email, username, profileImageUrl } = data;
-      setUser({ email, username, profileImageUrl });
-    }
-  }, [data, isLoading]);
-
-  if (!user) return <></>;
+  if (!user || isLoading) return <></>;
   return (
     <DropdownMenuContent
       className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-l relative bottom-2"
@@ -74,7 +64,7 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
             <DropdownMenuItem
               key={item.title}
               onClick={() => handleClick(item.title, item.url)}
-              className="hover:bg-accent hover:text-accent-foreground h-10"
+              className="hover:bg-accent hover:text-accent-foreground h-10 cursor-pointer"
             >
               <item.icon className="mr-2 h-4 w-4" />
               <span>{item.title}</span>
@@ -86,4 +76,6 @@ export default function UserMenuDropdown({ setDropdownOpen }: SetDropdownOpen) {
       </DropdownMenuGroup>
     </DropdownMenuContent>
   );
-}
+};
+
+export default UserMenuDropdown;

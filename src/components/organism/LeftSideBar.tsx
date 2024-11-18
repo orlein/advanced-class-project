@@ -16,7 +16,7 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
 import { ChevronDown, ChevronsUpDown, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useWideScreen } from '@/hooks/use-wideScreen';
 import UserMenuDropdown from './UserMenuDropdown';
 import { DropdownMenu, DropdownMenuTrigger } from '../ui/dropdown-menu';
@@ -26,12 +26,13 @@ import ThemeMenu from './ThemeMenu';
 import { MENU_ITEMS } from '@/constants/sidebarMenuItems';
 import ProfileImage from '../molecule/ProfileImage';
 import { ScrollArea } from '../ui/scroll-area';
+import { useGetUserInfoQuery } from '@/api/accountApi';
 
-export function LeftSideBar() {
+export const LeftSideBar = memo(() => {
   const navigate = useNavigate();
   const isWideScreen = useWideScreen();
   const isSignedIn = useSelector((state: RootState) => state.auth.isSignedIn);
-  const user = useSelector((state: RootState) => state.auth.user);
+  const { data: user, refetch } = useGetUserInfoQuery(undefined, { skip: !isSignedIn });
   const { open, setOpen, setOpenMobile, isMobile } = useSidebar();
   const [openIndices, setOpenIndices] = useState<boolean[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
@@ -52,6 +53,9 @@ export function LeftSideBar() {
     }
     if (!isWideScreen) setOpenIndices([]);
   };
+  useEffect(() => {
+    if (isSignedIn) refetch();
+  }, [isSignedIn]);
   return (
     <Sidebar collapsible="icon" className="z-50">
       <SidebarHeader className="h-16 justify-center bg-background">
@@ -150,8 +154,8 @@ export function LeftSideBar() {
                   <DropdownMenuTrigger asChild>
                     <div className="flex items-center justify-between w-full">
                       <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">{user?.username}</span>
-                        <span className="truncate text-xs">{user?.email}</span>
+                        <span className="truncate font-semibold">{user.username}</span>
+                        <span className="truncate text-xs">{user.email}</span>
                       </div>
                       <ChevronsUpDown className="ml-auto size-4" />
                     </div>
@@ -165,4 +169,4 @@ export function LeftSideBar() {
       </SidebarFooter>
     </Sidebar>
   );
-}
+});
