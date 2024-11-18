@@ -11,7 +11,6 @@ import { Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
-import { useSelector } from 'react-redux';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
@@ -26,7 +25,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { RootState } from '@/RTK/store';
 import { profileSchema } from '@/lib/schemas/userInfoSchema';
 import { ProfileData } from '@/types/userData';
 import { Textarea } from '@/components/ui/textarea';
@@ -101,7 +99,7 @@ export default function MyProfile() {
       formData.append('type', 'account');
       formData.append('id', id);
       formData.append('filename', filename);
-      formData.append('extension', extension);
+      formData.append('extension', extension.toLocaleLowerCase());
       formData.append('sizeInKb', sizeInKb);
       formData.append('width', '300');
       formData.append('height', '300');
