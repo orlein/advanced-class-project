@@ -11,7 +11,6 @@ import { Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input.tsx';
-import { useSelector } from 'react-redux';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
@@ -26,7 +25,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { RootState } from '@/RTK/store';
 import { profileSchema } from '@/lib/schemas/userInfoSchema';
 import { ProfileData } from '@/types/userData';
 import { Textarea } from '@/components/ui/textarea';
@@ -35,25 +33,27 @@ import { Label } from '@/components/ui/label';
 import ProfileImage from '@/components/molecule/ProfileImage';
 import { Toggle } from '@/components/ui/toggle';
 import { NATIONALITY_OPTIONS, TAG_OPTIONS } from '@/constants/myProfile';
+import { useUploadImageMutation } from '@/api/imageApi';
+import { v4 as uuid } from 'uuid';
 
 const DISABLED_STYLE =
   'disabled:border-none disabled:shadow-none disabled:cursor-default disabled:opacity-100';
 
 export default function MyProfile() {
   const { toast } = useToast();
-  const id = useSelector((state: RootState) => state.auth.userId);
-  const [user, setUser] = useState<ProfileData>();
+  const id = sessionStorage.getItem('userId');
   const [updateUserInfo] = useUpdateUserInfoMutation();
-  const { data, isLoading } = useGetUserInfoQuery();
+  const [uploadImage] = useUploadImageMutation();
+  const { data: user, isLoading, refetch } = useGetUserInfoQuery();
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [profileImage, setProfileImage] = useState<string>(data?.profileImageUrl ?? '');
+  const [profileImage, setProfileImage] = useState<string>(user?.profileImageUrl ?? '');
   const [tags, setTags] = useState<string[]>([]);
   const defaultValues = {
-    username: data?.username,
-    bio: data?.bio ?? '',
-    nationality: data?.nationality ?? '',
-    isPrivate: data?.isPrivate ?? false,
-    profileImageUrl: data?.profileImageUrl ?? '',
+    username: user?.username,
+    bio: user?.bio,
+    nationality: user?.nationality,
+    isPrivate: user?.isPrivate,
+    profileImageUrl: user?.profileImageUrl,
   };
   const form = useForm<ProfileData>({
     resolver: zodResolver(profileSchema),
@@ -68,7 +68,6 @@ export default function MyProfile() {
         id,
         ...data,
         profileImageUrl: profileImage,
-        nationality: data.nationality === 'null' ? null : data.nationality,
       }).then(res => {
         if (!res.error) {
           setIsEditing(false);
@@ -77,19 +76,35 @@ export default function MyProfile() {
             description: '프로필이 성공적으로 업데이트되었습니다.',
             duration: 3000,
           });
+          refetch();
         }
       });
     }
   };
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const profileImageInput = e.target.files?.[0];
-    if (profileImageInput) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(profileImageInput);
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && user && id) {
+      const profileImageInput = e.target.files[0];
+      const filename = uuid();
+      const [_, extension] = profileImageInput.name.split('.');
+      const sizeInKb = Math.round(profileImageInput.size / 1000).toString();
+
+      const formData = new FormData();
+      formData.delete('file');
+      formData.append(
+        'file',
+        profileImageInput,
+        `${filename}.${extension};type=${profileImageInput.type}`,
+      );
+      formData.append('type', 'account');
+      formData.append('id', id);
+      formData.append('filename', filename);
+      formData.append('extension', extension.toLocaleLowerCase());
+      formData.append('sizeInKb', sizeInKb);
+      formData.append('width', '300');
+      formData.append('height', '300');
+
+      uploadImage(formData).then(res => res.data && setProfileImage(res.data.url));
     }
   };
 
@@ -98,7 +113,7 @@ export default function MyProfile() {
       title: '계정 설정',
       description: `${
         isPrivate ? '비공개 계정으로 설정되었습니다.' : '공개 계정으로 설정되었습니다.'
-      } 저장하기를 눌러 주세요.`,
+      }\n저장하기를 눌러주세요.`,
       duration: 3000,
     });
   };
@@ -114,22 +129,18 @@ export default function MyProfile() {
 
   const handleReset = () => {
     form.reset(defaultValues);
-    setProfileImage(data?.profileImageUrl ?? '');
+    setProfileImage(user?.profileImageUrl ?? '');
     setIsEditing(false);
   };
 
   React.useEffect(() => {
-    if (!isLoading && data) {
-      const { username, bio, nationality, isPrivate, profileImageUrl } = data;
-      setUser({ username, bio, nationality, isPrivate, profileImageUrl });
+    if (!isLoading && user) {
+      form.reset(defaultValues);
+      setProfileImage(user.profileImageUrl ?? '');
     }
-  }, [data, isLoading]);
+  }, [user, isLoading, form]);
 
-  React.useEffect(() => {
-    if (user) form.reset(user);
-  }, [user, form]);
-
-  if (!data) return <></>;
+  if (!user) return <></>;
   return (
     <>
       <div className="h-full flex items-center justify-center">
@@ -147,7 +158,7 @@ export default function MyProfile() {
                         <FormControl>
                           <Switch
                             className="dark:data-[state=unchecked]:bg-muted-foreground disabled:cursor-default"
-                            checked={field.value || false}
+                            checked={field.value}
                             onCheckedChange={e => {
                               handlePrivateAccount(!field.value);
                               field.onChange(e);
@@ -163,7 +174,11 @@ export default function MyProfile() {
 
               <section className="w-full flex flex-col sm:flex-row justify-center items-center gap-5">
                 <div className="relative">
-                  <ProfileImage url={profileImage} variant="profile" />
+                  <ProfileImage
+                    url={profileImage}
+                    variant="myProfile"
+                    setProfileImage={setProfileImage}
+                  />
                   {isEditing && (
                     <div className="absolute bottom-2 right-2 rounded-full size-9 cursor-pointer bg-foreground shadow-lg flex justify-center items-center">
                       <FormField
@@ -243,7 +258,7 @@ export default function MyProfile() {
                     <FormLabel className="font-bold pl-3">지역</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value || ''}
+                      defaultValue={field.value ?? ''}
                       disabled={!isEditing}
                     >
                       <FormControl>
@@ -255,7 +270,6 @@ export default function MyProfile() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="null">지역을 선택하세요.</SelectItem>
                         {NATIONALITY_OPTIONS.map(option => (
                           <SelectItem value={option} key={option}>
                             {option}
@@ -271,7 +285,7 @@ export default function MyProfile() {
                 <section
                   className={`grid ${tags.length === 0 && !isEditing && 'grid-cols-1'} ${
                     (tags.length > 0 || isEditing) && 'grid-cols-2 md:grid-cols-3 gap-3'
-                  } mt-3`}
+                  } mt-4`}
                 >
                   {isEditing &&
                     TAG_OPTIONS.map(tag => (
@@ -298,7 +312,7 @@ export default function MyProfile() {
                       </Toggle>
                     ))}
                   {!isEditing && tags.length === 0 && (
-                    <p className="pl-2 text-sm">관심사를 선택하세요.</p>
+                    <p className="pl-1 text-sm">관심사를 선택하세요.</p>
                   )}
                 </section>
               </section>

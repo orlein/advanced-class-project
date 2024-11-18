@@ -7,6 +7,7 @@ import {
 } from '@/types/userData';
 import { setUser, setLoggedIn } from '@/RTK/slice';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { baseQuery } from './baseQuery';
 
 export interface User {
   id: string;
@@ -36,16 +37,8 @@ export const authApi = createApi({
 
 const accountApi = createApi({
   reducerPath: 'accountApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'https://ozadv6.beavercoding.net/api',
-    prepareHeaders: headers => {
-      const token = sessionStorage.getItem('accessToken');
-      if (token) headers.set('Authorization', `Bearer ${token}`);
-      headers.set('accept', 'application/json');
-      headers.set('Content-Type', 'application/json');
-      return headers;
-    },
-  }),
+  baseQuery: baseQuery,
+  tagTypes: ['user'],
   endpoints: builder => ({
     signUp: builder.mutation<void, SignUpRequestData>({
       query: userData => ({
@@ -72,7 +65,7 @@ const accountApi = createApi({
           const { data } = await queryFulfilled;
           if (data) {
             dispatch(setLoggedIn(data));
-            dispatch(accountApi.endpoints.getUserInfo.initiate());
+            dispatch(accountApi.endpoints.getUserInfo.initiate(undefined, { forceRefetch: true }));
           }
         } catch (err: any) {
           throw new Error(`\n🚨 signIn Error! \nError Status: ${err.error.status}`);
@@ -92,6 +85,7 @@ const accountApi = createApi({
           throw new Error(`\n🚨 getUserInfo Error! \nError Status: ${err.error.status}`);
         }
       },
+      providesTags: ['user'],
     }),
     updateUserInfo: builder.mutation<UserInfoData, ProfileUpdateRequestData>({
       query: userData => ({

@@ -7,9 +7,17 @@ import ResetPassword from '@/pages/account/ResetPassword';
 import CheckBoxFormField from '../molecule/field/CheckBoxFormField';
 import useSignInForm from '@/hooks/useSignInForm';
 import { CurrentTab } from '@/types/signInTab';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../ui/alert-dialog';
 
 export default function SignInFormField({ currentTab }: { currentTab: CurrentTab }) {
-  const { form, onSubmit } = useSignInForm(currentTab);
+  const { form, onSubmit, isAlertOpen, setIsAlertOpen } = useSignInForm(currentTab);
   return (
     <article className="flex flex-col items-center justify-center gap-7 h-full">
       <Form {...form}>
@@ -41,6 +49,17 @@ export default function SignInFormField({ currentTab }: { currentTab: CurrentTab
         </>
       )}
       {currentTab === 'Password' && <ResetPassword />}
+      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>로그인 실패!</AlertDialogTitle>
+            <AlertDialogDescription>이메일 또는 비밀번호를 확인해주세요.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button onClick={() => setIsAlertOpen(false)}>닫기</Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </article>
   );
 }
