@@ -4,17 +4,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface AuthState {
   isSignedIn: boolean;
   user: UserInfoData | null;
-  userId: string | null;
   error: string | null;
-  token: string | null;
 }
 
 const initialState: AuthState = {
-  isSignedIn: sessionStorage.getItem('accessToken') ? true : false,
-  user: JSON.parse(sessionStorage.getItem('user')!),
-  userId: sessionStorage.getItem('userId') ?? null,
+  isSignedIn: false,
+  user: null,
   error: null,
-  token: sessionStorage.getItem('accessToken') || null,
 };
 
 const authSlice = createSlice({
@@ -23,20 +19,15 @@ const authSlice = createSlice({
   reducers: {
     setLoggedIn: (state, action: PayloadAction<SignInResponseData>) => {
       state.isSignedIn = true;
-      state.token = action.payload.accessToken;
-      sessionStorage.setItem('accessToken', action.payload.accessToken);
       sessionStorage.setItem('userId', action.payload.account.id);
+      sessionStorage.setItem('accessToken', action.payload.accessToken);
     },
     setUser: (state, action: PayloadAction<UserInfoData>) => {
-      state.user = {
-        ...action.payload,
-      };
+      state.user = action.payload;
       state.isSignedIn = true;
-      sessionStorage.setItem('user', JSON.stringify(action.payload));
     },
     clearUser: state => {
-      sessionStorage.removeItem('accessToken');
-      sessionStorage.removeItem('user');
+      sessionStorage.clear();
       state.user = null;
       state.isSignedIn = false;
     },
