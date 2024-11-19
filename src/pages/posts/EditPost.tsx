@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetPostByIdQuery, useUpdatePostMutation } from '@/features/posts/postsApi';
+import { useGetPostByIdQuery, useUpdatePostMutation } from '@/api/postsApi';
 import PostForm from '@/components/ui/PostForm';
 
 export default function EditPost() {
