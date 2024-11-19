@@ -50,12 +50,12 @@ export const likeResponseSchema = postSchema.omit({
   pureLikeCount: true,
 });
 
-export const likeStatusRequestSchema = z.object({
+export const postLikeStatusRequestSchema = z.object({
   id: z.string(),
   postId: z.string(),
 });
 
-export const likeStatusResponseSchema = likeStatusRequestSchema.extend({
+export const postLikeStatusResponseSchema = postLikeStatusRequestSchema.extend({
   accountId: z.string(),
   commentId: z.string(),
   challengeId: z.string(),

@@ -4,8 +4,8 @@ import {
   postSchema,
   metaSchema,
   likeResponseSchema,
-  likeStatusResponseSchema,
-  likeStatusRequestSchema,
+  postLikeStatusResponseSchema,
+  postLikeStatusRequestSchema,
   deleteLikeResponseSchema,
 } from '../lib/schemas/postSchema';
 
@@ -13,6 +13,6 @@ export type PostsResponseData = z.infer<typeof postSchema>;
 export type MetaData = z.infer<typeof metaSchema>;
 export type PostRequestData = z.infer<typeof postRequestSchema>;
 export type LikeResponseData = z.infer<typeof likeResponseSchema>;
-export type LikeStatusRequestData = z.infer<typeof likeStatusRequestSchema>;
-export type LikeStatusResponseData = z.infer<typeof likeStatusResponseSchema>;
+export type PostLikeStatusRequestData = z.infer<typeof postLikeStatusRequestSchema>;
+export type PostLikeStatusResponseData = z.infer<typeof postLikeStatusResponseSchema>;
 export type DeleteLikeResponseData = z.infer<typeof deleteLikeResponseSchema>;
