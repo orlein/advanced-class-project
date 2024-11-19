@@ -6,34 +6,8 @@ import {
   UserInfoData,
 } from '@/types/userData';
 import { setUser, setLoggedIn } from '@/RTK/slice';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
-
-export interface User {
-  id: string;
-  username: string;
-  roles: string[];
-  role: string;
-}
-
-export const authApi = createApi({
-  reducerPath: 'authApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'https://ozadv6.beavercoding.net/api',
-    prepareHeaders: headers => {
-      const token = sessionStorage.getItem('accessToken');
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
-  endpoints: builder => ({
-    getCurrentUser: builder.query<User, void>({
-      query: () => 'accounts/me',
-    }),
-  }),
-});
 
 const accountApi = createApi({
   reducerPath: 'accountApi',
@@ -102,6 +76,19 @@ const accountApi = createApi({
         }
       },
     }),
+    getAnotherUserInfo: builder.query<UserInfoData, string>({
+      query: id => ({
+        url: `/accounts/${id}`,
+        method: 'GET',
+      }),
+      onQueryStarted: async (_, { queryFulfilled }) => {
+        try {
+          await queryFulfilled.then(console.log);
+        } catch (err: any) {
+          throw new Error(`\n🚨 getAnotherUserInfo Error! \nError Status: ${err.error.status}`);
+        }
+      },
+    }),
   }),
 });
 
@@ -110,6 +97,6 @@ export const {
   useSignInMutation,
   useGetUserInfoQuery,
   useUpdateUserInfoMutation,
+  useGetAnotherUserInfoQuery,
 } = accountApi;
 export default accountApi;
-export const { useGetCurrentUserQuery } = authApi;
