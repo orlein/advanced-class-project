@@ -28,7 +28,7 @@ export const userSchema = z.object({
   nationality: z.string().nullable().optional(),
   bio: z.string().max(50, { message: '최대 50자 이하여야 합니다.' }).optional(),
   interests: z.string().optional(),
-  profileImageUrl: z.string().optional(),
+  profileImageUrl: z.string(),
   currentPassword: passwordValidationSchema,
   password: passwordValidationSchema,
   confirmPassword: passwordValidationSchema,
