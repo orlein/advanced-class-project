@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetPostByIdQuery, useUpdatePostMutation } from '@/api/postsApi';
-import PostForm from '@/components/ui/PostForm';
+import PostForm from '@/components/organism/PostForm';
 
 export default function EditPost() {
   const navigate = useNavigate();

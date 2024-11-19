@@ -1,9 +1,9 @@
-import PostList from "@/components/ui/PostList.tsx";
+import PostList from '@/components/organism/PostList';
 
 export default function AllPosts() {
-    return (
-        <div>
-            <PostList/>
-        </div>
-    )
+  return (
+    <div>
+      <PostList />
+    </div>
+  );
 }

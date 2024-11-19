@@ -1,9 +1,8 @@
-import PostDetails from '@/components/ui/PostDetails.tsx';
+import PostDetails from '@/components/organism/PostDetails';
 export default function PostDetail() {
-
-    return (
-        <div>
-            <PostDetails />
-        </div>
-    );
+  return (
+    <div>
+      <PostDetails />
+    </div>
+  );
 }
