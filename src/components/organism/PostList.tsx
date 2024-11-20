@@ -181,7 +181,7 @@ export default function PostList() {
     }
 
     return cols;
-  }, [isAdmin]);
+  }, [isAdmin, tableData.length]);
 
   const table = useReactTable({
     data: tableData,
