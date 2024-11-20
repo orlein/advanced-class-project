@@ -38,13 +38,25 @@ export const metaSchema = z.object({
   limit: z.number(),
 });
 
+export const postLikeStatusRequestSchema = z.object({
+  id: z.string(),
+  postId: z.string(),
+});
+
+export const postLikeStatusResponseSchema = postLikeStatusRequestSchema.extend({
+  accountId: z.string(),
+  commentId: z.string(),
+  challengeId: z.string(),
+  challengeEventId: z.string(),
+  type: z.string().default('like'),
+  count: z.number(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
 export const likeResponseSchema = z.object({
   message: z.string(),
   likeCount: z.number(),
-});
-
-export const likeStatusResponseSchema = z.object({
-  type: z.enum(['like', 'dislike', 'none']),
 });
 
 export const deleteLikeResponseSchema = z.object({
