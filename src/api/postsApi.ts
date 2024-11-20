@@ -3,7 +3,7 @@ import {
   PostsResponseData,
   MetaData,
   LikeResponseData,
-  LikeStatusResponseData,
+  PostLikeStatusResponseData,
   DeleteLikeResponseData,
 } from '@/types/post';
 import { createApi } from '@reduxjs/toolkit/query/react';
@@ -68,7 +68,7 @@ export const postsApi = createApi({
       }),
       invalidatesTags: (_result, _error, postId) => [{ type: 'Posts', id: postId }],
     }),
-    getLikeStatus: builder.query<LikeStatusResponseData, { postId: string }>({
+    getLikeStatus: builder.query<PostLikeStatusResponseData, { postId: string }>({
       query: ({ postId }) => ({
         url: `/posts/${postId}/like-status`,
       }),
