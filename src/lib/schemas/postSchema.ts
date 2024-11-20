@@ -22,32 +22,20 @@ export const postSchema = z.object({
   pureLikeCount: z.number(),
 });
 
-export const metaSchema = z.object({
-  total: z.number(),
-  page: z.number(),
-  limit: z.number(),
-  isLastPage: z.boolean(),
-});
-
 export const postRequestSchema = postSchema.pick({
   title: true,
   content: true,
   contentType: true,
   externalLink: true,
-  isDeleted: true,
-  type: true,
   isCommentAllowed: true,
   isLikeAllowed: true,
   challengeId: true,
 });
 
-export const likeResponseSchema = postSchema.omit({
-  accountId: true,
-  accountUsername: true,
-  likeCount: true,
-  dislikeCount: true,
-  commentCount: true,
-  pureLikeCount: true,
+export const metaSchema = z.object({
+  total: z.number(),
+  page: z.number(),
+  limit: z.number(),
 });
 
 export const postLikeStatusRequestSchema = z.object({
@@ -66,10 +54,11 @@ export const postLikeStatusResponseSchema = postLikeStatusRequestSchema.extend({
   updatedAt: z.string(),
 });
 
-export const deleteLikeResponseSchema = postSchema.omit({
-  accountUsername: true,
-  likeCount: true,
-  dislikeCount: true,
-  commentCount: true,
-  pureLikeCount: true,
+export const likeResponseSchema = z.object({
+  message: z.string(),
+  likeCount: z.number(),
+});
+
+export const deleteLikeResponseSchema = z.object({
+  message: z.string(),
 });
