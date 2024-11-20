@@ -100,29 +100,16 @@ export default function PostList() {
     const cols: ColumnDef<PostData>[] = [
       {
         accessorKey: 'No',
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            No
-            {/* <CaretSortIcon className="ml-2 h-4 w-4" /> */}
-          </Button>
-        ),
-        cell: ({ row }) => <div className="text-center">{row.getValue('No')}</div>,
+        header: 'No',
+        cell: ({ row }) => {
+          const totalRows = tableData.length;
+          return <div className="text-center">{totalRows - row.index}</div>;
+        },
         enableSorting: false,
       },
       {
         accessorKey: 'title',
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
-            제목
-            {/* <CaretSortIcon className="ml-2 h-4 w-4" /> */}
-          </Button>
-        ),
+        header: '제목',
         cell: ({ row }) => <div className="text-center line-clamp-1">{row.getValue('title')}</div>,
         filterFn: textFilter,
         enableGlobalFilter: true,
@@ -131,7 +118,7 @@ export default function PostList() {
       {
         accessorKey: 'accountUsername',
         header: '작성자',
-        cell: ({ row }) => <div className="text-center">{row.getValue('accountUsername')}</div>,
+        cell: ({ row }) => <div className="text-center line-clamp-1">{row.getValue('accountUsername')}</div>,
         enableGlobalFilter: false,
       },
       {

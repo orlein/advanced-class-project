@@ -15,7 +15,9 @@ import { useGetAnotherUserInfoQuery, useGetUserInfoQuery } from '@/api/accountAp
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
 import ReactMarkdown from 'react-markdown';
-import ProfileImage from '../molecule/ProfileImage';
+import ProfileImage from '@/components/molecule/ProfileImage';
+import CommentList from '@/components/organism/CommentList';
+
 
 export default function PostDetail() {
   const navigate = useNavigate();
@@ -143,6 +145,7 @@ export default function PostDetail() {
               목록으로 돌아가기
             </Button>
           </div>
+          <CommentList postId={post_id!} />
         </CardContent>
       </Card>
     </div>
