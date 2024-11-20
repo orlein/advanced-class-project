@@ -22,54 +22,31 @@ export const postSchema = z.object({
   pureLikeCount: z.number(),
 });
 
-export const metaSchema = z.object({
-  total: z.number(),
-  page: z.number(),
-  limit: z.number(),
-  isLastPage: z.boolean(),
-});
-
 export const postRequestSchema = postSchema.pick({
   title: true,
   content: true,
   contentType: true,
   externalLink: true,
-  isDeleted: true,
-  type: true,
   isCommentAllowed: true,
   isLikeAllowed: true,
   challengeId: true,
 });
 
-export const likeResponseSchema = postSchema.omit({
-  accountId: true,
-  accountUsername: true,
-  likeCount: true,
-  dislikeCount: true,
-  commentCount: true,
-  pureLikeCount: true,
+export const metaSchema = z.object({
+  total: z.number(),
+  page: z.number(),
+  limit: z.number(),
 });
 
-export const likeStatusRequestSchema = z.object({
-  id: z.string(),
-  postId: z.string(),
+export const likeResponseSchema = z.object({
+  message: z.string(),
+  likeCount: z.number(),
 });
 
-export const likeStatusResponseSchema = likeStatusRequestSchema.extend({
-  accountId: z.string(),
-  commentId: z.string(),
-  challengeId: z.string(),
-  challengeEventId: z.string(),
-  type: z.string().default('like'),
-  count: z.number(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+export const likeStatusResponseSchema = z.object({
+  type: z.enum(['like', 'dislike', 'none']),
 });
 
-export const deleteLikeResponseSchema = postSchema.omit({
-  accountUsername: true,
-  likeCount: true,
-  dislikeCount: true,
-  commentCount: true,
-  pureLikeCount: true,
+export const deleteLikeResponseSchema = z.object({
+  message: z.string(),
 });
