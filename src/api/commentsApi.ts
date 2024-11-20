@@ -2,23 +2,24 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
 import { Comment, CommentRequest, CommentUpdateRequest } from '@/types/commentTypes';
 
-export const commentsApi = createApi({
+const commentsApi = createApi({
   reducerPath: 'commentsApi',
   baseQuery: baseQuery,
   tagTypes: ['Comments'],
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     // 댓글 목록 조회
     getCommentsByPostId: builder.query<
       { data: Comment[]; meta: any },
       { postId: string; page?: number; limit?: number }
     >({
-      query: ({ postId, page = 1, limit = 10 }) => `posts/${postId}/comments?page=${page}&limit=${limit}`,
+      query: ({ postId, page = 1, limit = 10 }) =>
+        `posts/${postId}/comments?page=${page}&limit=${limit}`,
       providesTags: (result, _error, { postId }) =>
         result
           ? [
-            ...result.data.map(({ id }) => ({ type: 'Comments' as const, id })),
-            { type: 'Comments', id: `POST_${postId}` },
-          ]
+              ...result.data.map(({ id }) => ({ type: 'Comments' as const, id })),
+              { type: 'Comments', id: `POST_${postId}` },
+            ]
           : [{ type: 'Comments', id: `POST_${postId}` }],
     }),
     // 댓글 작성
@@ -28,10 +29,15 @@ export const commentsApi = createApi({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: (_result, _error, { postId }) => [{ type: 'Comments', id: `POST_${postId}` }],
+      invalidatesTags: (_result, _error, { postId }) => [
+        { type: 'Comments', id: `POST_${postId}` },
+      ],
     }),
     // 댓글 수정
-    updateComment: builder.mutation<Comment, { postId: string; commentId: string; data: CommentUpdateRequest }>({
+    updateComment: builder.mutation<
+      Comment,
+      { postId: string; commentId: string; data: CommentUpdateRequest }
+    >({
       query: ({ postId, commentId, data }) => ({
         url: `posts/${postId}/comments/${commentId}`,
         method: 'PATCH',
@@ -86,3 +92,4 @@ export const {
   useUnlikeCommentMutation,
   useGetCommentLikeStatusQuery,
 } = commentsApi;
+export default commentsApi;

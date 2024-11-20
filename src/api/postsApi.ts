@@ -9,7 +9,7 @@ import {
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
 
-export const postsApi = createApi({
+const postsApi = createApi({
   reducerPath: 'postsApi',
   baseQuery: baseQuery,
   tagTypes: ['Posts'],
@@ -93,3 +93,4 @@ export const {
   useUnlikePostMutation,
   useGetLikeStatusQuery,
 } = postsApi;
+export default postsApi;
