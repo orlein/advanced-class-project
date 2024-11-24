@@ -31,6 +31,19 @@ export const newChallengeRequestSchema = challengeSchema.pick({
   isFinished: true,
 });
 
+export const newChallengeFormSchema = challengeSchema
+  .pick({
+    title: true,
+    description: true,
+  })
+  .extend({
+    startDate: z.date() || z.number() || z.undefined(),
+    endDate: z.date() || z.number() || z.undefined(),
+  })
+  .refine(data => data.startDate < data.endDate, {
+    message: '종료 일자는 시작 일자보다 이후로 설정하세요.',
+  });
+
 export const challengeMetaSchema = z.object({
   total: z.number(),
   page: z.number(),
@@ -43,7 +56,10 @@ export const getChallengesResponseSchema = z.object({
   meta: challengeMetaSchema,
 });
 
-export const updateChallengeRequestSchema = z.object(newChallengeRequestSchema.shape);
+export const updateChallengeRequestSchema = z.object({
+  updateData: newChallengeRequestSchema,
+  challengeId: z.string(),
+});
 
 export const challengeIdSchema = challengeSchema.pick({ id: true });
 

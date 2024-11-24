@@ -9,13 +9,15 @@ const ProfileImage = ({
   isEditing,
 }: {
   url: string | undefined;
-  variant: 'sidebar' | 'list' | 'post' | 'myProfile' | 'userProfile';
+  variant: 'sidebar' | 'challenge' | 'list' | 'post' | 'myProfile' | 'userProfile';
   setProfileImage?: Dispatch<SetStateAction<string>>;
   isEditing?: boolean;
 }) => {
   const STYLE =
     variant === 'sidebar'
       ? 'size-8 rounded-lg'
+      : variant === 'challenge'
+      ? 'size-8 rounded-full'
       : variant === 'list'
       ? 'size-9 rounded-full'
       : variant === 'post'

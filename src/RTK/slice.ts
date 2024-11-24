@@ -8,7 +8,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  isSignedIn: false,
+  isSignedIn: !!sessionStorage.getItem('accessToken'),
   user: null,
   error: null,
 };

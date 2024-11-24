@@ -76,14 +76,14 @@ const accountApi = createApi({
         }
       },
     }),
-    getAnotherUserInfo: builder.query<UserInfoData, string>({
-      query: id => ({
-        url: `/accounts/${id}`,
+    getAnotherUserInfo: builder.query<UserInfoData, { userId: string }>({
+      query: ({ userId }) => ({
+        url: `/accounts/${userId}`,
         method: 'GET',
       }),
       onQueryStarted: async (_, { queryFulfilled }) => {
         try {
-          await queryFulfilled.then(console.log);
+          await queryFulfilled;
         } catch (err: any) {
           throw new Error(`\n🚨 getAnotherUserInfo Error! \nError Status: ${err.error.status}`);
         }

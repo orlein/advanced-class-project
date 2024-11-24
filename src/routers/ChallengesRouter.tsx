@@ -8,7 +8,7 @@ import ChallengeEventsList from '@/pages/challenges/individualChallenge/Challeng
 import EditChallenge from '@/pages/challenges/individualChallenge/EditChallenge';
 import EditChallengeEvent from '@/pages/challenges/individualChallenge/EditChallengeEvent';
 import JoinChallenge from '@/pages/challenges/individualChallenge/JoinChallenge';
-import NewChallenges from '@/pages/challenges/NewChallenges';
+import NewChallenge from '@/pages/challenges/NewChallenge';
 import SuccessUsers from '@/pages/challenges/SuccessUsers';
 import TopChallenges from '@/pages/challenges/TopChallenges';
 
@@ -21,9 +21,9 @@ const eventsRouter = [
   },
 ];
 
-const individualChallengeRouter = [
+export const individualChallengeRouter = [
   {
-    path: ':challenge_id',
+    path: 'challenges/:challenge_id',
     element: <ChallengeDetail />,
     children: [
       { index: true, element: <ChallengeDetailDescription /> },
@@ -43,8 +43,13 @@ export const challengesRouter = [
       { path: 'category/:category', element: <ChallengesByCategory /> },
       { path: 'success-users', element: <SuccessUsers /> },
       { path: 'top', element: <TopChallenges /> },
-      { path: 'new', element: <NewChallenges /> },
-      ...individualChallengeRouter,
     ],
+  },
+];
+
+export const newChallengeRouter = [
+  {
+    path: 'challenges/new',
+    element: <NewChallenge />,
   },
 ];

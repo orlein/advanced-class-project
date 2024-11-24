@@ -1,5 +1,5 @@
 import { LucideProps } from 'lucide-react';
-import { SidebarMenuButton, useSidebar } from '../sidebar';
+import { SidebarMenuButton, useSidebar } from '../ui/sidebar';
 import { useNavigate } from 'react-router-dom';
 import { useWideScreen } from '@/hooks/use-wideScreen';
 
