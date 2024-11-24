@@ -24,7 +24,6 @@ const Pagination = ({ totalResults, currentPage, setCurrentPage, perPage }: Pagi
     () => Math.min(pageGroup * PAGE_GROUP_SIZE, totalPages),
     [pageGroup, totalPages],
   );
-  console.log(firstPageOfTheGroup, lastPageOfTheGroup);
   return (
     <>
       <ShadcnPagenation>
