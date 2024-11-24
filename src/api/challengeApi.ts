@@ -15,12 +15,11 @@ const challengeApi = createApi({
   baseQuery: baseQuery,
   tagTypes: ['challenge'],
   endpoints: builder => ({
-    getChallenges: builder.query<ChallengeData[], { page?: string; limit?: string }>({
+    getChallenges: builder.query<GetChallengesResponseData, { page?: string; limit?: string }>({
       query: ({ page = '1', limit = '20' }) => ({
         url: `/challenges?page=${page}&limit=${limit}`,
         method: 'GET',
       }),
-      transformResponse: (response: GetChallengesResponseData) => response.data,
       onQueryStarted: async (_, { queryFulfilled }) => {
         try {
           await queryFulfilled;
