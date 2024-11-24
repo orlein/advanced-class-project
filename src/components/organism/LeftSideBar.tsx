@@ -142,7 +142,7 @@ export const LeftSideBar = memo(() => {
               </SidebarMenuItem>
             </>
           )}
-          {isSignedIn && user && (
+          {isSignedIn && (
             <SidebarMenuItem>
               <DropdownMenu onOpenChange={setDropdownOpen} open={dropdownOpen}>
                 <SidebarMenuButton
@@ -150,12 +150,12 @@ export const LeftSideBar = memo(() => {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                   onClick={() => handleIconClick()}
                 >
-                  <ProfileImage url={user.profileImageUrl} variant="sidebar" />
+                  <ProfileImage url={user?.profileImageUrl} variant="sidebar" />
                   <DropdownMenuTrigger asChild>
                     <div className="flex items-center justify-between w-full">
                       <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">{user.username}</span>
-                        <span className="truncate text-xs">{user.email}</span>
+                        <span className="truncate font-semibold">{user?.username}</span>
+                        <span className="truncate text-xs">{user?.email}</span>
                       </div>
                       <ChevronsUpDown className="ml-auto size-4" />
                     </div>

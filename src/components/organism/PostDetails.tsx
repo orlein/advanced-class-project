@@ -18,7 +18,6 @@ import ReactMarkdown from 'react-markdown';
 import ProfileImage from '@/components/molecule/ProfileImage';
 import CommentList from '@/components/organism/CommentList';
 
-
 export default function PostDetail() {
   const navigate = useNavigate();
   const { post_id } = useParams<{ post_id: string }>();
@@ -30,7 +29,10 @@ export default function PostDetail() {
   const [unlikePost] = useUnlikePostMutation();
 
   const { data: signedInUser } = useGetUserInfoQuery();
-  const { data: author } = useGetAnotherUserInfoQuery(post?.accountId as string, { skip: !post });
+  const { data: author } = useGetAnotherUserInfoQuery(
+    { userId: post?.accountId! },
+    { skip: !post },
+  );
 
   const { data: likeStatus, error: likeError } = useGetLikeStatusQuery(
     { postId: post_id! },
