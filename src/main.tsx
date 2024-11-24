@@ -6,7 +6,11 @@ import HomePage from './pages/home.tsx';
 import ErrorPage from './pages/ErrorPage.tsx';
 import { accountRouter } from './routers/AccountRouter.tsx';
 import { settingRouter } from './routers/SettingRouter.tsx';
-import { challengesRouter } from './routers/ChallengesRouter.tsx';
+import {
+  challengesRouter,
+  individualChallengeRouter,
+  newChallengeRouter,
+} from './routers/ChallengesRouter.tsx';
 import { myChallengesRouter } from './routers/MyChallengesRouter.tsx';
 import { myEventsRouter } from './routers/MyEventsRouter.tsx';
 import { postsRouter } from './routers/PostsRouter.tsx';
@@ -23,6 +27,8 @@ const router = createBrowserRouter([
       ...settingRouter,
       ...challengesRouter,
       ...myChallengesRouter,
+      ...individualChallengeRouter,
+      ...newChallengeRouter,
       ...myEventsRouter,
       ...postsRouter,
       ...messageChannelsRouter,
