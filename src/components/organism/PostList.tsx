@@ -1,5 +1,3 @@
-'use client';
-
 import { useMemo, useState, useEffect } from 'react';
 import { CaretSortIcon, ChevronDownIcon } from '@radix-ui/react-icons';
 import {
@@ -38,6 +36,7 @@ import { useNavigate } from 'react-router-dom';
 import { useGetPostsQuery, useDeletePostMutation } from '@/api/postsApi';
 import { debounce } from 'lodash';
 import { useGetUserInfoQuery } from '@/api/accountApi';
+import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export type PostData = {
   id: string;
@@ -62,7 +61,7 @@ export default function PostList() {
   // 관리자인지 여부 확인
   const isAdmin = currentUser?.role === 'admin';
 
-  const { data, isLoading, error } = useGetPostsQuery({ page: 1, limit: 20 });
+  const { data, isLoading, error } = useGetPostsQuery({ page: 1, limit: 100 });
   const [deletePost] = useDeletePostMutation();
 
   // 테이블 데이터 구성
@@ -155,7 +154,6 @@ export default function PostList() {
       },
     ];
 
-    // 관리자인 경우 체크박스 열 추가
     if (isAdmin) {
       cols.unshift({
         id: 'select',
@@ -203,6 +201,12 @@ export default function PostList() {
     getFilteredRowModel: getFilteredRowModel(),
     globalFilterFn: textFilter,
     enableRowSelection: isAdmin,
+    manualPagination: false,
+    initialState: {
+      pagination: {
+        pageSize: 15, // 페이지 당 행 수 설정
+      },
+    },
   });
 
   // 선택된 행의 ID 업데이트
@@ -243,6 +247,75 @@ export default function PostList() {
     return <div>데이터를 불러오는 중 오류가 발생했습니다.</div>;
   }
 
+  // 페이지 번호 생성 함수
+  const generatePageButtons = () => {
+    const pageCount = table.getPageCount();
+    const pageIndex = table.getState().pagination.pageIndex;
+
+    const visiblePageButtonCount = 5; // 최대 표시할 페이지 번호 수
+    let startPage = Math.max(pageIndex - Math.floor(visiblePageButtonCount / 2), 0);
+    let endPage = startPage + visiblePageButtonCount;
+
+    if (endPage > pageCount) {
+      endPage = pageCount;
+      startPage = Math.max(endPage - visiblePageButtonCount, 0);
+    }
+
+    const pageButtons = [];
+    for (let i = startPage; i < endPage; i++) {
+      pageButtons.push(
+        <Button
+          key={i}
+          variant={i === pageIndex ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => table.setPageIndex(i)}
+        >
+          {i + 1}
+        </Button>
+      );
+    }
+
+    return (
+      <>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.setPageIndex(0)}
+          disabled={!table.getCanPreviousPage()}
+        >
+          <ChevronFirst />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          <ChevronLeft />
+        </Button>
+        {startPage > 0 && <span className="px-2">...</span>}
+        {pageButtons}
+        {endPage < pageCount && <span className="px-2">...</span>}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          <ChevronRight />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.setPageIndex(pageCount - 1)}
+          disabled={!table.getCanNextPage()}
+        >
+          <ChevronLast />
+        </Button>
+      </>
+    );
+  };
+
   return (
     <div className="flex justify-center">
       <div className="w-full max-w-5xl">
@@ -278,24 +351,17 @@ export default function PostList() {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
+          <Button variant="default" className="ml-2" onClick={() => navigate('/posts/new')}>
+            글 작성
+          </Button>
           {isAdmin && (
-            <>
-              <Button
-                variant="destructive"
-                className="ml-2"
-                onClick={handleDeleteSelected}
-                disabled={selectedRows.length === 0}
-              >
-                선택 삭제
-              </Button>
-              <Button variant="default" className="ml-2" onClick={() => navigate('/posts/new')}>
-                글 작성
-              </Button>
-            </>
-          )}
-          {!isAdmin && (
-            <Button variant="default" className="ml-2" onClick={() => navigate('/posts/new')}>
-              글 작성
+            <Button
+              variant="destructive"
+              className="ml-2"
+              onClick={handleDeleteSelected}
+              disabled={selectedRows.length === 0}
+            >
+              선택 삭제
             </Button>
           )}
         </section>
@@ -340,31 +406,8 @@ export default function PostList() {
             </TableBody>
           </Table>
         </section>
-        <section className="flex items-center justify-end space-x-2 py-4">
-          {isAdmin && (
-            <section className="flex-1 text-sm text-muted-foreground">
-              {table.getFilteredSelectedRowModel().rows.length} /{' '}
-              {table.getFilteredRowModel().rows.length} 행 선택됨.
-            </section>
-          )}
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              이전
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              다음
-            </Button>
-          </div>
+        <section className="flex items-center justify-center space-x-2 py-4">
+          {generatePageButtons()}
         </section>
       </div>
     </div>

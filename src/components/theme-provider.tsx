@@ -10,25 +10,55 @@ type ThemeProviderProps = {
 
 type ThemeProviderState = {
   theme: Theme;
+  systemTheme: Theme; // 추가된 부분
   setTheme: (theme: Theme) => void;
 };
 
 const initialState: ThemeProviderState = {
   theme: "system",
+  systemTheme: "light", // 기본값 설정
   setTheme: () => null,
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
-  children,
-  defaultTheme = "system",
-  storageKey = "vite-ui-theme",
-  ...props
-}: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
+                                children,
+                                defaultTheme = "system",
+                                storageKey = "vite-ui-theme",
+                                ...props
+                              }: ThemeProviderProps) {
+  const [theme, setThemeState] = useState<Theme>(
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   );
+
+  const [systemTheme, setSystemTheme] = useState<Theme>("light");
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+
+    // 시스템 테마 감지 함수
+    const updateSystemTheme = () => {
+      const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const newSystemTheme = isDarkMode ? "dark" : "light";
+      setSystemTheme(newSystemTheme);
+
+      // 시스템 테마가 변경될 때 root 클래스도 업데이트
+      if (theme === "system") {
+        root.classList.remove("light", "dark");
+        root.classList.add(newSystemTheme);
+      }
+    };
+
+    // 초기 시스템 테마 설정 및 이벤트 리스너 추가
+    updateSystemTheme();
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", updateSystemTheme);
+
+    // cleanup 함수에서 이벤트 리스너 제거
+    return () => {
+      window.matchMedia("(prefers-color-scheme: dark)").removeEventListener("change", updateSystemTheme);
+    };
+  }, [theme]);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -36,24 +66,21 @@ export function ThemeProvider({
     root.classList.remove("light", "dark");
 
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-
       root.classList.add(systemTheme);
-      return;
+    } else {
+      root.classList.add(theme);
     }
+  }, [theme, systemTheme]);
 
-    root.classList.add(theme);
-  }, [theme]);
+  const setTheme = (newTheme: Theme) => {
+    localStorage.setItem(storageKey, newTheme);
+    setThemeState(newTheme);
+  };
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
-    },
+    systemTheme, // 추가된 부분
+    setTheme,
   };
 
   return (

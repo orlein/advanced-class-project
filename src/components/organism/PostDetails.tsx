@@ -7,16 +7,19 @@ import {
   useUnlikePostMutation,
   useGetLikeStatusQuery,
 } from '@/api/postsApi';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-import { ThumbsUp } from 'lucide-react';
 import { useGetAnotherUserInfoQuery, useGetUserInfoQuery } from '@/api/accountApi';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ThumbsUp, Edit, Trash2, ChevronLeft } from 'lucide-react';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
 import ReactMarkdown from 'react-markdown';
 import ProfileImage from '@/components/molecule/ProfileImage';
 import CommentList from '@/components/organism/CommentList';
+import LoginAlert from '@/components/molecule/LoginAlert';
+import LikeAlert from '@/components/molecule/LikeAlert';
+import DeleteConfirmDialog from '@/components/molecule/DeleteConfirmDialog';
 
 export default function PostDetail() {
   const navigate = useNavigate();
@@ -39,7 +42,11 @@ export default function PostDetail() {
     { skip: !post || !signedInUser },
   );
 
-  const [isLikedByMe, setIsLikedByMe] = useState<boolean>(true);
+  const [isLikedByMe, setIsLikedByMe] = useState<boolean>(false);
+
+  const [showLoginAlert, setShowLoginAlert] = useState(false);
+  const [showLikeAlert, setShowLikeAlert] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (likeStatus) {
@@ -53,12 +60,12 @@ export default function PostDetail() {
 
   const handleLike = async () => {
     if (!signedInUser) {
-      alert('로그인이 필요합니다.');
+      setShowLoginAlert(true);
       return;
     }
 
     if (signedInUser.id === post?.accountId) {
-      alert('자신의 게시물은 추천할 수 없습니다.');
+      setShowLikeAlert(true);
       return;
     }
 
@@ -70,84 +77,139 @@ export default function PostDetail() {
         await likePost(post_id!);
         setIsLikedByMe(true);
       }
-      // 좋아요 상태 변경 후 게시물 데이터 갱신
       refetchPost();
     } catch (error) {
       console.error('Failed to toggle like:', error);
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm('정말로 삭제하시겠습니까?')) {
-      try {
-        await deletePost(post_id!).unwrap();
-        console.log('Post deleted');
-        navigate('/posts');
-      } catch (error) {
-        console.error('Failed to delete post:', error);
-      }
+  const handleDelete = () => {
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await deletePost(post_id!).unwrap();
+      console.log('Post deleted');
+      navigate('/posts');
+    } catch (error) {
+      console.error('Failed to delete post:', error);
     }
   };
 
   if (isLoading) {
-    return <div className="text-center mt-20">로딩 중...</div>;
+    return <PostDetailSkeleton />;
   }
 
   if (error || !post) {
-    return <div className="text-center mt-20">게시글을 찾을 수 없습니다.</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <p className="text-center text-lg">게시글을 찾을 수 없습니다.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen px-8 py-12">
-      <Card className="w-full max-w-4xl mx-auto shadow-lg p-8">
+    <div className="min-h-screen p-4 md:p-8 max-w-4xl mx-auto">
+      <div
+        onClick={() => navigate(-1)}
+        className="self-start flex gap-2 items-center mb-2 text-muted-foreground hover:text-foreground transition-colors duration-300 cursor-pointer"
+      >
+        <ChevronLeft size={20} />
+        뒤로 가기
+      </div>
+      <Card className="w-full shadow-lg">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold mb-4">{post.title}</CardTitle>
-          <div className="flex items-center mb-4 gap-2">
-            <ProfileImage variant="post" url={author?.profileImageUrl ?? ''} />
-            <div>
-              <p className="text-sm font-semibold">
-                {author?.username ?? author?.id.split('-')[0]}
-              </p>
-              <p className="text-xs text-gray-500">
-                {new Date(post.createdAt).toLocaleDateString()}
-              </p>
+          <CardTitle className="text-2xl md:text-3xl font-bold mb-2">{post.title}</CardTitle>
+          <CardDescription>
+            <div className="flex items-center gap-2">
+              <ProfileImage variant="post" url={author?.profileImageUrl ?? ''} />
+              <div>
+                <p className="text-sm font-semibold">
+                  {author?.username ?? author?.id.split('-')[0]}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(post.createdAt).toLocaleDateString()}
+                </p>
+              </div>
             </div>
-          </div>
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="prose lg:prose-xl mb-8 max-w-none">
+          <div className="prose dark:prose-invert lg:prose-lg mb-8 max-w-none">
             <ReactMarkdown
-              children={post.content}
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeSanitize]}
-            />
+            >
+              {post.content}
+            </ReactMarkdown>
           </div>
-          <div className="flex items-center gap-4 mt-4">
-            <Button variant={isLikedByMe ? 'default' : 'outline'} onClick={handleLike}>
+          <div className="flex items-center justify-between mt-8">
+            <Button
+              variant={isLikedByMe ? 'default' : 'outline'}
+              onClick={handleLike}
+              className="transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
               <ThumbsUp className="mr-2 h-4 w-4" />
               좋아요 {post.likeCount ?? 0}
             </Button>
-          </div>
-          <div className="flex justify-end gap-4 mt-8">
             {signedInUser && (
-              <>
+              <div className="space-x-2">
                 {signedInUser.id === post.accountId && (
-                  <Button variant="default" onClick={handleEdit}>
+                  <Button variant="outline" onClick={handleEdit}>
+                    <Edit className="mr-2 h-4 w-4" />
                     수정
                   </Button>
                 )}
                 {(signedInUser.id === post.accountId || signedInUser.role === 'admin') && (
                   <Button variant="destructive" onClick={handleDelete}>
+                    <Trash2 className="mr-2 h-4 w-4" />
                     삭제
                   </Button>
                 )}
-              </>
+              </div>
             )}
-            <Button variant="outline" onClick={() => navigate('/posts')}>
-              목록으로 돌아가기
-            </Button>
           </div>
+        </CardContent>
+      </Card>
+      <Card className="mt-8">
+        <CardContent>
           <CommentList postId={post_id!} />
+        </CardContent>
+      </Card>
+
+      <LoginAlert showLoginAlert={showLoginAlert} setShowLoginAlert={setShowLoginAlert} />
+
+      <LikeAlert showLikeAlert={showLikeAlert} setShowLikeAlert={setShowLikeAlert} isPost={true} />
+
+      <DeleteConfirmDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        onConfirm={confirmDelete}
+        title="게시글 삭제"
+        description="정말로 삭제하시겠습니까? 이 동작은 되돌릴 수 없습니다."
+      />
+    </div>
+  );
+}
+
+function PostDetailSkeleton() {
+  return (
+    <div className="min-h-screen p-4 md:p-8 max-w-4xl mx-auto">
+      <Skeleton className="h-10 w-32 mb-4" />
+      <Card className="w-full shadow-lg">
+        <CardHeader>
+          <Skeleton className="h-8 w-3/4 mb-2" />
+          <Skeleton className="h-6 w-1/2" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-4 w-full mb-2" />
+          <Skeleton className="h-4 w-full mb-2" />
+          <Skeleton className="h-4 w-3/4" />
         </CardContent>
       </Card>
     </div>
