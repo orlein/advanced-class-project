@@ -1,3 +1,4 @@
+import { useUploadImageMutation } from '@/api/imageApi';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -19,9 +20,11 @@ import { NewChallengeFormData, UpdateChallengeRequestData } from '@/types/challe
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuid } from 'uuid';
+import { Label } from '../ui/label';
 
 const ChallengeForm = ({
   isNew = false,
@@ -31,8 +34,11 @@ const ChallengeForm = ({
   challengeId?: string;
 }) => {
   const navigate = useNavigate();
-  const { createNewChallenge, updateChallenge } = useChallengeMutations();
-  const { challengeInfo } = challengeId ? useChallenges(challengeId) : { challengeInfo: undefined };
+  const { createNewChallenge, updateChallenge, joinChallenge, updateChallengeImage } =
+    useChallengeMutations();
+  const [uploadImage] = useUploadImageMutation();
+  const { challengeInfo } = useChallenges(challengeId ?? '');
+  const [imageInput, setImageInput] = useState<File | undefined>();
   const defaultValues = challengeInfo
     ? {
         title: challengeInfo.title,
@@ -50,27 +56,70 @@ const ChallengeForm = ({
     resolver: zodResolver(newChallengeFormSchema),
     defaultValues,
   });
-  const onSubmit = (data: NewChallengeFormData) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const challengeImageInput = e.target.files[0];
+      setImageInput(challengeImageInput);
+    }
+  };
+  const uploadImageFormData = async (challengeImageInput: File, id: string) => {
+    const filename = uuid();
+    const [, extension] = challengeImageInput.name.split('.');
+    const sizeInKb = Math.round(challengeImageInput.size / 1000).toString();
+
+    const formData = new FormData();
+    formData.delete('file');
+    formData.append(
+      'file',
+      challengeImageInput,
+      `${filename}.${extension};type=${challengeImageInput.type}`,
+    );
+    formData.append('type', 'challenge');
+    formData.append('id', id);
+    formData.append('filename', filename);
+    formData.append('extension', extension.toLocaleLowerCase());
+    formData.append('sizeInKb', sizeInKb);
+    formData.append('width', '300');
+    formData.append('height', '300');
+
+    const url = await uploadImage(formData).then(res => res.data?.url ?? '');
+    return url;
+  };
+
+  const onSubmit = async (data: NewChallengeFormData) => {
     const challengeData = {
       ...data,
       startDate: data.startDate.toString(),
-      endDate: data.endDate.toString(),
+      endDate: data.endDate.setDate(data.endDate.getDate() + 1).toString(),
       type: 'challenge',
       isFinished: false,
       isDeleted: false,
       isPublished: false,
     };
     if (isNew) {
-      createNewChallenge(challengeData).then(res => {
-        if (!res.error) navigate('/challenges');
+      createNewChallenge(challengeData).then(async res => {
+        if (res.data) {
+          if (imageInput) {
+            const url = await uploadImageFormData(imageInput, res.data.id);
+            updateChallengeImage({
+              challengeId: res.data.id,
+              updateData: { challengeImageUrl: url },
+            });
+          }
+          joinChallenge({ challengeId: res.data.id });
+          navigate('/challenges');
+        }
       });
     } else if (challengeId) {
+      const url = imageInput
+        ? await uploadImageFormData(imageInput, challengeId)
+        : challengeInfo?.challengeImageUrl ?? '';
       const updateChallengeData: UpdateChallengeRequestData = {
-        updateData: challengeData,
+        updateData: { ...challengeData, challengeImageUrl: url },
         challengeId,
       };
       updateChallenge(updateChallengeData).then(res => {
-        if (!res.error) navigate('/challenges');
+        if (res.data) navigate('/challenges');
       });
     }
   };
@@ -83,7 +132,7 @@ const ChallengeForm = ({
         endDate: new Date(challengeInfo.endDate),
       });
     }
-  }, [challengeInfo, form.reset]);
+  }, [challengeInfo, form]);
   return (
     <div className="flex justify-center w-full">
       <section className="w-full max-w-3xl">
@@ -184,13 +233,26 @@ const ChallengeForm = ({
               name="description"
               render={({ field }) => (
                 <FormItem className="flex gap-2 items-start">
-                  <FormLabel className="shrink-0 pt-3">내용</FormLabel>
+                  <FormLabel className="shrink-0 pt-4">내용</FormLabel>
                   <FormControl className="w-full">
                     <Textarea {...field} className="resize-none h-[300px]" />
                   </FormControl>
                 </FormItem>
               )}
             />
+            <div className="flex gap-2 items-center mt-2">
+              <Label className="shrink-0">사진</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={e => {
+                  if (e.target.files) {
+                    handleImageUpload(e);
+                  }
+                }}
+              />
+            </div>
+
             <Button type="submit" className="self-end my-3">
               등록
             </Button>
