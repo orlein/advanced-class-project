@@ -13,14 +13,6 @@ const imageApi = createApi({
         body: imageData,
       }),
       invalidatesTags: ['imageUpload'],
-      onQueryStarted: async (_, { queryFulfilled }) => {
-        try {
-          await queryFulfilled;
-        } catch (err: any) {
-          console.log(err);
-          throw new Error(`\n🚨 uploadImage Error! \nError Status: ${err.error.status}`);
-        }
-      },
     }),
   }),
 });

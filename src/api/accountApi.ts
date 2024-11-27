@@ -20,13 +20,6 @@ const accountApi = createApi({
         method: 'POST',
         body: userData,
       }),
-      onQueryStarted: async (_, { queryFulfilled }) => {
-        try {
-          await queryFulfilled;
-        } catch (err: any) {
-          if (err.error.status === 409) throw new Error('이미 가입한 이메일입니다.');
-        }
-      },
     }),
     signIn: builder.mutation<SignInResponseData, SignInRequestData>({
       query: userData => ({
@@ -35,14 +28,10 @@ const accountApi = createApi({
         body: userData,
       }),
       onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
-        try {
-          const { data } = await queryFulfilled;
-          if (data) {
-            dispatch(setLoggedIn(data));
-            dispatch(accountApi.endpoints.getUserInfo.initiate(undefined, { forceRefetch: true }));
-          }
-        } catch (err: any) {
-          throw new Error(`\n🚨 signIn Error! \nError Status: ${err.error.status}`);
+        const { data } = await queryFulfilled;
+        if (data) {
+          dispatch(setLoggedIn(data));
+          dispatch(accountApi.endpoints.getUserInfo.initiate(undefined, { forceRefetch: true }));
         }
       },
     }),
@@ -52,11 +41,9 @@ const accountApi = createApi({
         method: 'GET',
       }),
       onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
-        try {
-          const { data } = await queryFulfilled;
-          data && dispatch(setUser({ ...data }));
-        } catch (err: any) {
-          throw new Error(`\n🚨 getUserInfo Error! \nError Status: ${err.error.status}`);
+        const { data } = await queryFulfilled;
+        if (data) {
+          dispatch(setUser({ ...data }));
         }
       },
       providesTags: ['user'],
@@ -68,11 +55,9 @@ const accountApi = createApi({
         body: userData,
       }),
       onQueryStarted: async (_, { queryFulfilled, dispatch }) => {
-        try {
-          const { data } = await queryFulfilled;
-          data && dispatch(setUser({ ...data }));
-        } catch (err: any) {
-          throw new Error(`\n🚨 updateUserInfo Error! \nError Status: ${err.error.status}`);
+        const { data } = await queryFulfilled;
+        if (data) {
+          dispatch(setUser({ ...data }));
         }
       },
     }),
@@ -81,13 +66,6 @@ const accountApi = createApi({
         url: `/accounts/${userId}`,
         method: 'GET',
       }),
-      onQueryStarted: async (_, { queryFulfilled }) => {
-        try {
-          await queryFulfilled;
-        } catch (err: any) {
-          throw new Error(`\n🚨 getAnotherUserInfo Error! \nError Status: ${err.error.status}`);
-        }
-      },
     }),
   }),
 });

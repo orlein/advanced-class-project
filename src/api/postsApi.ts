@@ -72,13 +72,6 @@ const postsApi = createApi({
       query: ({ postId }) => ({
         url: `/posts/${postId}/like-status`,
       }),
-      onQueryStarted: async (_, { queryFulfilled }) => {
-        try {
-          await queryFulfilled.then(console.log);
-        } catch (err: any) {
-          throw new Error(`\n🚨 getLikeStatus Error! \nError Status: ${err.error.status}`);
-        }
-      },
     }),
   }),
 });
