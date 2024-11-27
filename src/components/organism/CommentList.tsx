@@ -6,7 +6,7 @@ import {
 import { useGetUserInfoQuery } from '@/api/accountApi';
 import CommentItem from './CommentItem';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { TextareaAutoSize } from '@/components/molecule/textarea-autosize';
 import LoginAlert from '@/components/molecule/LoginAlert';
 import ErrorAlert from '@/components/molecule/ErrorAlert';
 
@@ -50,21 +50,28 @@ const CommentList: React.FC<CommentListProps> = ({ postId }) => {
   return (
     <div className="mt-8">
       <h2 className="text-xl font-semibold mb-4">댓글</h2>
-      {/* 댓글 작성 폼 */}
       {currentUser && (
         <div className="mb-4">
-          <Textarea
+          <TextareaAutoSize
             placeholder="댓글을 입력하세요"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
+            className="w-full p-2 border rounded resize-none"
+            minRows={2}
           />
-          <Button onClick={handleCreateComment} className="mt-2">
-            댓글 작성
-          </Button>
+          <div className="flex justify-end mt-2">
+            <Button onClick={handleCreateComment}>댓글 작성</Button>
+          </div>
         </div>
       )}
-      {commentsData?.data.map((comment) => (
-        <CommentItem key={comment.id} comment={comment} postId={postId} />
+      {/* 댓글 목록 */}
+      {commentsData?.data.map((comment, index) => (
+        <CommentItem
+          key={comment.id}
+          comment={comment}
+          postId={postId}
+          isLast={index === commentsData.data.length - 1}
+        />
       ))}
 
       <LoginAlert showLoginAlert={showLoginAlert} setShowLoginAlert={setShowLoginAlert} />

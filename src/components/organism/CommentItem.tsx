@@ -8,7 +8,7 @@ import {
 } from '@/api/commentsApi';
 import { useGetUserInfoQuery } from '@/api/accountApi';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { TextareaAutoSize } from '@/components/molecule/textarea-autosize';
 import { ThumbsUp } from 'lucide-react';
 import { Comment } from '@/types/commentTypes';
 import LoginAlert from '@/components/molecule/LoginAlert';
@@ -18,9 +18,10 @@ import DeleteConfirmDialog from '@/components/molecule/DeleteConfirmDialog';
 interface CommentItemProps {
   comment: Comment;
   postId: string;
+  isLast: boolean;
 }
 
-const CommentItem: React.FC<CommentItemProps> = ({ comment, postId }) => {
+const CommentItem: React.FC<CommentItemProps> = ({ comment, postId, isLast }) => {
   const { data: currentUser } = useGetUserInfoQuery();
   const [deleteComment] = useDeleteCommentMutation();
   const [updateComment] = useUpdateCommentMutation();
@@ -96,7 +97,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postId }) => {
   };
 
   return (
-    <div className="border-b py-4">
+    <div className={`py-4 ${!isLast ? 'border-b' : ''}`}>
       <div className="flex justify-between">
         <div>
           <p className="font-semibold">{comment.accountUsername || comment.accountId}</p>
@@ -115,18 +116,20 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postId }) => {
       </div>
       {isEditing ? (
         <div className="mt-2">
-          <Textarea
+          <TextareaAutoSize
             value={editedContent}
             onChange={(e) => setEditedContent(e.target.value)}
+            className="w-full p-2 border rounded resize-none"
+            minRows={2}
           />
-          <Button onClick={handleUpdate} className="mt-2">
-            수정 완료
-          </Button>
+          <div className="flex justify-end mt-2">
+            <Button onClick={handleUpdate}>수정 완료</Button>
+          </div>
         </div>
       ) : (
-        <p className="mt-2">{comment.content}</p>
+        <p className="mt-2 break-all whitespace-pre-wrap">{comment.content}</p>
       )}
-      <div className="flex items-center gap-2 mt-2">
+      <div className="flex justify-end mt-2">
         <Button
           variant={currentLikeStatus === 'like' ? 'default' : 'outline'}
           size="sm"
