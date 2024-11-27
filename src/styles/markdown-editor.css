@@ -1,0 +1,117 @@
+.md-editor-custom {
+    --md-border-color: hsl(var(--border));
+    --md-bg-color: hsl(var(--background));
+    --md-text-color: hsl(var(--foreground));
+    --md-hover-color: hsl(var(--accent));
+}
+
+.md-editor-custom .rc-md-editor {
+    border-color: var(--md-border-color);
+}
+
+.md-editor-custom .rc-md-editor,
+.md-editor-custom .rc-md-editor .editor-container,
+.md-editor-custom .rc-md-editor .editor-container textarea,
+.md-editor-custom .rc-md-editor .preview {
+    background-color: var(--md-bg-color);
+    color: var(--md-text-color);
+}
+
+.md-editor-custom .rc-md-navigation {
+    background-color: hsl(var(--secondary));
+    border-color: var(--md-border-color);
+}
+
+.md-editor-custom .rc-md-navigation .button {
+    color: var(--md-text-color);
+}
+
+.md-editor-custom .rc-md-navigation .button:hover {
+    background-color: var(--md-hover-color);
+}
+
+.md-editor-custom .rc-md-editor .editor-container .sec-md,
+.md-editor-custom .rc-md-editor .editor-container .sec-html {
+    background-color: var(--md-bg-color);
+    color: var(--md-text-color);
+}
+
+.md-editor-custom .rc-md-editor .editor-container textarea::-webkit-scrollbar,
+.md-editor-custom .rc-md-editor .preview::-webkit-scrollbar {
+    width: 8px;
+}
+
+.md-editor-custom .rc-md-editor .editor-container textarea::-webkit-scrollbar-thumb,
+.md-editor-custom .rc-md-editor .preview::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--secondary));
+    border-radius: 4px;
+}
+
+.md-editor-custom .rc-md-editor .editor-container textarea::-webkit-scrollbar-track,
+.md-editor-custom .rc-md-editor .preview::-webkit-scrollbar-track {
+    background-color: hsl(var(--background));
+}
+
+/* Dark mode specific styles */
+.md-editor-dark.md-editor-custom {
+    --md-border-color: hsl(var(--border));
+    --md-bg-color: hsl(var(--background));
+    --md-text-color: hsl(var(--foreground));
+    --md-hover-color: hsl(var(--accent));
+}
+
+.md-editor-dark.md-editor-custom .rc-md-navigation {
+    background-color: hsl(var(--secondary));
+}
+
+.md-editor-dark.md-editor-custom .rc-md-navigation .button:hover {
+    background-color: var(--md-hover-color);
+}
+
+/* Markdown preview styles */
+.markdown-body {
+    color: var(--md-text-color);
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+    color: hsl(var(--primary));
+    border-bottom-color: var(--md-border-color);
+}
+
+.markdown-body a {
+    color: hsl(var(--primary));
+}
+
+.markdown-body hr {
+    background-color: var(--md-border-color);
+}
+
+.markdown-body blockquote {
+    color: hsl(var(--muted-foreground));
+    border-left-color: var(--md-border-color);
+}
+
+.markdown-body table th,
+.markdown-body table td {
+    border-color: var(--md-border-color);
+}
+
+.markdown-body code {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+}
+
+.markdown-body pre {
+    background-color: hsl(var(--secondary));
+    border-color: var(--md-border-color);
+}
+
+.markdown-body pre code {
+    color: hsl(var(--secondary-foreground));
+}
+

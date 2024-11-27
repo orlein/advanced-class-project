@@ -11,6 +11,9 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ThumbsUp } from 'lucide-react';
 import { Comment } from '@/types/commentTypes';
+import LoginAlert from '@/components/molecule/LoginAlert';
+import ErrorAlert from '@/components/molecule/ErrorAlert';
+import DeleteConfirmDialog from '@/components/molecule/DeleteConfirmDialog';
 
 interface CommentItemProps {
   comment: Comment;
@@ -33,23 +36,31 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postId }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
 
+  const [showLoginAlert, setShowLoginAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   useEffect(() => {
     setCurrentLikeStatus(likeStatus ?? null);
   }, [likeStatus]);
 
   const handleDelete = async () => {
-    if (window.confirm('댓글을 삭제하시겠습니까?')) {
-      try {
-        await deleteComment({ postId, commentId: comment.id }).unwrap();
-      } catch (error) {
-        console.error('Failed to delete comment:', error);
-      }
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await deleteComment({ postId, commentId: comment.id }).unwrap();
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+    } finally {
+      setShowDeleteConfirm(false);
     }
   };
 
   const handleUpdate = async () => {
     if (!editedContent.trim()) {
-      alert('댓글 내용을 입력해주세요.');
+      setShowErrorAlert(true);
       return;
     }
 
@@ -67,7 +78,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postId }) => {
 
   const handleLike = async () => {
     if (!currentUser) {
-      alert('로그인이 필요합니다.');
+      setShowLoginAlert(true);
       return;
     }
 
@@ -125,6 +136,23 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, postId }) => {
           좋아요 {comment.likeCount ?? 0}
         </Button>
       </div>
+
+      <LoginAlert showLoginAlert={showLoginAlert} setShowLoginAlert={setShowLoginAlert} />
+
+      <ErrorAlert
+        open={showErrorAlert}
+        onOpenChange={setShowErrorAlert}
+        title="입력 오류"
+        description="댓글 내용을 입력해주세요."
+      />
+
+      <DeleteConfirmDialog
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        onConfirm={confirmDelete}
+        title="댓글 삭제"
+        description="댓글을 삭제하시겠습니까?"
+      />
     </div>
   );
 };

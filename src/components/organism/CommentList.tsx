@@ -7,6 +7,8 @@ import { useGetUserInfoQuery } from '@/api/accountApi';
 import CommentItem from './CommentItem';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import LoginAlert from '@/components/molecule/LoginAlert';
+import ErrorAlert from '@/components/molecule/ErrorAlert';
 
 interface CommentListProps {
   postId: string;
@@ -19,14 +21,17 @@ const CommentList: React.FC<CommentListProps> = ({ postId }) => {
 
   const [newComment, setNewComment] = useState('');
 
+  const [showLoginAlert, setShowLoginAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+
   const handleCreateComment = async () => {
     if (!currentUser) {
-      alert('로그인이 필요합니다.');
+      setShowLoginAlert(true);
       return;
     }
 
     if (!newComment.trim()) {
-      alert('댓글 내용을 입력해주세요.');
+      setShowErrorAlert(true);
       return;
     }
 
@@ -58,10 +63,18 @@ const CommentList: React.FC<CommentListProps> = ({ postId }) => {
           </Button>
         </div>
       )}
-      {/* 댓글 목록 */}
       {commentsData?.data.map((comment) => (
         <CommentItem key={comment.id} comment={comment} postId={postId} />
       ))}
+
+      <LoginAlert showLoginAlert={showLoginAlert} setShowLoginAlert={setShowLoginAlert} />
+
+      <ErrorAlert
+        open={showErrorAlert}
+        onOpenChange={setShowErrorAlert}
+        title="입력 오류"
+        description="댓글 내용을 입력해주세요."
+      />
     </div>
   );
 };
