@@ -3,11 +3,16 @@ import MyChallengeEventsMain from '@/pages/myChallengeEvent/MyChallengeEventsMai
 import MyCompletedEvents from '@/pages/myChallengeEvent/MyCompletedEvents';
 import MyFailedEvents from '@/pages/myChallengeEvent/MyFailedEvents';
 import MyUpcomingEvents from '@/pages/myChallengeEvent/MyUpcomingEvents';
+import ProtectedRouter from '@/pages/ProtectedRouter';
 
 export const myEventsRouter = [
   {
     path: '/my-events',
-    element: <MyChallengeEventsMain />,
+    element: (
+      <ProtectedRouter>
+        <MyChallengeEventsMain />
+      </ProtectedRouter>
+    ),
     children: [
       { index: true, element: <AllMyChallengeEvents /> },
       { path: 'upcoming', element: <MyUpcomingEvents /> },
