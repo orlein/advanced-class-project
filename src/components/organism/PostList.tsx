@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { CaretSortIcon, ChevronDownIcon } from '@radix-ui/react-icons';
+import { CaretSortIcon } from '@radix-ui/react-icons';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -17,12 +17,6 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -109,7 +103,9 @@ export default function PostList() {
       {
         accessorKey: 'title',
         header: '제목',
-        cell: ({ row }) => <div className="text-center line-clamp-1">{row.getValue('title')}</div>,
+        cell: ({ row }) => (
+          <div className="text-center line-clamp-1">{row.getValue('title')}</div>
+        ),
         filterFn: textFilter,
         enableGlobalFilter: true,
         enableSorting: false,
@@ -117,7 +113,9 @@ export default function PostList() {
       {
         accessorKey: 'accountUsername',
         header: '작성자',
-        cell: ({ row }) => <div className="text-center line-clamp-1">{row.getValue('accountUsername')}</div>,
+        cell: ({ row }) => (
+          <div className="text-center line-clamp-1">{row.getValue('accountUsername')}</div>
+        ),
         enableGlobalFilter: false,
       },
       {
@@ -160,17 +158,17 @@ export default function PostList() {
         header: ({ table }) => (
           <Checkbox
             checked={table.getIsAllPageRowsSelected()}
-            onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
             aria-label="Select all"
-            onClick={event => event.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
           />
         ),
         cell: ({ row }) => (
           <Checkbox
             checked={row.getIsSelected()}
-            onCheckedChange={value => row.toggleSelected(!!value)}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
             aria-label="Select row"
-            onClick={event => event.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
           />
         ),
         enableSorting: false,
@@ -212,8 +210,8 @@ export default function PostList() {
   // 선택된 행의 ID 업데이트
   useEffect(() => {
     const selectedIds = Object.keys(rowSelection)
-      .filter(key => rowSelection[key])
-      .map(key => table.getRowModel().rowsById[key].original.id);
+      .filter((key) => rowSelection[key])
+      .map((key) => table.getRowModel().rowsById[key].original.id);
     setSelectedRows(selectedIds);
   }, [rowSelection, table]);
 
@@ -221,7 +219,7 @@ export default function PostList() {
   const handleDeleteSelected = async () => {
     if (window.confirm('선택한 게시물을 삭제하시겠습니까?')) {
       try {
-        await Promise.all(selectedRows.map(id => deletePost(id).unwrap()));
+        await Promise.all(selectedRows.map((id) => deletePost(id).unwrap()));
         // 삭제 후 선택된 행 초기화 및 데이터 재요청
         table.resetRowSelection();
       } catch (error) {
@@ -230,7 +228,6 @@ export default function PostList() {
     }
   };
 
-  // 필터 입력 시 딜레이 적용
   const handleFilterChange = useMemo(
     () =>
       debounce((value: string) => {
@@ -238,6 +235,25 @@ export default function PostList() {
       }, 300),
     [],
   );
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setColumnVisibility({
+        createdAt: width > 768,
+        viewCount: width > 480,
+        accountUsername: width > 400,
+      });
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   if (isLoading || isUserLoading) {
     return <div>로딩 중...</div>;
@@ -271,7 +287,7 @@ export default function PostList() {
           onClick={() => table.setPageIndex(i)}
         >
           {i + 1}
-        </Button>
+        </Button>,
       );
     }
 
@@ -319,38 +335,14 @@ export default function PostList() {
   return (
     <div className="flex justify-center">
       <div className="w-full max-w-5xl">
-        <section className="flex items-center py-4">
+        <section className="flex items-center py-4 justify-between">
           <Input
             placeholder="제목으로 검색..."
-            onChange={event => {
+            onChange={(event) => {
               handleFilterChange(event.target.value);
             }}
             className="max-w-sm"
           />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" aria-label="Columns">
-              {table
-                .getAllColumns()
-                .filter(column => column.getCanHide())
-                .map(column => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={value => column.toggleVisibility(value)}
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
           <Button variant="default" className="ml-2" onClick={() => navigate('/posts/new')}>
             글 작성
           </Button>
@@ -365,13 +357,13 @@ export default function PostList() {
             </Button>
           )}
         </section>
-        <section className="rounded-md border">
-          <Table>
+        <section className="rounded-md border overflow-x-auto">
+          <Table className="min-w-full">
             <TableHeader>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id} className="">
-                  {headerGroup.headers.map(header => (
-                    <TableHead key={header.id} className="text-center">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} className="text-center px-2 py-1">
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -382,15 +374,15 @@ export default function PostList() {
             </TableHeader>
             <TableBody>
               {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map(row => (
+                table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
                     onClick={() => navigate(`/posts/${row.original.id}`)}
-                    className="cursor-pointer transition-colors"
+                    className="cursor-pointer transition-colors h-10"
                   >
-                    {row.getVisibleCells().map(cell => (
-                      <TableCell key={cell.id} className="text-center">
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="text-center px-2 py-1">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
@@ -406,6 +398,7 @@ export default function PostList() {
             </TableBody>
           </Table>
         </section>
+
         <section className="flex items-center justify-center space-x-2 py-4">
           {generatePageButtons()}
         </section>
