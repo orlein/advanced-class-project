@@ -1,3 +1,4 @@
+import PostEditProtectedRouter from '@/pages/PostEditProtectedRouter';
 import AllComments from '@/pages/posts/AllComments';
 import AllPosts from '@/pages/posts/AllPosts';
 import Comments from '@/pages/posts/Comments';
@@ -8,6 +9,7 @@ import NewPost from '@/pages/posts/NewPost';
 import PostDetail from '@/pages/posts/PostDetail';
 import PostsMain from '@/pages/posts/PostsMain';
 import SortedPosts from '@/pages/posts/SortedPosts';
+import ProtectedRouter from '@/pages/ProtectedRouter';
 
 export const postsRouter = [
   {
@@ -16,8 +18,22 @@ export const postsRouter = [
     children: [
       { index: true, element: <AllPosts /> },
       { path: 'sort/likes', element: <SortedPosts /> },
-      { path: 'new', element: <NewPost /> },
-      { path: ':post_id/edit', element: <EditPost /> },
+      {
+        path: 'new',
+        element: (
+          <ProtectedRouter>
+            <NewPost />
+          </ProtectedRouter>
+        ),
+      },
+      {
+        path: ':post_id/edit',
+        element: (
+          <PostEditProtectedRouter>
+            <EditPost />
+          </PostEditProtectedRouter>
+        ),
+      },
       { path: ':post_id', element: <PostDetail /> },
       { path: 'sort/likes', element: <SortedPosts /> },
       {

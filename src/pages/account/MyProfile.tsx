@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useMemo } from 'react';
 import { Card } from '@/components/ui/card.tsx';
 import {
   Select,
@@ -48,13 +48,16 @@ export default function MyProfile() {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [profileImage, setProfileImage] = useState<string>(user?.profileImageUrl ?? '');
   const [tags, setTags] = useState<string[]>([]);
-  const defaultValues = {
-    username: user?.username,
-    bio: user?.bio,
-    nationality: user?.nationality,
-    isPrivate: user?.isPrivate,
-    profileImageUrl: user?.profileImageUrl,
-  };
+  const defaultValues = useMemo<ProfileData>(
+    () => ({
+      username: user?.username ?? '',
+      bio: user?.bio,
+      nationality: user?.nationality,
+      isPrivate: user?.isPrivate ?? false,
+      profileImageUrl: user?.profileImageUrl ?? '',
+    }),
+    [user],
+  );
   const form = useForm<ProfileData>({
     resolver: zodResolver(profileSchema),
     defaultValues,
@@ -86,7 +89,7 @@ export default function MyProfile() {
     if (e.target.files && user && id) {
       const profileImageInput = e.target.files[0];
       const filename = uuid();
-      const [_, extension] = profileImageInput.name.split('.');
+      const [, extension] = profileImageInput.name.split('.');
       const sizeInKb = Math.round(profileImageInput.size / 1000).toString();
 
       const formData = new FormData();
@@ -138,7 +141,7 @@ export default function MyProfile() {
       form.reset(defaultValues);
       setProfileImage(user.profileImageUrl ?? '');
     }
-  }, [user, isLoading, form]);
+  }, [user, isLoading, form, defaultValues]);
 
   if (!user) return <></>;
   return (

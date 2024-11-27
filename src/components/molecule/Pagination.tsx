@@ -8,16 +8,16 @@ import {
 import { SetStateAction, useMemo } from 'react';
 
 const PAGE_GROUP_SIZE = 5;
+export const PER_PAGE = 10;
 
 type PaginationProps = {
   totalResults: number;
   currentPage: number;
   setCurrentPage: React.Dispatch<SetStateAction<number>>;
-  perPage: number;
 };
 
-const Pagination = ({ totalResults, currentPage, setCurrentPage, perPage }: PaginationProps) => {
-  const totalPages = Math.ceil(totalResults / perPage);
+const Pagination = ({ totalResults, currentPage, setCurrentPage }: PaginationProps) => {
+  const totalPages = Math.ceil(totalResults / PER_PAGE);
   const pageGroup = useMemo(() => Math.ceil(currentPage / PAGE_GROUP_SIZE), [currentPage]);
   const firstPageOfTheGroup = useMemo(() => (pageGroup - 1) * PAGE_GROUP_SIZE + 1, [pageGroup]);
   const lastPageOfTheGroup = useMemo(

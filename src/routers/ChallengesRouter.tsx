@@ -11,6 +11,8 @@ import JoinChallenge from '@/pages/challenges/individualChallenge/JoinChallenge'
 import NewChallenge from '@/pages/challenges/NewChallenge';
 import SuccessUsers from '@/pages/challenges/SuccessUsers';
 import TopChallenges from '@/pages/challenges/TopChallenges';
+import ProtectedRouter from '@/pages/ProtectedRouter';
+import ChallengeEditProtectedRouter from '@/pages/ChallengeEditProtectedRouter';
 
 const eventsRouter = [
   { path: 'events', element: <ChallengeEventsList /> },
@@ -28,7 +30,14 @@ export const individualChallengeRouter = [
     children: [
       { index: true, element: <ChallengeDetailDescription /> },
       { path: 'join', element: <JoinChallenge /> },
-      { path: 'edit', element: <EditChallenge /> },
+      {
+        path: 'edit',
+        element: (
+          <ChallengeEditProtectedRouter>
+            <EditChallenge />
+          </ChallengeEditProtectedRouter>
+        ),
+      },
       ...eventsRouter,
     ],
   },
@@ -50,6 +59,10 @@ export const challengesRouter = [
 export const newChallengeRouter = [
   {
     path: 'challenges/new',
-    element: <NewChallenge />,
+    element: (
+      <ProtectedRouter>
+        <NewChallenge />
+      </ProtectedRouter>
+    ),
   },
 ];

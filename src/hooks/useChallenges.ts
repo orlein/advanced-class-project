@@ -7,22 +7,28 @@ const useChallenges = (challengeId: string) => {
     { challengeId },
     { skip: !challengeId },
   );
-  const { data: challengeInfo } = useGetChallengeInfoQuery({ challengeId }, { skip: !challengeId });
+  const { data: challengeInfo, refetch: challengeInfoRefetch } = useGetChallengeInfoQuery(
+    { challengeId },
+    { skip: !challengeId },
+  );
   const isCreatedByMe = challengeInfo?.accountId === userId ? true : false;
-  const numberOfMembers = members?.length;
   const isMember = members?.some(member => member.id === userId);
   const { data: challengeCreator } = useGetAnotherUserInfoQuery(
-    { userId: challengeInfo?.accountId! },
+    { userId: challengeInfo?.accountId ?? '' },
     { skip: !challengeInfo?.accountId },
   );
+  const challengeProgress =
+    Number(challengeInfo?.challengeEventCheckedParticipantsFraction ?? 0) * 100;
 
   return {
     memberStatusRefetch,
+    challengeInfoRefetch,
+    members,
     challengeInfo,
     isCreatedByMe,
-    numberOfMembers,
     isMember,
     challengeCreator,
+    challengeProgress,
   };
 };
 

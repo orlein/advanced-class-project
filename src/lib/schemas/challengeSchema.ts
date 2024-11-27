@@ -4,6 +4,7 @@ export const challengeSchema = z.object({
   id: z.string(),
   title: z.string(),
   description: z.string(),
+  challengeImageUrl: z.string(),
   type: z.string(),
   startDate: z.string(),
   endDate: z.string(),
@@ -17,7 +18,10 @@ export const challengeSchema = z.object({
   likeCount: z.number(),
   dislikeCount: z.number(),
   pureLikeCount: z.number(),
+  controversialCount: z.number(),
   challengeEventCount: z.number(),
+  challengeParticipantCount: z.number(),
+  challengeEventCheckedParticipantsFraction: z.number(),
 });
 
 export const newChallengeRequestSchema = challengeSchema.pick({
@@ -44,6 +48,11 @@ export const newChallengeFormSchema = challengeSchema
     message: '종료 일자는 시작 일자보다 이후로 설정하세요.',
   });
 
+export const updateChallengeImageRequestSchema = z.object({
+  updateData: challengeSchema.pick({ challengeImageUrl: true }),
+  challengeId: z.string(),
+});
+
 export const challengeMetaSchema = z.object({
   total: z.number(),
   page: z.number(),
@@ -57,7 +66,7 @@ export const getChallengesResponseSchema = z.object({
 });
 
 export const updateChallengeRequestSchema = z.object({
-  updateData: newChallengeRequestSchema,
+  updateData: newChallengeRequestSchema.extend({ challengeImageUrl: z.string() }),
   challengeId: z.string(),
 });
 
