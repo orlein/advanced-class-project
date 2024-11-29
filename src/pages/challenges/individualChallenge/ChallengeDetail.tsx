@@ -1,5 +1,6 @@
 import { ChevronLeft } from 'lucide-react';
 import { Outlet, useNavigate } from 'react-router-dom';
+import ChallengeEventsList from './ChallengeEventsList';
 
 export default function ChallengeDetail() {
   const navigate = useNavigate();
@@ -16,6 +17,9 @@ export default function ChallengeDetail() {
         <div className="w-full mt-5">
           <Outlet />
         </div>
+        <section className="mt-5">
+          <ChallengeEventsList />
+        </section>
       </div>
     </div>
   );
