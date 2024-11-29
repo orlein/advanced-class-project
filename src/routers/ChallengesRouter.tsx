@@ -13,6 +13,8 @@ import SuccessUsers from '@/pages/challenges/SuccessUsers';
 import TopChallenges from '@/pages/challenges/TopChallenges';
 import ProtectedRouter from '@/pages/ProtectedRouter';
 import ChallengeEditProtectedRouter from '@/pages/ChallengeEditProtectedRouter';
+import NewChallengeEvent from '@/pages/challenges/individualChallenge/NewChallengeEvent';
+import NewChallengeEventProtectedRouter from '@/pages/NewChallengeEventProtectedRouter';
 
 const eventsRouter = [
   { path: 'events', element: <ChallengeEventsList /> },
@@ -63,6 +65,17 @@ export const newChallengeRouter = [
       <ProtectedRouter>
         <NewChallenge />
       </ProtectedRouter>
+    ),
+  },
+];
+
+export const newChallengeEventRouter = [
+  {
+    path: 'challenges/:challenge_id/events/new',
+    element: (
+      <NewChallengeEventProtectedRouter>
+        <NewChallengeEvent />
+      </NewChallengeEventProtectedRouter>
     ),
   },
 ];

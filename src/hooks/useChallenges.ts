@@ -3,16 +3,17 @@ import { useGetChallengeInfoQuery, useGetChallengeMembersQuery } from '@/api/cha
 
 const useChallenges = (challengeId: string) => {
   const userId = sessionStorage.getItem('userId');
-  const { data: members, refetch: memberStatusRefetch } = useGetChallengeMembersQuery(
-    { challengeId },
-    { skip: !challengeId },
-  );
+  const {
+    data: members,
+    isLoading: isMemberFetchingLoading,
+    refetch: memberStatusRefetch,
+  } = useGetChallengeMembersQuery({ challengeId }, { skip: !challengeId });
   const { data: challengeInfo, refetch: challengeInfoRefetch } = useGetChallengeInfoQuery(
     { challengeId },
     { skip: !challengeId },
   );
   const isCreatedByMe = challengeInfo?.accountId === userId ? true : false;
-  const isMember = members?.some(member => member.id === userId);
+  const isMember = !isMemberFetchingLoading && members?.some(member => member.id === userId);
   const { data: challengeCreator } = useGetAnotherUserInfoQuery(
     { userId: challengeInfo?.accountId ?? '' },
     { skip: !challengeInfo?.accountId },
@@ -24,6 +25,7 @@ const useChallenges = (challengeId: string) => {
     memberStatusRefetch,
     challengeInfoRefetch,
     members,
+    isMemberFetchingLoading,
     challengeInfo,
     isCreatedByMe,
     isMember,
