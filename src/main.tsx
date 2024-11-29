@@ -9,6 +9,7 @@ import { settingRouter } from './routers/SettingRouter.tsx';
 import {
   challengesRouter,
   individualChallengeRouter,
+  newChallengeEventRouter,
   newChallengeRouter,
 } from './routers/ChallengesRouter.tsx';
 import { myChallengesRouter } from './routers/MyChallengesRouter.tsx';
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
       ...myChallengesRouter,
       ...individualChallengeRouter,
       ...newChallengeRouter,
+      ...newChallengeEventRouter,
       ...myEventsRouter,
       ...postsRouter,
       ...messageChannelsRouter,
