@@ -1,6 +1,6 @@
 export type PaginationParams = {
-  page?: number;
-  limit?: number;
+  page?: string;
+  limit?: string;
   sortBy?: string;
   order?: 'asc' | 'desc';
 };
