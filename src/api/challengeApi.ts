@@ -10,16 +10,14 @@ import {
   UpdateChallengeRequestData,
 } from '@/types/challenge';
 import { UserInfoData } from '@/types/userData';
+import { PaginationParams } from '@/types/paginationParams';
 
 const challengeApi = createApi({
   reducerPath: 'challengeApi',
   baseQuery: baseQuery,
   tagTypes: ['challenge'],
   endpoints: builder => ({
-    getChallenges: builder.query<
-      GetChallengesResponseData,
-      { page?: string; limit?: string; sortBy?: string; order?: 'asc' | 'desc' }
-    >({
+    getChallenges: builder.query<GetChallengesResponseData, PaginationParams>({
       query: ({ page = '1', limit = '20', sortBy = 'endDate', order = 'asc' }) => ({
         url: `/challenges?page=${page}&limit=${limit}&sortBy=${sortBy}&order=${order}`,
         method: 'GET',

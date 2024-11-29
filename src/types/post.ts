@@ -2,7 +2,6 @@ import { z } from 'zod';
 import {
   postRequestSchema,
   postSchema,
-  metaSchema,
   likeResponseSchema,
   postLikeStatusResponseSchema,
   postLikeStatusRequestSchema,
@@ -10,7 +9,6 @@ import {
 } from '../lib/schemas/postSchema';
 
 export type PostsResponseData = z.infer<typeof postSchema>;
-export type MetaData = z.infer<typeof metaSchema>;
 export type PostRequestData = z.infer<typeof postRequestSchema>;
 export type LikeResponseData = z.infer<typeof likeResponseSchema>;
 export type PostLikeStatusRequestData = z.infer<typeof postLikeStatusRequestSchema>;

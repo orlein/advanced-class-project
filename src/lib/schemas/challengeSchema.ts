@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { metaSchema } from '../metaSchema';
 
 export const challengeSchema = z.object({
   id: z.string(),
@@ -53,16 +54,9 @@ export const updateChallengeImageRequestSchema = z.object({
   challengeId: z.string(),
 });
 
-export const challengeMetaSchema = z.object({
-  total: z.number(),
-  page: z.number(),
-  limit: z.number(),
-  isLastPage: z.boolean(),
-});
-
 export const getChallengesResponseSchema = z.object({
   data: z.array(challengeSchema),
-  meta: challengeMetaSchema,
+  meta: metaSchema,
 });
 
 export const updateChallengeRequestSchema = z.object({

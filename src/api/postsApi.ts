@@ -1,13 +1,13 @@
 import {
   PostRequestData,
   PostsResponseData,
-  MetaData,
   LikeResponseData,
   PostLikeStatusResponseData,
   DeleteLikeResponseData,
 } from '@/types/post';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './baseQuery';
+import { Meta } from '@/types/meta';
 
 const postsApi = createApi({
   reducerPath: 'postsApi',
@@ -15,7 +15,7 @@ const postsApi = createApi({
   tagTypes: ['Posts'],
   endpoints: builder => ({
     getPosts: builder.query<
-      { data: PostsResponseData[]; meta: MetaData },
+      { data: PostsResponseData[]; meta: Meta },
       { page?: number; limit?: number }
     >({
       query: ({ page = 1, limit = 10 }) => `posts?page=${page}&limit=${limit}`,

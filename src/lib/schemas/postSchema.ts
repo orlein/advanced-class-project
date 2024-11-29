@@ -32,12 +32,6 @@ export const postRequestSchema = postSchema.pick({
   challengeId: true,
 });
 
-export const metaSchema = z.object({
-  total: z.number(),
-  page: z.number(),
-  limit: z.number(),
-});
-
 export const postLikeStatusRequestSchema = z.object({
   id: z.string(),
   postId: z.string(),
